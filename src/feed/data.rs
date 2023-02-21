@@ -1,6 +1,5 @@
 // https://validator.w3.org/feed/docs/atom.html
 
-use std::f32::consts::E;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug)]
