@@ -8,7 +8,6 @@ For mvp  (minimal viable product)
 
 * Sources:
     - mewe 
-    - pikabu
     - telegram channels
 * Cache storage
 * Config 

@@ -1,8 +1,4 @@
-use crate::feed::Feed;
 
 mod traits;
+mod mewe;
 
-
-trait Importer {
-    fn import(&self) -> Feed;
-}

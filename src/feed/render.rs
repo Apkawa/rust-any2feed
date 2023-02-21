@@ -5,8 +5,6 @@ use crate::feed::data::{
     Entry,
     Feed,
     Category,
-    Element,
-    Attribute,
 };
 use crate::feed::Link;
 use crate::feed::traits::{FeedAttribute, FeedElement};

@@ -1,7 +1,6 @@
 use std::fmt::{Display, Formatter};
 use std::format;
 use crate::feed::{Attribute, CDATAElement, Element};
-use crate::feed::data::Feed;
 
 pub trait FeedElement {
     fn render_tag(&self, tag: &str) -> String;
