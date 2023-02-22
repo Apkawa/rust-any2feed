@@ -1,0 +1,54 @@
+{
+  "postItemId": "5c406c003019a167da2aeaf9",
+  "userId": "5c26c67bf727707e3e634387",
+  "text": "",
+  "medias": [
+    {
+      "mediaId": "5c406c003019a167da2aeaf7",
+      "postItemId": "5c406c003019a167da2aeaf9",
+      "photo": {
+        "id": "5c406bff3019a167da2a9942",
+        "size": {
+          "width": 192,
+          "height": 144
+        },
+        "mime": "image/png",
+        "_links": {
+          "img": {
+            "href": "/api/v2/photo/Q3vN88GilL5WXnQX61yA5dbN4aDhgGHYYWtAdTO7zAFcQGv_MBmhZ9oqmUI/{imageSize}/img?static={static}",
+            "templated": true
+          }
+        }
+      },
+      "video": {
+        "id": "5c406bff3019a167da2a9941",
+        "name": "gplus7547868620594622820.mp4",
+        "availableResolutions": [
+          "original",
+          "480p",
+          "hls2m"
+        ],
+        "_links": {
+          "linkTemplate": {
+            "href": "/api/v2/proxy/video/shared/5c406c003019a167da2aeaf9/{resolution}/gplus7547868620594622820.mp4?_dummy=1",
+            "templated": true
+          }
+        }
+      }
+    }
+  ],
+  "mediasCount": 1,
+  "groupId": "5c2784e7f727707e3ec7d110",
+  "permissions": {
+    "comment": true,
+    "remove": false,
+    "canEmojify": true,
+    "reshare": true,
+    "download": true,
+    "follow": true,
+    "canAddEmoji": true
+  },
+  "createdAt": 1547725824,
+  "updatedAt": 1547725824,
+  "follows": false
+}

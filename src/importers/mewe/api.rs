@@ -9,6 +9,7 @@ use reqwest::blocking::Response;
 use serde::{Deserialize, Serialize};
 
 use crate::http_client::cookie::{import_cookie_from_file, update_cookie_from_file};
+use crate::importers::mewe::json;
 
 const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
 
@@ -17,31 +18,15 @@ macro_rules! api_mewe {
 }
 const API_MEWE_IDENTIFY: &str = concat!(api_mewe!(), "/v3/auth/identify");
 const API_MEWE_ME_INFO: &str = concat!(api_mewe!(), "/v2/me/info");
-
-#[derive(Debug, Deserialize)]
-struct MeweApiIdentify {
-    authenticated: bool,
-    confirmed: bool,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-#[serde(rename_all = "camelCase")]
-struct MeweApiMeInfo {
-    id: String,
-    first_name: String,
-    last_name: String,
-    contact_invite_id: String,
-    primary_email: String,
-
-}
+const API_MEWE_USER_INFO: &str = concat!(api_mewe!(), "/v2/mycontacts/user/");
 
 #[derive(Debug, Default)]
-struct MeweApi {
+pub(crate) struct MeweApi {
     cookies_path: String,
     cookies: Arc<Jar>,
     session: reqwest::blocking::Client,
     headers: RefCell<HashMap<String, String>>,
-    pub me_info: Option<MeweApiMeInfo>,
+    pub me_info: Option<json::MeweApiUserInfo>,
 }
 
 /// Подсматриваем туда https://github.com/goutsune/mewe-wrapper
@@ -67,7 +52,7 @@ impl MeweApi {
     fn save_cookies(&self, scope_url: &str) -> Option<()> {
         update_cookie_from_file(self.cookies.borrow(),
                                 &Url::parse(scope_url).ok()?,
-                                    &self.cookies_path,
+                                &self.cookies_path,
         )
     }
 
@@ -91,8 +76,8 @@ impl MeweApi {
         Ok(result)
     }
 
-    pub fn whoami(&mut self) -> Option<MeweApiMeInfo> {
-        let info: MeweApiMeInfo = self.get(API_MEWE_ME_INFO).ok()?.json().ok()?;
+    pub fn whoami(&mut self) -> Option<json::MeweApiUserInfo> {
+        let info: json::MeweApiUserInfo = self.get(API_MEWE_ME_INFO).ok()?.json().ok()?;
         self.me_info = Some(info.clone());
         Some(info)
     }
@@ -102,7 +87,7 @@ impl MeweApi {
         let result = self.get(API_MEWE_IDENTIFY).ok()?;
         if result.status() == 200 {
             let json = {
-                result.json::<MeweApiIdentify>().ok()?
+                result.json::<json::MeweApiIdentify>().ok()?
             };
             if json.authenticated {
                 return Some(());
@@ -110,6 +95,10 @@ impl MeweApi {
         }
         None
     }
+
+    // pub fn fetch_feed(&self, url: &str, limit: usize, page: usize) -> Option<json::MeweApiFeedList> {
+    //     self.identify()
+    // }
 }
 
 
@@ -119,8 +108,8 @@ mod test {
 
     use reqwest::cookie::Jar;
     use reqwest::Url;
+    use crate::importers::mewe::api::MeweApi;
 
-    use crate::importers::mewe::{MeweApi, USER_AGENT};
 
     #[test]
     fn test_identify() {
@@ -129,7 +118,6 @@ mod test {
         dbg!(&mewe);
         let info = mewe.whoami().unwrap();
         assert_eq!(info.contact_invite_id, "apkawa");
-
     }
 
     #[test]

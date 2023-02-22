@@ -1,0 +1,41 @@
+{
+  "postItemId": "63d961d3dcd548728bd7e585",
+  "userId": "5df156f1cf7750663a63c1d8",
+  "text": "Hey Everyone,\n\nWe wanted to share some thoughts about a recent feature change that several of you have commented on. That being the removal of the “Me and We’s” disappearing GIFs that people could post in chats. We rarely remove features from MeWe but in this case, it seemed like the right thing to do. The feature was never as popular as we would have liked and by removing it we have opened up space for some of our previously less accessible chat features like **Share a Location, Doodles, and Files.**\n\nWe think **Share a Location** can be particularly useful and we’ve done a nice twist to it, by allowing you to share any location you want from a map with your friends in a group or in a private chat, and you don’t have to give the app your location. If you choose to do so, you can enable location sharing so the app will reveal where you are, but as privacy is always top of mind for us, you don’t have to in order to use the feature.\n\nWe are always looking to improve our members' experience and these small steps forward only hint at some of the really amazing changes we have coming soon. **Stay tuned!**",
+  "emojis": {
+    "userEmojis": [],
+    "emojiCounts": [
+      {
+        "🙂": 315
+      },
+      {
+        "👍": 945
+      },
+      {
+        "❤": 333
+      },
+      {
+        "🌎": 302
+      }
+    ],
+    "counts": {
+      "🙂": 315,
+      "👍": 945,
+      "❤": 333,
+      "🌎": 302
+    }
+  },
+  "groupId": "55f9dd29e4b050c69e693558",
+  "permissions": {
+    "remove": false,
+    "canEmojify": true,
+    "reshare": true,
+    "follow": true,
+    "canAddEmoji": true
+  },
+  "createdAt": 1675190739,
+  "updatedAt": 1675190739,
+  "follows": false,
+  "sharesCount": 74,
+  "language": "en"
+}

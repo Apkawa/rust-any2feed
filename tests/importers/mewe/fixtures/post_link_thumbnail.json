@@ -1,0 +1,29 @@
+{
+  "postItemId": "5c5d06a71963a30cd8df85a3",
+  "userId": "5c25e3487d4f7e4447d07ba0",
+  "text": "Почти пять лет с момента написания поста, это по нынешним временам вечность. Как сейчас-то с этим дела?\nhttps://habr.com/ru/company/madrobots/blog/232059/",
+  "link": {
+    "description": "У меня тут грустный юбилей. Нет, я не отмечаю первый год в завязке или десятилетие со дня первого развода. Все куда проще. Но в каком-то смысле не менее драматично. Недавно я профинансировал на...",
+    "title": "Пора взрослеть: как я разочаровался в краудфандинге / Блог компании Madrobots / Хабр",
+    "_links": {
+      "url": {
+        "href": "https://habr.com/ru/company/madrobots/blog/232059/"
+      },
+      "urlHost": {
+        "href": "habr.com"
+      }
+    }
+  },
+  "groupId": "5c57ddfe3d1f8126ee0854e5",
+  "permissions": {
+    "comment": true,
+    "remove": false,
+    "canEmojify": true,
+    "reshare": true,
+    "follow": true,
+    "canAddEmoji": true
+  },
+  "createdAt": 1549600423,
+  "updatedAt": 1549600777,
+  "follows": false
+}

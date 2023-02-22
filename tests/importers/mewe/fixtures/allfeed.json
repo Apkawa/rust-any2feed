@@ -1,0 +1,790 @@
+{
+  "feed": [
+    {
+      "postItemId": "63f5ad3e91c36f05ad2408b0",
+      "userId": "5c26eb4185c02b29771d0b8b",
+      "text": ":tongue:",
+      "medias": [
+        {
+          "mediaId": "63f5ad3e91c36f05ad2408af",
+          "postItemId": "63f5ad3e91c36f05ad2408b0",
+          "photo": {
+            "id": "63f5ad3d5dd2f71157b41056",
+            "size": {
+              "width": 900,
+              "height": 1350
+            },
+            "mime": "image/jpeg",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/OSZfhcMOWPG9bbnUzAiYPywCdqAEtqibf22szGQCUWZj9a09XdL3EVe0EFY/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        }
+      ],
+      "mediasCount": 1,
+      "photosCount": 1,
+      "emojis": {
+        "userEmojis": [],
+        "emojiCounts": [
+          {
+            "🥳": 1
+          },
+          {
+            "😻": 2
+          },
+          {
+            "😤": 3
+          },
+          {
+            "‼": 1
+          }
+        ],
+        "counts": {
+          "🥳": 1,
+          "😻": 2,
+          "😤": 3,
+          "‼": 1
+        }
+      },
+      "permissions": {
+        "comment": true,
+        "remove": false,
+        "canEmojify": true,
+        "reshare": true,
+        "download": true,
+        "follow": true,
+        "canAddEmoji": true
+      },
+      "createdAt": 1677045054,
+      "updatedAt": 1677045054,
+      "follows": false,
+      "public": true,
+      "language": "fr"
+    },
+    {
+      "postItemId": "63f5ad3ce014907947758d93",
+      "userId": "5c26eb4185c02b29771d0b8b",
+      "text": ":tongue:",
+      "medias": [
+        {
+          "mediaId": "63f5ad3ce014907947758d92",
+          "postItemId": "63f5ad3ce014907947758d93",
+          "photo": {
+            "id": "63f5ad3b94697147930feefb",
+            "size": {
+              "width": 981,
+              "height": 1600
+            },
+            "mime": "image/jpeg",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/gHkeOP6QLj3TAUnHv6vQiePGQ_rWTER4Rsb8k5Iwbcdj9a07lGlxR5MP7vs/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        }
+      ],
+      "mediasCount": 1,
+      "photosCount": 1,
+      "emojis": {
+        "userEmojis": [],
+        "emojiCounts": [
+          {
+            "👅": 4
+          },
+          {
+            "🤤": 1
+          }
+        ],
+        "counts": {
+          "👅": 4,
+          "🤤": 1
+        }
+      },
+      "permissions": {
+        "comment": true,
+        "remove": false,
+        "canEmojify": true,
+        "reshare": true,
+        "download": true,
+        "follow": true,
+        "canAddEmoji": true
+      },
+      "createdAt": 1677045052,
+      "updatedAt": 1677045052,
+      "follows": false,
+      "public": true,
+      "language": "fr"
+    },
+    {
+      "postItemId": "63f5ad3a5dd2f71157b40c52",
+      "userId": "5c26eb4185c02b29771d0b8b",
+      "text": "",
+      "medias": [
+        {
+          "mediaId": "63f5ad3a5dd2f71157b40c51",
+          "postItemId": "63f5ad3a5dd2f71157b40c52",
+          "photo": {
+            "id": "63f5ad3ad955df238c8b058d",
+            "size": {
+              "width": 1000,
+              "height": 1414
+            },
+            "mime": "image/jpeg",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/aVVDkriqHQbiElkvwgQXc9xLyx59JTulpH246OXXG5dj9a062VXfI4yLBY0/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        }
+      ],
+      "mediasCount": 1,
+      "photosCount": 1,
+      "emojis": {
+        "userEmojis": [],
+        "emojiCounts": [
+          {
+            "🥭": 4
+          },
+          {
+            "🤤": 1
+          }
+        ],
+        "counts": {
+          "🥭": 4,
+          "🤤": 1
+        }
+      },
+      "permissions": {
+        "comment": true,
+        "remove": false,
+        "canEmojify": true,
+        "reshare": true,
+        "download": true,
+        "follow": true,
+        "canAddEmoji": true
+      },
+      "createdAt": 1677045050,
+      "updatedAt": 1677045050,
+      "follows": false,
+      "public": true
+    },
+    {
+      "postItemId": "63f595639469714793f48108",
+      "userId": "5c532e66e622d3252b9de1c0",
+      "text": "Кстати вот так выглядит рендеринг ленты в старом FF и в Vivaldi",
+      "medias": [
+        {
+          "mediaId": "63f595639469714793f48106",
+          "postItemId": "63f595639469714793f4810a",
+          "photo": {
+            "id": "63f5954e91c36f05ad082ee2",
+            "size": {
+              "width": 1600,
+              "height": 1179
+            },
+            "mime": "image/png",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/EitiavZjjo0o2UzX9nCfGTss_OO9cJR8yX_v2ozdygVj9ZVOkcNvBa0ILuI/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        },
+        {
+          "mediaId": "63f595639469714793f48107",
+          "postItemId": "63f595639469714793f4810b",
+          "photo": {
+            "id": "63f595509469714793f46c01",
+            "size": {
+              "width": 657,
+              "height": 1068
+            },
+            "mime": "image/png",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/9u-SwZgaP0nSLfPhvkXsOoKxlgO0b8S8qOkeFy9qaDJj9ZVQlGlxR5P0bAE/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        }
+      ],
+      "mediasCount": 2,
+      "photosCount": 2,
+      "emojis": {
+        "userEmojis": [],
+        "emojiCounts": [
+          {
+            "😏": 2
+          }
+        ],
+        "counts": {
+          "😏": 2
+        }
+      },
+      "permissions": {
+        "comment": true,
+        "remove": false,
+        "canEmojify": true,
+        "follow": true,
+        "canAddEmoji": true
+      },
+      "createdAt": 1677038947,
+      "updatedAt": 1677038947,
+      "follows": false
+    },
+    {
+      "postItemId": "63f594ba91c36f05ad077915",
+      "userId": "5c532e66e622d3252b9de1c0",
+      "text": "Вытащила рендеринг в шаблон, чтобы не превращать код совсем в спагетти.\n\nПрогресс: Текст постов с разметкой, картинки, галлереи, репосты, видео, файлы, ссылки, опросы вытаскиваются в рсс.\n\nНе хватает эмодзей, категорий (они есть но я забыла в шаблон подложить), юзернеймов и вообще вебморды чтобы смотреть отдельные посты с комментариями.\n\n~~Вареник для привлечения внимания, а то знаю я вас~~",
+      "medias": [
+        {
+          "mediaId": "63f594ba91c36f05ad077914",
+          "postItemId": "63f594ba91c36f05ad077917",
+          "photo": {
+            "id": "63f594a78a8f251c5a05d8ad",
+            "size": {
+              "width": 984,
+              "height": 842
+            },
+            "mime": "image/png",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/c3lqJhgZ310H-FZdMKgsZGAC_uuefRUpid5YTdw6cIdj9ZSnio8lHFoF2K0/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        },
+        {
+          "mediaId": "63f594ba91c36f05ad077911",
+          "postItemId": "63f594ba91c36f05ad077918",
+          "photo": {
+            "id": "63f5947a91c36f05ad072b83",
+            "size": {
+              "width": 984,
+              "height": 842
+            },
+            "mime": "image/png",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/VN4aRFj9IRFlIik26W2nBGEcoufyTfSI6fu7kQVM5YBj9ZR6kcNvBa0HK4M/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        },
+        {
+          "mediaId": "63f594ba91c36f05ad077912",
+          "postItemId": "63f594ba91c36f05ad077919",
+          "photo": {
+            "id": "63f5947a9e1c2667e8aceb13",
+            "size": {
+              "width": 984,
+              "height": 842
+            },
+            "mime": "image/png",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/qZvzJZ9QYF-d2jKeaObva1D-3uGwCoXVYXxcV-R4gSJj9ZR6nhwmZ-is6xM/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        },
+        {
+          "mediaId": "63f594ba91c36f05ad07790f",
+          "postItemId": "63f594ba91c36f05ad07791a",
+          "photo": {
+            "id": "63f59479e014907947588962",
+            "size": {
+              "width": 984,
+              "height": 501
+            },
+            "mime": "image/png",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/YfxVgmecS82rw_hqNN8qYwVYX7rhqLdO-CfR7_tHvphj9ZR54BSQeUdYiWI/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        }
+      ],
+      "mediasCount": 6,
+      "photosCount": 6,
+      "comments": {
+        "feed": [
+          {
+            "id": "63f5c6fc6efd6c21067373a1",
+            "text": "Осталось только все переписать на раст.\nКстати, я не пойму, как у тебя раскладывается лента по пользователям/категориям? Я посмотрел в шаблонах - там нет категорий и отдельный фид под каждого пользователя. Ручками что-ли забивать?",
+            "createdAt": 1677051644,
+            "editedAt": 1677051760,
+            "canRemove": true,
+            "canEmojify": true,
+            "canEdit": true,
+            "canFollow": true,
+            "emojis": {
+              "userEmojis": [],
+              "emojiCounts": [],
+              "counts": {}
+            },
+            "sharedPostId": "63f594ba91c36f05ad077915",
+            "repliesCount": 2,
+            "follows": true,
+            "userId": "5c24cbf135baad0186c85859",
+            "postItemId": "63f594ba91c36f05ad077915",
+            "postId": "deprecated"
+          }
+        ],
+        "total": 1,
+        "_links": {}
+      },
+      "permissions": {
+        "comment": true,
+        "remove": false,
+        "canEmojify": true,
+        "follow": true,
+        "canAddEmoji": true
+      },
+      "createdAt": 1677038778,
+      "updatedAt": 1677051644,
+      "follows": true
+    },
+    {
+      "postItemId": "63f58e9d83709e2a2b1c2b5f",
+      "userId": "5c26eb4185c02b29771d0b8b",
+      "text": ":tongue:",
+      "medias": [
+        {
+          "mediaId": "63f58e9d83709e2a2b1c2b5e",
+          "postItemId": "63f58e9d83709e2a2b1c2b5f",
+          "photo": {
+            "id": "63f58e9c91c36f05ad0021c6",
+            "size": {
+              "width": 823,
+              "height": 1280
+            },
+            "mime": "image/jpeg",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/OmY5uq7EF3qDtdybIYfaxXBx8wRjYpsjXAJDeVpHHJ1j9Y6ckcNvBa0AIcY/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        }
+      ],
+      "mediasCount": 1,
+      "photosCount": 1,
+      "comments": {
+        "feed": [
+          {
+            "id": "63f5b27e946971479315c021",
+            "text": "🐬 🤤",
+            "createdAt": 1677046398,
+            "canRemove": false,
+            "canEmojify": true,
+            "canEdit": false,
+            "canFollow": true,
+            "emojis": {
+              "userEmojis": [],
+              "emojiCounts": [],
+              "counts": {}
+            },
+            "sharedPostId": "63f58e9d83709e2a2b1c2b5f",
+            "follows": false,
+            "userId": "5c25c5da3c8bb1088cb5f62e",
+            "postItemId": "63f58e9d83709e2a2b1c2b5f",
+            "postId": "deprecated"
+          }
+        ],
+        "total": 1,
+        "_links": {}
+      },
+      "emojis": {
+        "userEmojis": [],
+        "emojiCounts": [
+          {
+            "‼": 5
+          },
+          {
+            "👅": 7
+          },
+          {
+            "🍆": 6
+          },
+          {
+            "🖐": 5
+          }
+        ],
+        "counts": {
+          "‼": 5,
+          "👅": 7,
+          "🍆": 6,
+          "🖐": 5
+        }
+      },
+      "permissions": {
+        "comment": true,
+        "remove": false,
+        "canEmojify": true,
+        "reshare": true,
+        "download": true,
+        "follow": true,
+        "canAddEmoji": true
+      },
+      "createdAt": 1677037213,
+      "updatedAt": 1677046398,
+      "follows": false,
+      "public": true,
+      "language": "fr"
+    },
+    {
+      "postItemId": "63f58c19e0149079474ea0d4",
+      "userId": "5c2b3ed7ce26252774caa64a",
+      "text": "",
+      "medias": [
+        {
+          "mediaId": "63f58c19e0149079474ea0d3",
+          "postItemId": "63f58c19e0149079474ea0d4",
+          "photo": {
+            "id": "63f58c199469714793e8faf8",
+            "size": {
+              "width": 512,
+              "height": 768
+            },
+            "mime": "image/png",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/n5V2X8ExQkTKuM5xAVnClYwd0WZzeXsispFs3iojrURj9YwZlGlxR5Po-vg/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        }
+      ],
+      "mediasCount": 1,
+      "photosCount": 1,
+      "comments": {
+        "feed": [
+          {
+            "id": "63f5bad75dd2f71157c326d2",
+            "text": "Не сиди на хололном",
+            "createdAt": 1677048535,
+            "canRemove": false,
+            "canEmojify": true,
+            "canEdit": false,
+            "canFollow": true,
+            "emojis": {
+              "userEmojis": [],
+              "emojiCounts": [],
+              "counts": {}
+            },
+            "sharedPostId": "63f58c19e0149079474ea0d4",
+            "follows": false,
+            "userId": "5c2782a11043e20858cb7869",
+            "postItemId": "63f58c19e0149079474ea0d4",
+            "postId": "deprecated"
+          }
+        ],
+        "total": 1,
+        "_links": {}
+      },
+      "emojis": {
+        "userEmojis": [],
+        "emojiCounts": [
+          {
+            "🤗": 1
+          }
+        ],
+        "counts": {
+          "🤗": 1
+        }
+      },
+      "permissions": {
+        "comment": true,
+        "remove": false,
+        "canEmojify": true,
+        "follow": true,
+        "canAddEmoji": true
+      },
+      "createdAt": 1677036569,
+      "updatedAt": 1677048535,
+      "follows": false
+    },
+    {
+      "postItemId": "63f5874283709e2a2b13045b",
+      "userId": "5c26eb4185c02b29771d0b8b",
+      "text": ":tongue:",
+      "medias": [
+        {
+          "mediaId": "63f5874283709e2a2b130458",
+          "postItemId": "63f5874283709e2a2b13045b",
+          "photo": {
+            "id": "63f58741e0149079474893cb",
+            "size": {
+              "width": 1069,
+              "height": 1500
+            },
+            "mime": "image/jpeg",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/QSjrOhSkpKEth1xLoDRWSbVNGVtLtvvZRb4-RoSqLLhj9YdB4BSQeUdIk8s/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        }
+      ],
+      "mediasCount": 1,
+      "photosCount": 1,
+      "emojis": {
+        "userEmojis": [],
+        "emojiCounts": [
+          {
+            "👅": 3
+          },
+          {
+            "🤔": 1
+          }
+        ],
+        "counts": {
+          "👅": 3,
+          "🤔": 1
+        }
+      },
+      "permissions": {
+        "comment": true,
+        "remove": false,
+        "canEmojify": true,
+        "reshare": true,
+        "download": true,
+        "follow": true,
+        "canAddEmoji": true
+      },
+      "createdAt": 1677035330,
+      "updatedAt": 1677035330,
+      "follows": false,
+      "public": true,
+      "language": "fr"
+    },
+    {
+      "postItemId": "63f5873dd955df238c5de12b",
+      "userId": "5c26eb4185c02b29771d0b8b",
+      "text": ":tongue::foot:",
+      "medias": [
+        {
+          "mediaId": "63f5873dd955df238c5de12a",
+          "postItemId": "63f5873dd955df238c5de12b",
+          "photo": {
+            "id": "63f5873cd955df238c5de036",
+            "size": {
+              "width": 1142,
+              "height": 1600
+            },
+            "mime": "image/jpeg",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/WGyGIeldJusviVtmCXzO6f9BB0EZmI6CoL2IpeS9ghpj9Yc82VXfI4xd4DY/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        }
+      ],
+      "mediasCount": 1,
+      "photosCount": 1,
+      "emojis": {
+        "userEmojis": [],
+        "emojiCounts": [
+          {
+            "👆": 1
+          },
+          {
+            "🦵": 1
+          },
+          {
+            "👅": 2
+          }
+        ],
+        "counts": {
+          "👆": 1,
+          "🦵": 1,
+          "👅": 2
+        }
+      },
+      "permissions": {
+        "comment": true,
+        "remove": false,
+        "canEmojify": true,
+        "reshare": true,
+        "download": true,
+        "follow": true,
+        "canAddEmoji": true
+      },
+      "createdAt": 1677035325,
+      "updatedAt": 1677035325,
+      "follows": false,
+      "public": true,
+      "language": "fr"
+    },
+    {
+      "postItemId": "63f5873491c36f05adf73c3e",
+      "userId": "5c26eb4185c02b29771d0b8b",
+      "text": ":smirk:",
+      "medias": [
+        {
+          "mediaId": "63f5873491c36f05adf73c3d",
+          "postItemId": "63f5873491c36f05adf73c3e",
+          "photo": {
+            "id": "63f5873491c36f05adf73be3",
+            "size": {
+              "width": 876,
+              "height": 1599
+            },
+            "mime": "image/jpeg",
+            "_links": {
+              "img": {
+                "href": "/api/v2/photo/YLt03KWs1ufDy_ISeLkI0kBzsOftXJlqPBeDFqkbwo5j9Yc0kcNvBa33O-M/{imageSize}/img?static={static}",
+                "templated": true
+              }
+            }
+          }
+        }
+      ],
+      "mediasCount": 1,
+      "photosCount": 1,
+      "emojis": {
+        "userEmojis": [],
+        "emojiCounts": [
+          {
+            "🤗": 3
+          }
+        ],
+        "counts": {
+          "🤗": 3
+        }
+      },
+      "permissions": {
+        "comment": true,
+        "remove": false,
+        "canEmojify": true,
+        "reshare": true,
+        "download": true,
+        "follow": true,
+        "canAddEmoji": true
+      },
+      "createdAt": 1677035316,
+      "updatedAt": 1677035316,
+      "follows": false,
+      "public": true,
+      "language": "fi"
+    }
+  ],
+  "users": [
+    {
+      "id": "5c24cbf135baad0186c85859",
+      "name": "Ivanov Arkadiy",
+      "_links": {
+        "avatar": {
+          "href": "/api/v2/photo/profile/{imageSize}/5c24cbf135baad0186c85859?group=&f=F577231380099CE4IN4",
+          "templated": true
+        }
+      },
+      "fingerprint": "F577231380099CE4IN4",
+      "firstName": "Ivanov",
+      "lastName": "Arkadiy",
+      "contactInviteId": "apkawa",
+      "public": false
+    },
+    {
+      "id": "5c25c5da3c8bb1088cb5f62e",
+      "name": "Naru Ootori",
+      "_links": {
+        "avatar": {
+          "href": "/api/v2/photo/profile/{imageSize}/5c25c5da3c8bb1088cb5f62e?group=&f=F651595329856TOFKRH",
+          "templated": true
+        }
+      },
+      "fingerprint": "F651595329856TOFKRH",
+      "firstName": "Naru",
+      "lastName": "Ootori",
+      "contactInviteId": "naruootori",
+      "public": false
+    },
+    {
+      "id": "5c26eb4185c02b29771d0b8b",
+      "name": "Dmitry Manylov",
+      "_links": {
+        "avatar": {
+          "href": "/api/v2/photo/profile/{imageSize}/5c26eb4185c02b29771d0b8b?group=&f=F1491808830267CYCMU4",
+          "templated": true
+        }
+      },
+      "fingerprint": "F1491808830267CYCMU4",
+      "firstName": "Dmitry",
+      "lastName": "Manylov",
+      "contactInviteId": "dmitrymanylov",
+      "public": false
+    },
+    {
+      "id": "5c2782a11043e20858cb7869",
+      "name": "Andrey Sorc",
+      "_links": {
+        "avatar": {
+          "href": "/api/v2/photo/profile/{imageSize}/5c2782a11043e20858cb7869?group=&f=F657852192840K2QSBV",
+          "templated": true
+        }
+      },
+      "fingerprint": "F657852192840K2QSBV",
+      "firstName": "Andrey",
+      "lastName": "Sorc",
+      "contactInviteId": "andreysorc",
+      "public": false
+    },
+    {
+      "id": "5c2b3ed7ce26252774caa64a",
+      "name": "Weda Junguru :smirk_cat:",
+      "_links": {
+        "avatar": {
+          "href": "/api/v2/photo/profile/{imageSize}/5c2b3ed7ce26252774caa64a?group=&f=F1607815669973WWWEDE",
+          "templated": true
+        }
+      },
+      "fingerprint": "F1607815669973WWWEDE",
+      "firstName": "Weda",
+      "lastName": "Junguru :smirk_cat:",
+      "contactInviteId": "wedajunguru",
+      "public": false
+    },
+    {
+      "id": "5c532e66e622d3252b9de1c0",
+      "name": "tails underline",
+      "_links": {
+        "avatar": {
+          "href": "/api/v2/photo/profile/{imageSize}/5c532e66e622d3252b9de1c0?group=&f=F1127677604306ZNW5SM",
+          "templated": true
+        }
+      },
+      "fingerprint": "F1127677604306ZNW5SM",
+      "firstName": "tails",
+      "lastName": "underline",
+      "contactInviteId": "tailsunderline",
+      "public": false
+    }
+  ],
+  "_links": {
+    "nextPage": {
+      "href": "/api/v2/home/allfeed?limit=10&b=63f5873491c36f05adf73c3e&dateFrom=2023-02-22T03:08:36Z"
+    }
+  }
+}

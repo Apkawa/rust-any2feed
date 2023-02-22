@@ -1,0 +1,82 @@
+{
+  "postItemId": "5ded4e4b0d4a157c325f851c",
+  "userId": "5c25e3487d4f7e4447d07ba0",
+  "text": "Ну, офигеть. Оказывается, если не поставить на вход в септик предзаглубление, со временем дерьмо начнёт падать на поверхностную корку, в результате вырастет куча и закупорит вход. Никогда б не догадался.\n\nhttps://youtu.be/_TK6Z7b_a98",
+  "link": {
+    "description": "",
+    "title": "https://www.youtube.com/watch?v=_TK6Z7b_a98&feature=youtu.be",
+    "thumbnailSize": {
+      "width": 320,
+      "height": 180
+    },
+    "_links": {
+      "url": {
+        "href": "https://youtu.be/_TK6Z7b_a98"
+      },
+      "thumbnail": {
+        "href": "https://live-mewe-thumbs.s3.amazonaws.com/454dSY"
+      },
+      "urlHost": {
+        "href": "youtu.be"
+      }
+    }
+  },
+  "comments": {
+    "feed": [
+      {
+        "id": "5ded52720d4a157c3293f951",
+        "text": "ВСЁ С НАЧАЛА?",
+        "createdAt": 1575834226,
+        "canRemove": false,
+        "canEmojify": true,
+        "canEdit": false,
+        "canFollow": true,
+        "emojis": {
+          "userEmojis": [],
+          "emojiCounts": [],
+          "counts": {}
+        },
+        "sharedPostId": "5ded4e4b0d4a157c325f851c",
+        "groupId": "5c57ddfe3d1f8126ee0854e5",
+        "follows": false,
+        "userId": "5bc72ad21870d96bbf1b91ea",
+        "postItemId": "5ded4e4b0d4a157c325f851c",
+        "postId": "deprecated"
+      },
+      {
+        "id": "5dee4e4f2bad467790e656dc",
+        "text": "КОНВОЛЮЦИЯ ДЕРЬМОДЕМОНА",
+        "createdAt": 1575898703,
+        "canRemove": false,
+        "canEmojify": true,
+        "canEdit": false,
+        "canFollow": true,
+        "emojis": {
+          "userEmojis": [],
+          "emojiCounts": [],
+          "counts": {}
+        },
+        "sharedPostId": "5ded4e4b0d4a157c325f851c",
+        "groupId": "5c57ddfe3d1f8126ee0854e5",
+        "follows": false,
+        "userId": "5c480e1283b84d24b7dc5c35",
+        "postItemId": "5ded4e4b0d4a157c325f851c",
+        "postId": "deprecated"
+      }
+    ],
+    "total": 2,
+    "_links": {}
+  },
+  "groupId": "5c57ddfe3d1f8126ee0854e5",
+  "permissions": {
+    "comment": true,
+    "remove": false,
+    "canEmojify": true,
+    "reshare": true,
+    "follow": true,
+    "canAddEmoji": true
+  },
+  "createdAt": 1575833163,
+  "updatedAt": 1575898703,
+  "follows": false
+}
