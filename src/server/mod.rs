@@ -10,5 +10,5 @@ pub mod error;
 
 pub use error::*;
 
-mod thread_pool;
-mod request;
+pub mod thread_pool;
+pub mod request;

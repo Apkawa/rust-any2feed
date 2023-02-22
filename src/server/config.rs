@@ -1,5 +1,5 @@
 use std::sync::{Arc, Mutex};
-use crate::server::data::HTTPRequest;
+use crate::server::request::HTTPRequest;
 use crate::server::error;
 use crate::server::response::HTTPResponse;
 

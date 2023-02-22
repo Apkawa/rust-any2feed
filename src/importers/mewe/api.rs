@@ -2,11 +2,12 @@ use std::borrow::{Borrow, BorrowMut};
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::path::Path;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex, RwLock};
 
 use reqwest::{cookie::Jar, Url};
 use reqwest::blocking::Response;
 use serde::{Deserialize, Serialize};
+use serde::__private::de::Borrowed;
 
 use crate::http_client::cookie::{import_cookie_from_file, update_cookie_from_file};
 use crate::importers::mewe::json;
@@ -21,11 +22,11 @@ const API_MEWE_ME_INFO: &str = concat!(api_mewe!(), "/v2/me/info");
 const API_MEWE_USER_INFO: &str = concat!(api_mewe!(), "/v2/mycontacts/user/");
 
 #[derive(Debug, Default)]
-pub(crate) struct MeweApi {
+pub struct MeweApi {
     cookies_path: String,
     cookies: Arc<Jar>,
     session: reqwest::blocking::Client,
-    headers: RefCell<HashMap<String, String>>,
+    headers: Arc<Mutex<HashMap<String, String>>>,
     pub me_info: Option<json::MeweApiUserInfo>,
 }
 
@@ -58,7 +59,8 @@ impl MeweApi {
 
     fn get(&self, url: &str) -> reqwest::Result<Response> {
         let mut rb = self.session.get(url);
-        for (k, v) in self.headers.borrow().iter() {
+
+        for (k, v) in self.headers.lock().unwrap().iter() {
             rb = rb.header(k, v);
         }
         let result = rb.send()?;
@@ -69,7 +71,7 @@ impl MeweApi {
             .collect();
 
         if !csrf_token.is_empty() {
-            self.headers.borrow_mut()
+            self.headers.lock().unwrap()
                 .insert("x-csrf-token".to_string(), csrf_token);
         }
         self.save_cookies(&url);

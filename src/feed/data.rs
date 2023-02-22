@@ -1,6 +1,8 @@
 // https://validator.w3.org/feed/docs/atom.html
 
 use std::fmt::{Display, Formatter};
+use unicode_segmentation::UnicodeSegmentation;
+
 
 #[derive(Debug)]
 pub enum Content {
@@ -68,6 +70,18 @@ impl Entry {
                title: String,
                updated: String,
     ) -> Entry {
+        // TODO correct truncate unicode
+        let title = {
+            if title.len() > 60 {
+                UnicodeSegmentation::graphemes(title.as_str(), true)
+                    .take(55)
+                    .chain(["..."])
+                    .collect::<String>()
+            } else {
+                title
+            }
+
+        };
         Entry {
             id,
             title,

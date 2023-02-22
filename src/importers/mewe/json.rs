@@ -44,11 +44,18 @@ pub struct MeweApiPost {
     pub created_at: usize,
     pub updated_at: usize,
     pub group_id: Option<String>,
+    // Media
     pub medias: Option<Vec<MeweApiMedia>>,
     pub medias_count: Option<usize>,
     pub photos_count: Option<usize>,
+    // Link
     pub link: Option<MeweApiLink>,
+    // Ref post
     pub ref_post: Option<Box<MeweApiPost>>,
+    // Pool
+    // Files
+    //
+
 
     pub album: Option<String>,
     pub hash_tags: Option<Vec<String>>,
@@ -75,10 +82,11 @@ pub struct MeweApiMedia {
     pub id: String,
     #[serde(rename = "postItemId")]
     pub post_id: String,
-    pub photo: Option<MeweApiMediaPhoto>,
-    // pub video: Option<>;
+    pub photo: MeweApiMediaPhoto,
+    pub video: Option<MeweApiMediaVideo>,
 }
 
+// Media Photo
 
 #[derive(Debug, Deserialize)]
 pub struct MeweApiMediaPhoto {
@@ -87,13 +95,34 @@ pub struct MeweApiMediaPhoto {
     pub mime: String,
 
     #[serde(rename = "_links")]
-    pub links: MeweApiMediaLink,
+    pub links: MeweApiMediaPhotoLink,
+}
+
+
+#[derive(Debug, Deserialize)]
+pub struct MeweApiMediaPhotoLink {
+    pub img: MeweApiHref,
+}
+
+// MediaVideo
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MeweApiMediaVideo {
+    pub id: String,
+    pub name: String,
+    pub available_resolutions: Vec<String>,
+
+    #[serde(rename = "_links")]
+    pub links: MeweApiMediaVideoLink,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct MeweApiMediaLink {
-    pub img: MeweApiHref,
+#[serde(rename_all = "camelCase")]
+pub struct MeweApiMediaVideoLink {
+    pub link_template: MeweApiHref,
 }
+
 
 
 // LINK

@@ -5,8 +5,9 @@ use std::sync::{Arc, Mutex};
 use std::thread::sleep;
 use std::time::Duration;
 use crate::server::config::ServerConfig;
-use crate::server::data::{HTTPMethod, HTTPRequest};
+use crate::server::request::HTTPMethod;
 use crate::server::HTTPError::*;
+use crate::server::request::HTTPRequest;
 use crate::server::response::HTTPResponse;
 use crate::server::thread_pool::ThreadPool;
 
@@ -25,7 +26,9 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
         // Close
         return;
     }
-    let request = HTTPRequest::parse(&request).unwrap();
+    let mut request = HTTPRequest::parse(&request).unwrap();
+    request.stream = Some(Box::new(&stream));
+
     let routes = &config.routes;
     let mut response = Err(NotFound);
     for r in routes {

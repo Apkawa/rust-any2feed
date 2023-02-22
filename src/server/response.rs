@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
-use crate::server::data::HTTPRequest;
+use crate::server::request::HTTPRequest;
 
 #[derive(Debug, Default)]
 pub struct HTTPResponse {

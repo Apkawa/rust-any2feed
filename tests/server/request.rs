@@ -1,4 +1,5 @@
-use rust_any2feed::server::data::{HTTPMethod, HTTPRequest};
+use rust_any2feed::server::request::HTTPMethod;
+use rust_any2feed::server::request::HTTPRequest;
 
 #[test]
 fn parse_request() {
