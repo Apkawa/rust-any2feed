@@ -1,11 +1,12 @@
 use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
+use bytes::Bytes;
 use crate::server::request::HTTPRequest;
 
 #[derive(Debug, Default)]
 pub struct HTTPResponse {
     pub status: u16,
-    pub content: Option<String>,
+    pub content: Option<Bytes>,
     pub content_type: Option<String>,
     pub headers: HashMap<String, String>,
 }
@@ -20,7 +21,7 @@ impl HTTPResponse {
     pub fn with_content(content: String) -> Self {
         HTTPResponse{
             status: 200,
-            content: Some(content),
+            content: Some(Bytes::from(content)),
             ..HTTPResponse::default()
         }
     }
@@ -28,7 +29,7 @@ impl HTTPResponse {
 
 impl Display for HTTPResponse {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let content = &String::new();
+        let content = &Bytes::new();
         let content = self.content.as_ref().unwrap_or(content);
 
         let mut extra_headers: Vec<String> = Vec::with_capacity(2);
@@ -49,9 +50,8 @@ impl Display for HTTPResponse {
             .collect::<Vec<String>>()
             .join("\r\n");
 
-        write!(f, "HTTP/1.1 {status}\r\n{headers}\r\n\r\n{content}",
+        write!(f, "HTTP/1.1 {status}\r\n{headers}\r\n\r\n",
                                status = self.status,
-                               headers = headers,
-                               content = content)
+                               headers = headers)
     }
 }

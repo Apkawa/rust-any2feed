@@ -4,6 +4,7 @@ use std::ops::Deref;
 use std::sync::{Arc, Mutex};
 use std::thread::sleep;
 use std::time::Duration;
+use bytes::Bytes;
 use crate::server::config::ServerConfig;
 use crate::server::request::HTTPMethod;
 use crate::server::HTTPError::*;
@@ -27,6 +28,7 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
         return;
     }
     let mut request = HTTPRequest::parse(&request).unwrap();
+    request.config = Some(Arc::clone(&config));
     request.stream = Some(Box::new(&stream));
 
     let routes = &config.routes;
@@ -37,7 +39,7 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
             break;
         }
     }
-    dbg!(&response);
+    // dbg!(&response);
     let response = match response {
         Ok(r) => r,
         Err(e) => {
@@ -47,7 +49,8 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
             }
         },
     };
-    stream.write_all(response.to_string().as_bytes()).unwrap()
+    stream.write_all(response.to_string().as_bytes()).unwrap();
+    stream.write_all(response.content.unwrap_or(Bytes::new()).as_ref()).unwrap();
 }
 
 pub fn run(config: ServerConfig) -> std::io::Result<()> {

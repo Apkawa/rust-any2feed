@@ -1,14 +1,39 @@
+use std::fmt::{Debug, Formatter};
 use std::sync::{Arc, Mutex};
 use crate::server::request::HTTPRequest;
 use crate::server::error;
 use crate::server::response::HTTPResponse;
 
-// pub type ViewCallbackImpl = impl Fn(HTTPRequest) -> error::Result<HTTPResponse>;
 pub type ViewCallback = dyn Fn(&HTTPRequest) -> error::Result<HTTPResponse> + Send;
 
 pub struct Route {
     pattern: String,
     callback: Arc<Mutex<ViewCallback>>,
+}
+
+impl Debug for Route {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Route")
+            .field("pattern", &self.pattern)
+            .field("callback", &"Arc<Mutex<ViewCallback>")
+            .finish()
+    }
+}
+
+///
+/// ```
+/// use rust_any2feed::server::config::match_path;
+/// assert!(match_path("/foo/", "/foo/"));
+/// assert!(!match_path("/foo/", "/foo/bar"));
+/// assert!(match_path("/foo/*", "/foo/bar"));
+/// ```
+pub fn match_path(pattern: &str, path: &str) -> bool {
+    if pattern.ends_with("*") {
+        // Примитивный матчинг через *
+        path.starts_with(pattern.trim_end_matches("*"))
+    } else {
+        path == pattern
+    }
 }
 
 impl Route {
@@ -20,7 +45,7 @@ impl Route {
         }
     }
     pub fn match_path(&self, path: &String) -> bool {
-        path == &self.pattern
+        match_path(&self.pattern, path)
     }
 
     pub fn run_cb(&self, request: &HTTPRequest) -> error::Result<HTTPResponse> {
@@ -28,7 +53,7 @@ impl Route {
     }
 }
 
-#[derive(Default, )]
+#[derive(Default, Debug)]
 pub struct ServerConfig {
     pub port: Option<u16>,
     pub routes: Vec<Route>,

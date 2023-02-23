@@ -1,3 +1,6 @@
+use std::fs::rename;
+use chrono::serde::ts_seconds;
+use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -13,9 +16,10 @@ pub struct MeweApiSelfProfileInfo {
     pub first_name: String,
     pub last_name: String,
     pub contact_invite_id: String,
+    pub timezone: String,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Default, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct MeweApiUserInfo {
     pub id: String,
@@ -50,8 +54,13 @@ pub struct MeweApiPost {
     pub id: String,
     pub user_id: String,
     pub text: String,
-    pub created_at: usize,
-    pub updated_at: usize,
+
+    // Хоть тут и написано что utc, на самом деле приходит с таймзоной клиента
+    #[serde(with = "ts_seconds")]
+    pub created_at: DateTime<Utc>,
+    #[serde(with = "ts_seconds")]
+    pub updated_at: DateTime<Utc>,
+
     pub group_id: Option<String>,
     // Media
     pub medias: Option<Vec<MeweApiMedia>>,
@@ -65,10 +74,25 @@ pub struct MeweApiPost {
     // Files
     //
 
-
     pub album: Option<String>,
     pub hash_tags: Option<Vec<String>>,
 }
+
+impl MeweApiPost {
+    pub fn get_post_url(&self, user: Option<&MeweApiUserInfo>) -> Option<String> {
+        let user_id = &self.user_id;
+        match self.group_id.as_ref() {
+            Some(group_id) => return Some(format!("https://mewe.com/group/{group_id}/profile/{user_id}")),
+            None => {
+                if let Some(MeweApiUserInfo{contact_invite_id, ..}) = user {
+                    return Some(format!("https://mewe.com/i/{contact_invite_id}"))
+                }
+            },
+        }
+        None
+    }
+}
+
 // COMMON
 
 #[derive(Debug, Deserialize)]

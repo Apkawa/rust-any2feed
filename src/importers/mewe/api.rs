@@ -20,7 +20,7 @@ macro_rules! api_mewe {
 }
 const API_MEWE_IDENTIFY: &str = concat!(api_mewe!(), "/v3/auth/identify");
 const API_MEWE_ME_INFO: &str = concat!(api_mewe!(), "/v2/me/info");
-const API_MEWE_USER_INFO: &str = concat!(api_mewe!(), "/v2/mycontacts/user/");
+// const API_MEWE_USER_INFO: &str = concat!(api_mewe!(), "/v2/mycontacts/user/");
 
 const API_MEWE_ALLFEED: &str = concat!(api_mewe!(), "/v2/home/allfeed");
 const API_MEWE_USER_FEED: &str = concat!(api_mewe!(), "/v2/home/user/{user_id}/postsfeed");
@@ -61,7 +61,7 @@ impl MeweApi {
         )
     }
 
-    fn get(&self, url: &str) -> reqwest::Result<Response> {
+    pub fn get(&self, url: &str) -> reqwest::Result<Response> {
         let mut rb = self.session.get(url);
 
         for (k, v) in self.headers.lock().unwrap().iter() {
@@ -86,7 +86,7 @@ impl MeweApi {
             // Если был какой либо set-cookie, сохраняем актуальный стор
             self.save_cookies(&url);
         }
-        if (result.status() != 200) {
+        if result.status() != 200 {
             dbg!(&result);
             // dbg!(&result.text());
         }

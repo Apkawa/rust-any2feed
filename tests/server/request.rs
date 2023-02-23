@@ -12,3 +12,8 @@ Accept: */*"#.lines().map(|l| l.into()).collect();
     assert_eq!(res.method, HTTPMethod::HEAD);
     assert_eq!(res.path, "/");
 }
+
+#[test]
+fn parse_path() {
+
+}

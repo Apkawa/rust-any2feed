@@ -2,6 +2,8 @@ use std::fmt::Error;
 use HTTPError::*;
 use std::collections::HashMap;
 use std::net::TcpStream;
+use std::sync::Arc;
+use crate::server::config::ServerConfig;
 use crate::server::error;
 use crate::server::error::HTTPError;
 
@@ -42,7 +44,8 @@ pub struct HTTPRequest<'a > {
     pub path: String,
     pub headers: HashMap<String, String>,
     pub body: Option<String>,
-    pub stream: Option<Box<&'a TcpStream>>
+    pub stream: Option<Box<&'a TcpStream>>,
+    pub config: Option<Arc<ServerConfig>>
 }
 
 impl HTTPRequest<'_> {

@@ -56,6 +56,49 @@ impl Display for Feed {
     }
 }
 
+impl Display for Entry {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let Entry {
+            id,
+            title,
+            updated,
+            author,
+            content,
+            link,
+            summary,
+            categories,
+            contributor,
+            published,
+            rights
+        } = self;
+        let parts = [
+            author.render_tag("author"),
+            content.render_tag("content"),
+            link.as_ref().map_or(String::new(),
+                                 |l| l.to_string(),
+            ),
+            summary.render_tag("summary"),
+            categories.as_ref()
+                .map_or(String::new(),
+                        |l|
+                            l.0.iter()
+                                .map(|c| c.to_string()).collect(),
+                ),
+            contributor.render_tag("contributor"),
+            published.render_tag("published"),
+            rights.render_tag("rights"),
+        ].join("");
+        write!(f, r#"
+    <entry>
+        <id>{id}</id>
+        <title>{title}</title>
+        <updated>{updated}</updated>
+        {parts}
+    </entry>
+        "#)
+    }
+}
+
 
 impl Display for Category {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -118,44 +161,3 @@ impl Display for Person {
     }
 }
 
-
-impl Display for Entry {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let Entry {
-            id,
-            title,
-            updated,
-            author,
-            content,
-            link,
-            summary,
-            categories,
-            contributor,
-            published,
-            rights
-        } = self;
-        let parts = [
-            author.render_tag("author"),
-            content.render_tag("content"),
-            link.render_tag("link"),
-            summary.render_tag("summary"),
-            categories.as_ref()
-                .map_or(String::new(),
-                        |l|
-                            l.0.iter()
-                                .map(|c| c.to_string()).collect(),
-                ),
-            contributor.render_tag("contributor"),
-            published.render_tag("published"),
-            rights.render_tag("rights"),
-        ].join("");
-        write!(f, r#"
-    <entry>
-        <id>{id}</id>
-        <title>{title}</title>
-        <updated>{updated}</updated>
-        {parts}
-    </entry>
-        "#)
-    }
-}

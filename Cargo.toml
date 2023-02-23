@@ -11,7 +11,7 @@ reqwest = { version = "0.11", features = ["blocking", "json", "cookies"] }
 # Это попытка реализовать кастомный Jar
 cookie_store = { version = "0.16.1" }
 cookie_crate = { package = "cookie", version = "0.16.2" }
-bytes = {version = "1.4.0"}
+bytes = { version = "1.4.0" }
 # json тоже самостоятельно парсить не будем
 serde = { version = "1.0.152", features = ["derive"] }
 serde_json = "1.0.93"
@@ -19,8 +19,8 @@ unicode-segmentation = "1.10.1"
 # Парсим mewe тексты
 pulldown-cmark = { version = "0.9.2", default-features = false }
 
-regex = "1.7.1"
-
+regex = { version = "1.7.1" }
+chrono = { version = "0.4.23", features = ["serde"] }
 [dev-dependencies]
 # Для тестов
 rstest = "0.16.0"

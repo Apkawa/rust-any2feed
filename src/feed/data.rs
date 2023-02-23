@@ -57,7 +57,7 @@ pub struct Entry {
     pub updated: String,
     pub author: Element<Person>,
     pub content: Option<Content>,
-    pub link: Option<Element<String>>,
+    pub link: Option<Link>,
     pub summary: Option<Content>,
     pub categories: Option<Element<Vec<Category>>>,
     pub contributor: Option<Element<Person>>,

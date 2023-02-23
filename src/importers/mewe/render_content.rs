@@ -5,10 +5,9 @@ use crate::importers::mewe::json::{MeweApiHref, MeweApiLink, MeweApiMedia, MeweA
 use crate::importers::mewe::markdown::md_to_html;
 use crate::importers::mewe::utils::format_url;
 
-pub struct RenderContext {
-    // prepare_url
-}
 
+pub struct RenderContext {
+}
 
 pub trait RenderContent {
     fn as_dyn(&self) -> &dyn RenderContent where Self: Sized {
