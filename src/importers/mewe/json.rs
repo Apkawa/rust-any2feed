@@ -8,6 +8,15 @@ pub struct MeweApiIdentify {
 
 #[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
+pub struct MeweApiSelfProfileInfo {
+    pub id: String,
+    pub first_name: String,
+    pub last_name: String,
+    pub contact_invite_id: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct MeweApiUserInfo {
     pub id: String,
     pub first_name: String,
@@ -22,7 +31,7 @@ pub struct MeweApiFeedList {
     pub feed: Vec<MeweApiPost>,
     pub users: Vec<MeweApiUserInfo>,
     #[serde(rename="_links")]
-    links: Option<MeweApiFeedListNextPageLink>,
+    pub links: Option<MeweApiFeedListNextPageLink>,
 
     #[serde(skip)]
     pub groups: Option<()>,
@@ -31,7 +40,7 @@ pub struct MeweApiFeedList {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MeweApiFeedListNextPageLink {
-    next_page: Option<MeweApiHref>
+    pub next_page: Option<MeweApiHref>
 }
 
 #[derive(Debug, Deserialize)]

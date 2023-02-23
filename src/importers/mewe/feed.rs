@@ -28,7 +28,7 @@ pub fn mewe_post_to_entry(post: &MeweApiPost) -> Option<Entry> {
 }
 
 // Быстрофункция чтобы добить наконец функциональность до смотрибельного
-pub fn mewe_feed_to_feed(feed_list: Vec<MeweApiFeedList>) -> Option<Feed> {
+pub fn mewe_feed_to_feed(feed_list: &Vec<MeweApiFeedList>) -> Option<Feed> {
     let mut entries: Vec<Entry> = Vec::with_capacity(feed_list.len() * 10);
     let mut authors: HashMap<&String, &MeweApiUserInfo> = HashMap::with_capacity(20);
     for list in feed_list.iter() {

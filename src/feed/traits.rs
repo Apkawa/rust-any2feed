@@ -14,7 +14,7 @@ impl<T: Display> FeedElement for Element<T> {
 
 impl<T: Display> FeedElement for CDATAElement<T> {
     fn render_tag(&self, tag: &str) -> String {
-        format!("<{tag}><![CDATA[{}]]</{tag}>", self.0)
+        format!("<{tag}><![CDATA[{}]]></{tag}>", self.0)
     }
 }
 

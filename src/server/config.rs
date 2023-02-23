@@ -12,10 +12,10 @@ pub struct Route {
 }
 
 impl Route {
-    pub fn new(pattern: String,
+    pub fn new(pattern: &str,
                callback: impl Fn(&HTTPRequest) -> error::Result<HTTPResponse> + Send + 'static) -> Self {
         Self {
-            pattern,
+            pattern: pattern.to_string(),
             callback: Arc::new(Mutex::new(callback)),
         }
     }

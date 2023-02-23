@@ -47,7 +47,7 @@ impl Display for Feed {
 
         write!(f, r#"<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  {id}
+  <id>{id}</id>
   {link}
   <updated>{updated}</updated>
   {parts}
@@ -78,7 +78,7 @@ impl FeedElement for Content {
             Content::Html(x) => { ("html", x) }
             Content::Xhtml(x) => { ("xhtml", x) }
         };
-        format!(r#"<{tag} type="{t}><![CDATA[{c}]]</{tag}>"#)
+        format!(r#"<{tag} type="{t}"><![CDATA[{c}]]></{tag}>"#)
     }
 }
 
