@@ -1,6 +1,7 @@
 use std::fmt::{Display, Formatter};
 use std::format;
 use crate::feed::{Attribute, CDATAElement, Element};
+use crate::feed::utils::escape;
 
 pub trait FeedElement {
     fn render_tag(&self, tag: &str) -> String;
@@ -47,7 +48,8 @@ impl<T: FeedAttribute> FeedAttribute for Option<T> {
 
 impl<T: Display> FeedAttribute for Attribute<T> {
     fn render_attr(&self, name: &str) -> String {
-        format!(r#"{name}="{}""#, self.0)
+        let s = format!(r#"{name}="{}""#, self.0);
+        escape(s.as_str())
     }
 }
 

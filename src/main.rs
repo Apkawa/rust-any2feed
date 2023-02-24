@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 use std::sync::Arc;
-use bytes::Bytes;
-use rust_any2feed::feed::CDATAElement;
+use rust_any2feed::feed::{CDATAElement, Link, LinkRel};
 use rust_any2feed::importers::mewe::feed::{get_media_url_from_proxy_path, mewe_feed_to_feed, replace_mewe_media_urls};
+use rust_any2feed::importers::mewe::json::{MeweApiFeedList, MeweApiFeedListNextPageLink, MeweApiHref};
 use rust_any2feed::importers::mewe::MeweApi;
+use rust_any2feed::importers::mewe::utils::update_query;
 use rust_any2feed::server;
 use rust_any2feed::server::config::{Route, ServerConfig};
 use rust_any2feed::server::request::HTTPRequest;
@@ -13,7 +14,7 @@ use rust_any2feed::server::HTTPError::{InvalidRequest, NotFound};
 use rust_any2feed::server::response::HTTPResponse;
 
 
-fn main_view(request: &HTTPRequest) -> server::Result<HTTPResponse> {
+fn main_view(_request: &HTTPRequest) -> server::Result<HTTPResponse> {
     Ok(HTTPResponse::with_content("OK".to_string()))
 }
 
@@ -21,7 +22,7 @@ fn main() {
     let mut routes = vec![
         Route::new("/", main_view),
         Route::new("/hello",
-                   |r|
+                   |_r|
                        Ok(HTTPResponse::with_content("Hello world".to_string()))),
     ];
 
@@ -35,32 +36,58 @@ fn main() {
     routes.extend([
         Route::new("/mewe/feed/me/",
                    move |r| {
-                       let mewe_feeds = mewe_2.get_my_feeds(None, None).unwrap();
+                       let page_url = r.query_params.get("page_url");
+                       let mewe_feeds: Vec<MeweApiFeedList>;
+                       if let Some(next_page) = page_url {
+                           dbg!(next_page);
+                           mewe_feeds = mewe_2.fetch_feeds(next_page.as_str(), None,None).unwrap();
+                       } else {
+                           let limit = r.query_params.get("limit").map(|l| l.parse().ok()).flatten();
+                           let pages = r.query_params.get("pages").map(|l| l.parse().ok()).flatten();
+                           mewe_feeds = mewe_2.get_my_feeds(limit, pages).unwrap();
+                       }
                        let mut feeds = mewe_feed_to_feed(&mewe_feeds).unwrap();
+
+                       let next_page = mewe_feeds.last()
+                           .map(|f| f.links.as_ref())
+                           .flatten();
                        feeds.title = CDATAElement("Mewe me feed".to_string());
+                       if let Some(
+                           MeweApiFeedListNextPageLink{
+                               next_page: Some(MeweApiHref{href})}
+                       ) = next_page {
+                           let mut req_url = r.url();
+                           let href = format!("https://mewe.com{}", href);
+                           let query = HashMap::from([("page_url", href.as_str())]);
+                           update_query(&mut req_url, &query);
+                           feeds.link.push(Link::with_rel(req_url.to_string(), LinkRel::Next))
+                       }
                        let res = feeds.to_string();
                        let new_url = format!("http://{}/mewe/media", r.config.as_ref().unwrap().addr());
                        let res = replace_mewe_media_urls(
                            res.as_str(), new_url.as_str(),
                        );
-                       Ok(HTTPResponse::with_content(res))
+                       let mut response = HTTPResponse::with_content(res);
+                       response.content_type = Some("text/xml".to_string());
+                       Ok(response)
                    }),
         Route::new("/mewe/media/*",
                    move |r| {
                        let url = get_media_url_from_proxy_path(&r.path).unwrap();
-                       let queries: HashMap<String, String> = url.query_pairs()
-                           .into_iter()
-                           .map(|(k, v)| (k.to_string(), v.to_string()))
-                           .collect();
                        let media_res = mewe_3.get(url.as_str()).unwrap();
 
                        match media_res.status().as_u16() {
                            200 => {
+                               let media_headers: HashMap<String, String> = media_res.headers().iter()
+                                   .map(|(k, v)| (k.to_string(), v.to_str().unwrap().to_string()) )
+                                   .collect();
+                               let content_type = media_headers.get("content-type").cloned();
                                Ok(
                                    HTTPResponse {
                                        status: 200,
                                        content: Some(media_res.bytes().unwrap()),
-                                       content_type: queries.get("mime").cloned(),
+                                       content_type,
+                                       headers: media_headers,
                                        ..HTTPResponse::default()
                                    }
                                )

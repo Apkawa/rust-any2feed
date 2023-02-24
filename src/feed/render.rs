@@ -8,6 +8,7 @@ use crate::feed::data::{
 };
 use crate::feed::Link;
 use crate::feed::traits::{FeedAttribute, FeedElement};
+use crate::feed::utils::escape;
 
 
 impl Display for Feed {
@@ -30,6 +31,7 @@ impl Display for Feed {
         let parts = [
             title.render_tag("title"),
             author.render_tag("author"),
+            link.iter().map(|l| l.to_string()).collect::<String>(),
             // generator.render_
             subtitle.render_tag("subtitle"),
             contributor.render_tag("contributor"),
@@ -48,7 +50,6 @@ impl Display for Feed {
         write!(f, r#"<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <id>{id}</id>
-  {link}
   <updated>{updated}</updated>
   {parts}
 </feed>"#
@@ -71,6 +72,7 @@ impl Display for Entry {
             published,
             rights
         } = self;
+
         let parts = [
             author.render_tag("author"),
             content.render_tag("content"),
@@ -107,9 +109,10 @@ impl Display for Category {
             scheme,
             label
         } = self;
+        let term = escape(term);
         let scheme = scheme.render_attr("scheme");
         let label = label.render_attr("label");
-        write!(f, r#"<category term="{term}" {scheme} {label}>"#)
+        write!(f, r#"<category term="{term}" {scheme} {label} />"#)
     }
 }
 
@@ -146,6 +149,7 @@ impl Display for Link {
         write!(f, r#"<link {parts}/>"#)
     }
 }
+
 
 
 impl Display for Person {

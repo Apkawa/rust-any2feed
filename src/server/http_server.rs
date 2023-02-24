@@ -2,7 +2,6 @@ use std::io::{BufRead, BufReader, Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::ops::Deref;
 use std::sync::{Arc, Mutex};
-use std::thread::sleep;
 use std::time::Duration;
 use bytes::Bytes;
 use crate::server::config::ServerConfig;
@@ -49,6 +48,7 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
             }
         },
     };
+    println!("{code} {path}", code=response.status, path=request.full_path);
     stream.write_all(response.to_string().as_bytes()).unwrap();
     stream.write_all(response.content.unwrap_or(Bytes::new()).as_ref()).unwrap();
 }

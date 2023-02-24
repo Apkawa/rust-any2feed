@@ -3,6 +3,7 @@ use HTTPError::*;
 use std::collections::HashMap;
 use std::net::TcpStream;
 use std::sync::Arc;
+use reqwest::Url;
 use crate::server::config::ServerConfig;
 use crate::server::error;
 use crate::server::error::HTTPError;
@@ -39,16 +40,31 @@ impl HTTPMethod {
 
 
 #[derive(Debug, Default)]
-pub struct HTTPRequest<'a > {
+pub struct HTTPRequest<'a> {
     pub method: HTTPMethod,
     pub path: String,
+    pub full_path: String,
+    pub query_params: HashMap<String, String>,
     pub headers: HashMap<String, String>,
     pub body: Option<String>,
     pub stream: Option<Box<&'a TcpStream>>,
-    pub config: Option<Arc<ServerConfig>>
+    pub config: Option<Arc<ServerConfig>>,
 }
 
 impl HTTPRequest<'_> {
+    ///
+    /// ```
+    /// use rust_any2feed::server::request::HTTPRequest;
+    /// let v = vec!["GET / HTTP/1.1".to_string()];
+    /// let r = HTTPRequest::parse(&v).unwrap();
+    /// assert_eq!(r.path, "/".to_string());
+    /// assert_eq!(r.query_params.len(), 0);
+    /// let v = vec!["GET /foo?a=1&bar=diez HTTP/1.1".to_string()];
+    /// let r = HTTPRequest::parse(&v).unwrap();
+    /// assert_eq!(r.path, "/foo".to_string());
+    /// assert_eq!(r.query_params.len(), 2);
+    /// assert_eq!(r.query_params.get("a").unwrap(), "1");
+    /// ```
     pub fn parse(lines: &Vec<String>) -> error::Result<HTTPRequest> {
         let req_head = lines[0]
             .split_whitespace()
@@ -56,10 +72,17 @@ impl HTTPRequest<'_> {
             .collect::<Vec<&str>>();
 
         let mut request = match req_head[..] {
-            [method, path, http_version] => {
+            [method, path, _http_version] => {
+                let url = Url::parse(format!("http://example.com{path}").as_str()).unwrap();
+                let query_params: HashMap<String, String> = url.query_pairs()
+                    .into_iter()
+                    .map(|(k, v)| (k.to_string(), v.to_string()))
+                    .collect();
                 HTTPRequest {
                     method: HTTPMethod::from_str(method)?,
-                    path: path.to_string(),
+                    path: url.path().to_string(),
+                    full_path: path.to_string(),
+                    query_params,
                     ..HTTPRequest::default()
                 }
             }
@@ -78,6 +101,11 @@ impl HTTPRequest<'_> {
             };
         }
         return Ok(request);
+    }
+
+    pub fn url(&self) -> Url {
+        let s = format!("http://{}{}", self.config.as_ref().unwrap().addr(), self.full_path);
+        Url::parse(s.as_str()).unwrap()
     }
 }
 

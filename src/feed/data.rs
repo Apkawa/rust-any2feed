@@ -35,7 +35,7 @@ pub struct Feed {
     pub updated: String,
 
     pub author: Element<Person>,
-    pub link: Link,
+    pub link: Vec<Link>,
 
     pub categories: Option<Element<Vec<Category>>>,
     pub contributor: Option<Element<Person>>,
@@ -124,7 +124,6 @@ impl Person {
         }
     }
 }
-
 #[derive(Debug)]
 pub enum LinkRel {
     Alternate,
@@ -132,6 +131,11 @@ pub enum LinkRel {
     Related,
     _Self,
     Via,
+    /// https://www.rfc-editor.org/rfc/rfc5005#section-3
+    First,
+    Last,
+    Previous,
+    Next,
 }
 
 impl Default for LinkRel {
@@ -159,6 +163,9 @@ pub struct Link {
 impl Link {
     pub fn new(href: String) -> Link {
         Link { href: Attribute(href), ..Link::default() }
+    }
+    pub fn with_rel(href: String, rel: LinkRel) -> Link {
+        Link { href: Attribute(href), rel: Some(Attribute(rel)), ..Link::default() }
     }
 }
 

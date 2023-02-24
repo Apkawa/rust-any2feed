@@ -1,5 +1,6 @@
 use std::collections::HashMap;
-use chrono::{DateTime, Local};
+use std::vec;
+use chrono::{Local};
 use regex::Regex;
 use reqwest::Url;
 use crate::feed::{Category, CDATAElement, Content, Element, Entry, Feed, Link, Person};
@@ -57,13 +58,15 @@ pub fn mewe_feed_to_feed(feed_list: &Vec<MeweApiFeedList>) -> Option<Feed> {
             entries.push(entry);
         }
     }
+    let link = vec![Link::new("https://mewe.com/myworld".to_string())];
+
 
     let feed = Feed {
         id: "mewe_feed".to_string(),
         title: CDATAElement("Mewe feed".to_string()),
+        link,
         updated: Local::now().to_rfc3339(),
         author: Element(Person { name: "Mewe".to_string(), ..Person::default() }),
-        link: Link::new("https://mewe.com/myworld".to_string()),
         entries,
         ..Feed::default()
     };
@@ -99,7 +102,6 @@ pub fn replace_mewe_media_urls(text: &str, new_url: &str) -> String {
 /// assert_eq!(url.as_str(), expect);
 /// ```
 pub fn get_media_url_from_proxy_path(path: &str) -> Option<Url> {
-
     match path.split_once("v2") {
         Some((_, l)) =>
             Some(Url::parse(format!("https://mewe.com/api/v2{l}").as_str()).unwrap()),

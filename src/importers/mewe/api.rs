@@ -1,17 +1,17 @@
-use std::borrow::{Borrow, BorrowMut};
-use std::cell::{Cell, RefCell};
+use std::borrow::{Borrow};
+use std::cell::{Cell};
 use std::collections::HashMap;
-use std::path::Path;
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::{Arc, Mutex};
+use std::thread;
+use std::time::Duration;
 
 use reqwest::{cookie::Jar, Url};
 use reqwest::blocking::Response;
-use serde::{Deserialize, Serialize};
-use serde::__private::de::Borrowed;
 
 use crate::http_client::cookie::{import_cookie_from_file, update_cookie_from_file};
 use crate::importers::mewe::json;
 use crate::importers::mewe::json::MeweApiFeedListNextPageLink;
+use crate::importers::mewe::utils::update_query;
 
 const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
 
@@ -73,7 +73,7 @@ impl MeweApi {
             .collect();
         let cookies_len = cookies.len();
         let csrf_token: String = cookies.into_iter()
-            .filter(|(n, v) | n == "csrf-token")
+            .filter(|(n, v)| n == "csrf-token")
             .map(|(_, v)| v)
             .take(1)
             .collect();
@@ -115,32 +115,38 @@ impl MeweApi {
 
     pub fn fetch_feed(&self, url: &str, limit: Option<usize>) -> Option<json::MeweApiFeedList> {
         let mut url = Url::parse(url).unwrap();
-        let limit = limit.unwrap_or(10);
-        url.query_pairs_mut()
-            .append_pair("limit", limit.to_string().as_str());
+        if let Some(limit) = limit {
+            let limit = limit.to_string();
+            let query = HashMap::from([("limit", limit.as_str())]);
+            update_query(&mut url, &query);
+        }
         let response = self.get(url.as_str()).ok()?;
         if response.status() == 200 {
-            return Some(response.json::<json::MeweApiFeedList>().unwrap())
+            return Some(response.json::<json::MeweApiFeedList>().unwrap());
         } else {
+            dbg!(&response.text());
             return None;
         }
     }
 
     // Todo iterator
     pub fn fetch_feeds(&self, url: &str, limit: Option<usize>, pages: Option<usize>)
-            -> Option<Vec<json::MeweApiFeedList>> {
+                       -> Option<Vec<json::MeweApiFeedList>> {
         self.identify()?;
         let pages = pages.unwrap_or(1);
 
         let mut result: Vec<json::MeweApiFeedList> = Vec::with_capacity(pages);
         let mut next_page = url.to_string();
-        for _ in 0..pages {
+        for i in 0..pages {
+            if i > 0 {
+                // Не дрочим
+                thread::sleep(Duration::from_millis(100));
+            }
             let json = self.fetch_feed(next_page.as_str(), limit)?;
-            if let Some(MeweApiFeedListNextPageLink{next_page: Some(page)}) = &json.links {
+            if let Some(MeweApiFeedListNextPageLink { next_page: Some(page) }) = &json.links {
                 next_page = page.href.clone();
             }
             result.push(json)
-
         }
 
         if result.len() > 0 {

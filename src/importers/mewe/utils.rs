@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use regex::Regex;
+use reqwest::Url;
 
 ///
 /// ```
@@ -18,4 +19,30 @@ pub fn format_url(url: &str, args: &HashMap<&str, &str>) -> String {
         url = r.replace_all(url.as_str(), *v).to_string();
     }
     return url.to_string();
+}
+
+///
+/// ```
+/// use std::collections::HashMap;
+/// use reqwest::Url;
+/// use rust_any2feed::importers::mewe::utils::update_query;
+/// let mut url = Url::parse("https://example.com/?foo=1&bar=2&baz=3").unwrap();
+/// let query = HashMap::from([("foo", "2"), ("bar", "3")]);
+/// update_query(&mut url, &query);
+/// // order not guaranteed, reorder for reproduce
+/// let mut pairs: Vec<String> = url.query_pairs().map(|(k, v)| format!("{k}={v}")).collect();
+/// pairs.sort();
+/// assert_eq!(pairs.join("&"), "bar=3&baz=3&foo=2");
+/// ```
+pub fn update_query(url: &mut Url, query: &HashMap<&str, &str>) {
+    let mut query_params: HashMap<String, String> = url.query_pairs()
+        .into_iter()
+        .map(|(k, v)| (k.to_string(), v.to_string()))
+        .collect();
+    for (k, v) in query {
+        query_params.insert(k.to_string(), v.to_string());
+    }
+    url.query_pairs_mut()
+        .clear()
+        .extend_pairs(query_params);
 }

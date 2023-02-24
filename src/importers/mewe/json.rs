@@ -1,4 +1,3 @@
-use std::fs::rename;
 use chrono::serde::ts_seconds;
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
