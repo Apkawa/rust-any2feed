@@ -52,9 +52,9 @@ pub fn mewe_feed_to_feed(feed_list: &Vec<MeweApiFeedList>) -> Option<Feed> {
         }
         for post in list.feed.iter() {
             let entry = mewe_post_to_entry(
-                &post,
+                post,
                 Some(authors.get(&post.user_id).unwrap()))
-                .expect(format!("{post:?}").as_str());
+                .unwrap_or_else(|| panic!("{post:?}"));
             entries.push(entry);
         }
     }
@@ -70,7 +70,7 @@ pub fn mewe_feed_to_feed(feed_list: &Vec<MeweApiFeedList>) -> Option<Feed> {
         entries,
         ..Feed::default()
     };
-    return Some(feed);
+    Some(feed)
 }
 
 /// Меняем урлы на урл прокси
@@ -89,8 +89,8 @@ pub fn mewe_feed_to_feed(feed_list: &Vec<MeweApiFeedList>) -> Option<Feed> {
 /// ```
 pub fn replace_mewe_media_urls(text: &str, new_url: &str) -> String {
     let re = Regex::new(r#"(?P<host>https://mewe.com)(?P<m>/api/v2/(?:photo|proxy/video)/)"#).unwrap();
-    let res = re.replace_all(&text, &format!("{new_url}$m"));
-    return res.to_string();
+    let res = re.replace_all(text, &format!("{new_url}$m"));
+    res.to_string()
 }
 
 /// Из пути в прокси делаем прямой путь

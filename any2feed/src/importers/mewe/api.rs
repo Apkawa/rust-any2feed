@@ -1,5 +1,5 @@
 use std::borrow::{Borrow};
-use std::cell::{Cell};
+
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -23,7 +23,7 @@ const API_MEWE_ME_INFO: &str = concat!(api_mewe!(), "/v2/me/info");
 // const API_MEWE_USER_INFO: &str = concat!(api_mewe!(), "/v2/mycontacts/user/");
 
 const API_MEWE_ALLFEED: &str = concat!(api_mewe!(), "/v2/home/allfeed");
-const API_MEWE_USER_FEED: &str = concat!(api_mewe!(), "/v2/home/user/{user_id}/postsfeed");
+// const API_MEWE_USER_FEED: &str = concat!(api_mewe!(), "/v2/home/user/{user_id}/postsfeed");
 
 #[derive(Debug, Default)]
 pub struct MeweApi {
@@ -73,7 +73,7 @@ impl MeweApi {
             .collect();
         let cookies_len = cookies.len();
         let csrf_token: String = cookies.into_iter()
-            .filter(|(n, v)| n == "csrf-token")
+            .filter(|(n, _v)| n == "csrf-token")
             .map(|(_, v)| v)
             .take(1)
             .collect();
@@ -84,7 +84,7 @@ impl MeweApi {
         }
         if cookies_len > 0 {
             // Если был какой либо set-cookie, сохраняем актуальный стор
-            self.save_cookies(&url);
+            self.save_cookies(url);
         }
         if result.status() != 200 {
             dbg!(&result);
@@ -122,10 +122,10 @@ impl MeweApi {
         }
         let response = self.get(url.as_str()).ok()?;
         if response.status() == 200 {
-            return Some(response.json::<json::MeweApiFeedList>().unwrap());
+            Some(response.json::<json::MeweApiFeedList>().unwrap())
         } else {
             dbg!(&response.text());
-            return None;
+            None
         }
     }
 
@@ -149,7 +149,7 @@ impl MeweApi {
             result.push(json)
         }
 
-        if result.len() > 0 {
+        if !result.is_empty() {
             Some(result)
         } else {
             None
@@ -164,10 +164,10 @@ impl MeweApi {
 
 #[cfg(test)]
 mod test {
-    use std::sync::Arc;
+    
 
-    use reqwest::cookie::Jar;
-    use reqwest::Url;
+    
+    
     use crate::importers::mewe::api::MeweApi;
 
 
@@ -182,7 +182,7 @@ mod test {
 
     #[test]
     fn test_get_feeds() {
-        let mut mewe = MeweApi::new(
+        let mewe = MeweApi::new(
             "/home/apkawa/Downloads/mewe.com_cookies.txt".to_string()).unwrap();
         let feeds = mewe.get_my_feeds(None, None).unwrap();
         dbg!(&feeds);

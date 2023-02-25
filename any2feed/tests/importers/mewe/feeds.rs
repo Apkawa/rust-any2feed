@@ -37,7 +37,7 @@ fn test_allfeed() {
         mewe::load_json_fixture("allfeed").as_str()
     ).unwrap();
     let feeds = &vec![json];
-    let entry = mewe_feed_to_feed(&feeds).unwrap();
+    let entry = mewe_feed_to_feed(feeds).unwrap();
     dbg!(&entry);
     let xml = entry.to_string();
     println!("{}", xml);

@@ -1,11 +1,11 @@
-use std::io::{BufRead, BufReader, Read, Write};
+use std::io::{BufRead, BufReader, Write};
 use std::net::{TcpListener, TcpStream};
-use std::ops::Deref;
-use std::sync::{Arc, Mutex};
-use std::time::Duration;
-use bytes::Bytes;
+
+use std::sync::{Arc};
+
+
 use crate::server::config::ServerConfig;
-use crate::server::request::HTTPMethod;
+
 use crate::server::HTTPError::*;
 use crate::server::request::HTTPRequest;
 use crate::server::response::HTTPResponse;
@@ -22,7 +22,7 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
         .collect();
 
 
-    if request.len() == 0 {
+    if request.is_empty() {
         // Close
         return;
     }
@@ -50,7 +50,7 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
     };
     println!("{code} {path}", code=response.status, path=request.full_path);
     stream.write_all(response.to_string().as_bytes()).unwrap();
-    stream.write_all(response.content.unwrap_or(Bytes::new()).as_ref()).unwrap();
+    stream.write_all(response.content.unwrap_or_default().as_ref()).unwrap();
 }
 
 pub fn run(config: ServerConfig) -> std::io::Result<()> {

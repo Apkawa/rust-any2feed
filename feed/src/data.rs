@@ -102,8 +102,8 @@ impl Category {
     pub fn new(term: String, scheme: Option<String>, label: Option<String>) -> Category {
         Category {
             term,
-            scheme: scheme.map_or(None, |s| Some(Attribute(s))),
-            label: label.map_or(None, |s| Some(Attribute(s))),
+            scheme: scheme.map(Attribute),
+            label: label.map(Attribute),
         }
     }
 }
@@ -119,8 +119,8 @@ impl Person {
     pub fn new(name: String, url: Option<String>, email: Option<String>) -> Person {
         Person {
             name,
-            url: url.map_or(None, |s| Some(Element(s))),
-            email: email.map_or(None, |s| Some(Element(s))),
+            url: url.map(Element),
+            email: email.map(Element),
         }
     }
 }
@@ -146,7 +146,7 @@ impl Default for LinkRel {
 
 impl Display for LinkRel {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", format!("{:?}", self).trim_start_matches("_").to_ascii_lowercase())
+        write!(f, "{}", format!("{:?}", self).trim_start_matches('_').to_ascii_lowercase())
     }
 }
 
@@ -181,8 +181,8 @@ impl Generator {
     pub fn new(name: String, uri: Option<String>, version: Option<String>) -> Generator {
         Generator {
             name: Attribute(name),
-            uri: uri.map_or(None, |s| Some(Attribute(s))),
-            version: version.map_or(None, |s| Some(Attribute(s))),
+            uri: uri.map(Attribute),
+            version: version.map(Attribute),
         }
     }
 }

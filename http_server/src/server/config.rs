@@ -22,15 +22,15 @@ impl Debug for Route {
 
 ///
 /// ```
-/// use server::config::match_path;
+/// use http_server::config::match_path;
 /// assert!(match_path("/foo/", "/foo/"));
 /// assert!(!match_path("/foo/", "/foo/bar"));
 /// assert!(match_path("/foo/*", "/foo/bar"));
 /// ```
 pub fn match_path(pattern: &str, path: &str) -> bool {
-    if pattern.ends_with("*") {
+    if pattern.ends_with('*') {
         // Примитивный матчинг через *
-        path.starts_with(pattern.trim_end_matches("*"))
+        path.starts_with(pattern.trim_end_matches('*'))
     } else {
         path == pattern
     }

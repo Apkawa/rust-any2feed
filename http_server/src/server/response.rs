@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
 use bytes::Bytes;
-use crate::server::request::HTTPRequest;
+
 
 #[derive(Debug, Default)]
 pub struct HTTPResponse {
@@ -33,7 +33,7 @@ impl Display for HTTPResponse {
         let content = self.content.as_ref().unwrap_or(content);
 
         let mut extra_headers: Vec<String> = Vec::with_capacity(2);
-        if content.len() > 0 {
+        if !content.is_empty() {
             let content_type = &"text/plain".to_string();
             let content_type = self.content_type.as_ref()
                     .unwrap_or(content_type);

@@ -2,9 +2,9 @@ use std::collections::HashMap;
 use std::fs::{read_to_string, write};
 use std::io;
 use std::io::{Error, ErrorKind};
-use cookie_store::CookieDomain;
+
 use reqwest::cookie::{CookieStore, Jar};
-use reqwest::header::HOST;
+
 use reqwest::Url;
 
 
@@ -28,11 +28,11 @@ pub fn import_cookie_from_string(cookie_str: &String) -> io::Result<Jar> {
     let jar = Jar::default();
 
     for line in cookie_str.lines().map(|l| l.trim()) {
-        if line.is_empty() || line.starts_with("#") {
+        if line.is_empty() || line.starts_with('#') {
             continue;
         }
         let req_head = line
-            .split("\t")
+            .split('\t')
             .collect::<Vec<&str>>();
         let [
         host,
@@ -66,12 +66,12 @@ pub fn import_cookie_from_file(path: &String) -> io::Result<Jar> {
 
 pub fn update_cookie_from_file(jar: &Jar, url: &Url, path: &String) -> Option<()> {
     let cookie_str = read_to_string(path).ok()?;
-    let new_cookie_str = merge_cookie_to_string(&jar, &url, &cookie_str)?;
+    let new_cookie_str = merge_cookie_to_string(jar, url, &cookie_str)?;
     write(path, new_cookie_str).ok()
 }
 
 pub fn merge_cookie_to_string(jar: &Jar, url: &Url, cookie_txt: &String) -> Option<String> {
-    let domain = url.domain().unwrap().trim_start_matches(".");
+    let domain = url.domain().unwrap().trim_start_matches('.');
     let cookies = jar.cookies(url)?;
     let mut cookies_map = cookies.to_str().ok()?
         .split(';')
@@ -83,12 +83,12 @@ pub fn merge_cookie_to_string(jar: &Jar, url: &Url, cookie_txt: &String) -> Opti
     let lines = cookie_txt.lines().map(|l| l.trim());
     let mut new_lines: Vec<String> = Vec::with_capacity(10);
     for line in lines {
-        if line.is_empty() || line.starts_with("#") {
+        if line.is_empty() || line.starts_with('#') {
             new_lines.push(line.to_string());
             continue;
         }
         let req_head = line
-            .split("\t")
+            .split('\t')
             .collect::<Vec<&str>>();
         let [
         host,
@@ -107,8 +107,8 @@ pub fn merge_cookie_to_string(jar: &Jar, url: &Url, cookie_txt: &String) -> Opti
                 return None;
             }
         };
-        if host.trim_start_matches(".") == domain {
-            let new_value = cookies_map.remove(name).unwrap_or(&value);
+        if host.trim_start_matches('.') == domain {
+            let new_value = cookies_map.remove(name).unwrap_or(value);
             let new_head = [host, subdomains, path, is_secure, expire, name, new_value];
             let line = new_head.join("\t");
             new_lines.push(line.to_string());

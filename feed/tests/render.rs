@@ -1,5 +1,5 @@
 use feed::{CDATAElement, Content, Element, Entry, Feed, Link, Person};
-use feed::data;
+
 use feed::traits::FeedElement;
 
 //**
@@ -93,7 +93,7 @@ fn person() {
 
 
 fn entry() {
-    let entry = Entry::new(
+    let _entry = Entry::new(
         "id".to_string(),
         "title".to_string(),
         "2001-07-08T00:34:60".to_string(),

@@ -7,5 +7,5 @@
 /// ```
 pub fn escape(s: &str) -> String {
     // TODO check escapes
-    s.replace("&", "&amp;")
+    s.replace('&', "&amp;")
 }

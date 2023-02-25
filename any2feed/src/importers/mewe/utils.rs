@@ -18,7 +18,7 @@ pub fn format_url(url: &str, args: &HashMap<&str, &str>) -> String {
         let r = Regex::new(format!("\\{{{k}\\}}").as_str()).unwrap();
         url = r.replace_all(url.as_str(), *v).to_string();
     }
-    return url.to_string();
+    url
 }
 
 ///

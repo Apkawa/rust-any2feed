@@ -45,7 +45,7 @@ impl Display for Feed {
                                 .map(|c| c.to_string()).collect(),
                 ),
             entries.iter().map(|e| format!("{e}")).collect::<String>(),
-        ].into_iter().filter(|s| s.len() > 0).collect::<Vec<String>>().join("\n");
+        ].into_iter().filter(|s| !s.is_empty()).collect::<Vec<String>>().join("\n");
 
         write!(f, r#"<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">

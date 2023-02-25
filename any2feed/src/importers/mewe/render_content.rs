@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use crate::importers::mewe::json::{MeweApiHref, MeweApiLink, MeweApiMedia, MeweApiMediaPhoto, MeweApiMediaVideo, MeweApiPost};
+use crate::importers::mewe::json::{MeweApiLink, MeweApiMedia, MeweApiMediaPhoto, MeweApiMediaVideo, MeweApiPost};
 use crate::importers::mewe::markdown::md_to_html;
 use crate::importers::mewe::utils::format_url;
 
@@ -21,23 +21,22 @@ impl RenderContent for MeweApiPost {
             self.link.as_ref().map(|l| Box::new(l.as_dyn())),
         ];
         if self.ref_post.is_some() {
-            self.ref_post.as_ref().unwrap().render().map(|r| content.push_str(r.as_str()));
+            if let Some(r) = self.ref_post.as_ref().unwrap().render() { content.push_str(r.as_str()) }
         }
         if self.medias.is_some() {
             for m in self.medias.as_ref().unwrap() {
-                m.render().map(|r| content.push_str(r.as_str()));
+                if let Some(r) = m.render() { content.push_str(r.as_str()) }
             }
         }
 
         let parts = parts.iter()
             .filter(|i| i.is_some())
-            .map(|i| i.as_ref().unwrap().render())
-            .filter_map(|r| r)
+            .filter_map(|i| i.as_ref().unwrap().render())
             .collect::<String>()
             ;
 
         content.push_str(parts.as_str());
-        return Some(content);
+        Some(content)
     }
 }
 
@@ -64,7 +63,7 @@ impl RenderContent for MeweApiLink {
                               title = &self.title, url = &self.links.url.href,
                               description = &self.description
         );
-        return Some(content);
+        Some(content)
     }
 }
 

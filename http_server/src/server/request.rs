@@ -1,4 +1,4 @@
-use std::fmt::Error;
+
 use HTTPError::*;
 use std::collections::HashMap;
 use std::net::TcpStream;
@@ -54,7 +54,7 @@ pub struct HTTPRequest<'a> {
 impl HTTPRequest<'_> {
     ///
     /// ```
-    /// use server::request::HTTPRequest;
+    /// use http_server::HTTPRequest;
     /// let v = vec!["GET / HTTP/1.1".to_string()];
     /// let r = HTTPRequest::parse(&v).unwrap();
     /// assert_eq!(r.path, "/".to_string());
@@ -92,7 +92,7 @@ impl HTTPRequest<'_> {
         };
 
         for l in &lines[1..] {
-            let v = l.split_once(":");
+            let v = l.split_once(':');
             match v {
                 Some((k, v)) => request.headers.insert(k.trim().to_string(), v.trim().to_string()),
                 _ => {
@@ -100,7 +100,7 @@ impl HTTPRequest<'_> {
                 }
             };
         }
-        return Ok(request);
+        Ok(request)
     }
 
     pub fn url(&self) -> Url {

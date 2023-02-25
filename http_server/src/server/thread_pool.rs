@@ -1,11 +1,9 @@
 /// https://doc.rust-lang.org/book/ch20-02-multithreaded.html
 /// https://doc.rust-lang.org/book/ch20-03-graceful-shutdown-and-cleanup.html
-use std::io::{BufRead, BufReader, Read, Write};
-use std::net::{TcpListener, TcpStream};
 use std::sync::{Arc, mpsc, Mutex};
 use std::thread;
-use std::thread::{sleep, Thread};
-use std::time::Duration;
+
+
 
 pub struct ThreadPool {
     /// Кладем воркеров, они нужны больше для аккуратной остановки
@@ -33,7 +31,7 @@ impl ThreadPool {
             // Но без этого не будет работать graceful stop (дать процессу возможность до конца отработать)
             threads.push(worker);
         }
-        return ThreadPool { workers: threads, sender: Some(sender) };
+        ThreadPool { workers: threads, sender: Some(sender) }
     }
     pub fn execute<F>(&self, f: F)
         where F: FnOnce() + Send + 'static,

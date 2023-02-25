@@ -36,15 +36,14 @@ fn main() {
                            dbg!(next_page);
                            mewe_feeds = mewe_2.fetch_feeds(next_page.as_str(), None,None).unwrap();
                        } else {
-                           let limit = r.query_params.get("limit").map(|l| l.parse().ok()).flatten();
-                           let pages = r.query_params.get("pages").map(|l| l.parse().ok()).flatten();
+                           let limit = r.query_params.get("limit").and_then(|l| l.parse().ok());
+                           let pages = r.query_params.get("pages").and_then(|l| l.parse().ok());
                            mewe_feeds = mewe_2.get_my_feeds(limit, pages).unwrap();
                        }
                        let mut feeds = mewe_feed_to_feed(&mewe_feeds).unwrap();
 
                        let next_page = mewe_feeds.last()
-                           .map(|f| f.links.as_ref())
-                           .flatten();
+                           .and_then(|f| f.links.as_ref());
                        feeds.title = CDATAElement("Mewe me feed".to_string());
                        if let Some(
                            MeweApiFeedListNextPageLink{
