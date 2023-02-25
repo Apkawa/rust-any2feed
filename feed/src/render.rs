@@ -90,7 +90,7 @@ impl Display for Entry {
             contributor.render_tag("contributor"),
             published.render_tag("published"),
             rights.render_tag("rights"),
-        ].join("");
+        ].join("\n");
         write!(f, r#"
     <entry>
         <id>{id}</id>

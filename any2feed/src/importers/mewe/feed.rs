@@ -3,7 +3,7 @@ use std::vec;
 use chrono::{Local};
 use regex::Regex;
 use reqwest::Url;
-use feed::{Category, CDATAElement, Content, Element, Entry, Feed, Link, Person};
+use feed::{Category, CDATAElement, Content, Element, Entry, Feed, Link, LinkRel, Person};
 use crate::importers::mewe::json::{
     MeweApiFeedList,
     MeweApiPost,
@@ -13,8 +13,10 @@ use crate::importers::mewe::render_content::RenderContent;
 
 
 pub fn mewe_post_to_entry(post: &MeweApiPost, author: Option<&MeweApiUserInfo>) -> Option<Entry> {
+    let post_url = post.get_post_url(author);
+    let post_id = post_url.as_ref().map_or(post.id.to_string(), |u| format!("{}/{}", u, post.id));
     let mut entry = Entry::new(
-        post.id.to_string(),
+        post_id,
         post.text.to_string(),
         // TODO dt
         post.updated_at.to_rfc3339(),
@@ -32,7 +34,8 @@ pub fn mewe_post_to_entry(post: &MeweApiPost, author: Option<&MeweApiUserInfo>) 
     if let Some(author) = author {
         entry.author = Element(Person::new(author.name.clone(), None, None));
     }
-    entry.link = post.get_post_url(author).map(Link::new);
+    entry.link = post_url.map(Link::new);
+
     if let Some(hash_tags) = &post.hash_tags {
         let categories = hash_tags.iter()
             .map(|t| Category::new(t.clone(), None, None))
@@ -58,11 +61,13 @@ pub fn mewe_feed_to_feed(feed_list: &Vec<MeweApiFeedList>) -> Option<Feed> {
             entries.push(entry);
         }
     }
-    let link = vec![Link::new("https://mewe.com/myworld".to_string())];
+    let link = vec![
+        Link::with_rel("https://mewe.com/myworld".to_string(), LinkRel::Alternate)
+    ];
 
 
     let feed = Feed {
-        id: "mewe_feed".to_string(),
+        id: "https://mewe.com/myworld".to_string(),
         title: CDATAElement("Mewe feed".to_string()),
         link,
         updated: Local::now().to_rfc3339(),
