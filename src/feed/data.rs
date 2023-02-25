@@ -52,7 +52,7 @@ pub struct Feed {
 #[derive(Debug, Default)]
 pub struct Entry {
     pub id: String,
-    pub title: String,
+    pub title: CDATAElement<String>,
     // TODO dt object
     pub updated: String,
     pub author: Element<Person>,
@@ -84,7 +84,7 @@ impl Entry {
         };
         Entry {
             id,
-            title,
+            title: CDATAElement(title),
             updated,
             ..Entry::default()
         }

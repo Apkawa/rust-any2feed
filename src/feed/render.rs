@@ -74,6 +74,7 @@ impl Display for Entry {
         } = self;
 
         let parts = [
+            title.render_tag("title"),
             author.render_tag("author"),
             content.render_tag("content"),
             link.as_ref().map_or(String::new(),
@@ -93,7 +94,6 @@ impl Display for Entry {
         write!(f, r#"
     <entry>
         <id>{id}</id>
-        <title>{title}</title>
         <updated>{updated}</updated>
         {parts}
     </entry>
