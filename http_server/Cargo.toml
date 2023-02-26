@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 bytes = { version = "1.4.0" }
 url = { version = "2.3.1" }
+regex = { version = "1.7.1" }

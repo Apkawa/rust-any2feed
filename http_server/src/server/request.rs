@@ -43,6 +43,7 @@ impl HTTPMethod {
 pub struct HTTPRequest<'a> {
     pub method: HTTPMethod,
     pub path: String,
+    pub path_params: Option<HashMap<String, Option<String>>>,
     pub full_path: String,
     pub query_params: HashMap<String, String>,
     pub headers: HashMap<String, String>,

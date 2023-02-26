@@ -12,9 +12,10 @@ pub use error::*;
 
 pub mod thread_pool;
 pub mod request;
+pub mod utils;
 
 
 pub use request::{HTTPRequest, HTTPMethod};
 pub use response::HTTPResponse;
 pub use config::{ServerConfig, Route};
-pub use http_server::run;
+pub use self::http_server::run;

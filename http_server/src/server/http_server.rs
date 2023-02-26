@@ -33,7 +33,8 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
     let routes = &config.routes;
     let mut response = Err(NotFound);
     for r in routes {
-        if r.match_path(&request.path) {
+        if let Some(path_params) = r.parse_path(&request.path) {
+            request.path_params = Some(path_params);
             response = r.run_cb(&request);
             break;
         }
