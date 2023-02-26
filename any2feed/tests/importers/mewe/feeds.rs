@@ -14,7 +14,7 @@ fn test_post_to_entry() {
         id: "5c25e3487d4f7e4447d07ba0".to_string(),
         ..MeweApiUserInfo::default()
     };
-    let entry = mewe_post_to_entry(&json, Some(&author)).unwrap();
+    let entry = mewe_post_to_entry(&json, Some(&author), None).unwrap();
     dbg!(&entry);
 }
 
@@ -27,7 +27,7 @@ fn test_post_to_entry() {
 #[case("post_text")]
 fn test_post_to_entry_parametrized(#[case] json_name: &str) {
     let json: MeweApiPost = serde_json::from_str(mewe::load_json_fixture(json_name).as_str()).unwrap();
-    let entry = mewe_post_to_entry(&json, None).unwrap();
+    let entry = mewe_post_to_entry(&json, None, None).unwrap();
     dbg!(&entry);
 }
 

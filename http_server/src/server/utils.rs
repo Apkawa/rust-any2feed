@@ -15,11 +15,7 @@ use std::collections::HashMap;
 /// )));
 /// let c = parse_match_captures(&re, "/foo/bar/123/");
 /// assert_eq!(c,
-///     Some(HashMap::from([
-///         ("0".to_string(), Some("/foo/bar/123/".to_string())),
-///         ("1".to_string(), Some("bar".to_string())),
-///         ("2".to_string(), Some("123".to_string())),
-/// ]))
+///     Some()
 /// );
 /// assert_eq!(c.unwrap().get("1").unwrap(), &Some("bar".to_string()));
 /// assert_eq!(parse_match_captures(&re, "/foo/baz/565"), None);
@@ -32,4 +28,30 @@ pub fn parse_match_captures(re: &regex::Regex, text: &str) -> Option<HashMap<Str
         res.insert(i.to_string(), c.map(|c| c.as_str().to_string()));
     }
     Some(res)
+}
+
+///
+/// ```
+/// use std::collections::HashMap;
+/// use http_server::utils::path_params_to_vec;
+/// let path_params = HashMap::from([
+///         ("2".to_string(), Some("123".to_string())),
+///         ("1".to_string(), Some("bar".to_string())),
+///         ("0".to_string(), Some("/foo/bar/123/".to_string())),
+/// ]);
+/// assert_eq!(
+///     path_params_to_vec(&path_params),
+///     vec![
+///         Some("/foo/bar/123/".to_string()),
+///         Some("bar".to_string()),
+///         Some("123".to_string()),
+///     ]);
+/// ```
+pub fn path_params_to_vec(path_params: &HashMap<String, Option<String>>) -> Vec<Option<String>> {
+    let mut pairs: Vec<_> = path_params.iter()
+        .map(|(k, v)| (k, v))
+        .collect();
+    pairs.sort();
+
+    pairs.into_iter().map(|(_k, v)| v.clone()).collect()
 }

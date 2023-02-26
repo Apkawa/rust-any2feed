@@ -1,18 +1,17 @@
 use std::collections::HashMap;
-use std::vec;
-use chrono::{Local};
+
+use chrono::Local;
 use regex::Regex;
 use reqwest::Url;
-use feed::{Category, CDATAElement, Content, Element, Entry, Feed, Link, LinkRel, Person};
-use crate::importers::mewe::json::{
-    MeweApiFeedList,
-    MeweApiPost,
-    MeweApiUserInfo,
-};
+
+use feed::{Attribute, Category, CDATAElement, Content, Element, Entry, Feed, Link, Person};
+
+use crate::importers::mewe::json::{MeweApiFeedList, MeweApiGroup, MeweApiPost, MeweApiUserInfo};
 use crate::importers::mewe::render_content::RenderContent;
 
-
-pub fn mewe_post_to_entry(post: &MeweApiPost, author: Option<&MeweApiUserInfo>) -> Option<Entry> {
+pub fn mewe_post_to_entry(post: &MeweApiPost,
+                          author: Option<&MeweApiUserInfo>,
+                          group: Option<&MeweApiGroup>) -> Option<Entry> {
     let post_url = post.get_post_url(author);
     let post_id = post_url.as_ref().map_or(post.id.to_string(), |u| format!("{}/{}", u, post.id));
     let mut entry = Entry::new(
@@ -22,10 +21,25 @@ pub fn mewe_post_to_entry(post: &MeweApiPost, author: Option<&MeweApiUserInfo>) 
         post.updated_at.to_rfc3339(),
     );
     entry.published = Some(Element(post.created_at.to_rfc3339()));
+    let mut categories: Vec<Category> = Vec::with_capacity(2);
     if let Some(hash_tags) = &post.hash_tags {
-        let categories = hash_tags.iter()
-            .map(|t| Category { term: t.to_string(), ..Category::default() })
-            .collect::<Vec<Category>>();
+        let it = hash_tags.iter()
+            .map(|t| Category {
+                term: format!("hashtag/{t}"),
+                label: Some(Attribute(t.to_string())),
+                ..Category::default()
+            });
+        categories.extend(it);
+    }
+    if let Some(group) = group {
+        let name = group.name.clone();
+        categories.push(Category {
+            term: format!("group/{name}"),
+            label: Some(Attribute(name)),
+            ..Category::default()
+        })
+    }
+    if categories.len() > 0 {
         entry.categories = Some(Element(categories));
     }
     if let Some(content) = post.render() {
@@ -49,30 +63,40 @@ pub fn mewe_post_to_entry(post: &MeweApiPost, author: Option<&MeweApiUserInfo>) 
 pub fn mewe_feed_to_feed(feed_list: &Vec<MeweApiFeedList>) -> Option<Feed> {
     let mut entries: Vec<Entry> = Vec::with_capacity(feed_list.len() * 10);
     let mut authors: HashMap<&String, &MeweApiUserInfo> = HashMap::with_capacity(20);
+    let mut groups: HashMap<&String, &MeweApiGroup> = HashMap::with_capacity(20);
     for list in feed_list.iter() {
         for user in list.users.iter() {
             authors.insert(&user.id, user);
         }
+        if let Some(list_groups) = list.groups.as_ref() {
+            for group in list_groups.iter() {
+                groups.insert(&group.id, group);
+            }
+        }
         for post in list.feed.iter() {
+            let author = authors.get(&post.user_id)
+                .map(|a| *a);
+            let group = post.group_id.as_ref()
+                .map(|id| groups.get(&id))
+                .flatten()
+                .map(|o| *o);
             let entry = mewe_post_to_entry(
                 post,
-                Some(authors.get(&post.user_id).unwrap()))
+                author,
+                group,
+            )
                 .unwrap_or_else(|| panic!("{post:?}"));
             entries.push(entry);
         }
     }
-    let link = vec![
-        Link::with_rel("https://mewe.com/myworld".to_string(), LinkRel::Alternate)
-    ];
-
 
     let feed = Feed {
         id: "https://mewe.com/myworld".to_string(),
         title: CDATAElement("Mewe feed".to_string()),
-        link,
         updated: Local::now().to_rfc3339(),
         author: Element(Person { name: "Mewe".to_string(), ..Person::default() }),
         entries,
+        link: Vec::with_capacity(3),
         ..Feed::default()
     };
     Some(feed)

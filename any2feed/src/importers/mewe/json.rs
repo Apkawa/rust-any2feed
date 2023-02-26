@@ -190,6 +190,8 @@ pub struct MeweApiGroupList {
 pub struct MeweApiGroup {
     pub id: String,
     pub name: String,
+    #[serde(rename = "descriptionPlain")]
+    pub description: Option<String>,
     pub is_muted: Option<bool>,
 }
 

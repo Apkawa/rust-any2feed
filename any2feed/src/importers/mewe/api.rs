@@ -22,13 +22,15 @@ const API_MEWE_IDENTIFY: &str = concat!(api_mewe!(), "/v3/auth/identify");
 const API_MEWE_ME_INFO: &str = concat!(api_mewe!(), "/v2/me/info");
 // const API_MEWE_USER_INFO: &str = concat!(api_mewe!(), "/v2/mycontacts/user/");
 
-const API_MEWE_ALLFEED: &str = concat!(api_mewe!(), "/v2/home/allfeed");
-const API_MEWE_USER_FEED: &str = concat!(api_mewe!(), "/v2/home/user/{user_id}/postsfeed");
-const API_MEWE_GROUP_FEED: &str = concat!(api_mewe!(), "/v3/group/{group_id}/postsfeed");
+pub const API_MEWE_ALLFEED: &str = concat!(api_mewe!(), "/v2/home/allfeed");
+pub const API_MEWE_USER_FEED: &str = concat!(api_mewe!(), "/v2/home/user/{user_id}/postsfeed");
+pub const API_MEWE_GROUP_FEED: &str = concat!(api_mewe!(), "/v3/group/{group_id}/postsfeed");
 
+const API_MEWE_CONTACT_INFO: &str = concat!(api_mewe!(), "/v2/mycontacts/user?inviteId={invite_id}");
 const API_MEWE_CONTACTS_ALL: &str = concat!(api_mewe!(), "/v2/mycontacts/all");
 const API_MEWE_CONTACTS_FAVORITES: &str = concat!(api_mewe!(), "/v2/mycontacts/closefriends");
 const API_MEWE_GROUPS: &str = concat!(api_mewe!(), "/v2/groups");
+const API_MEWE_GROUP_INFO: &str = concat!(api_mewe!(), "/v2/group/{group_id}");
 
 
 #[derive(Debug, Default)]
@@ -184,8 +186,28 @@ impl MeweApi {
             None
         }
     }
+    pub fn fetch_group_info(&self, group_id: &str) -> Option<json::MeweApiGroup> {
+        let url = API_MEWE_GROUP_INFO.replace("{group_id}", group_id);
+        let response = self.get(url.as_str()).ok()?;
+        if response.status() == 200 {
+            Some(response.json::<json::MeweApiGroup>().unwrap())
+        } else {
+            None
+        }
+    }
 
-    pub fn fetch_contact(&self, url: &str, limit: usize, offset: Option<usize>) -> Option<json::MeweApiContactList> {
+    pub fn fetch_contact_info(&self, invite_id: &str) -> Option<json::MeweApiContactUser> {
+        let url = API_MEWE_CONTACT_INFO.replace("{invite_id}", invite_id);
+        let response = self.get(url.as_str()).ok()?;
+        if response.status() == 200 {
+            Some(response.json::<json::MeweApiContactUser>().unwrap())
+        } else {
+            None
+        }
+    }
+
+
+    pub fn fetch_contact_page(&self, url: &str, limit: usize, offset: Option<usize>) -> Option<json::MeweApiContactList> {
         let mut url = Url::parse(url).unwrap();
         url.query_pairs_mut().append_pair("maxResults", limit.to_string().as_str());
         if let Some(offset) = offset {
@@ -205,7 +227,7 @@ impl MeweApi {
         let mut res: Vec<json::MeweApiContactUser> = Vec::with_capacity(limit * pages);
         for i in 0..pages {
             let offset = if i == 0 { None } else { Some(i * limit) };
-            let json = self.fetch_contact(url, limit, offset);
+            let json = self.fetch_contact_page(url, limit, offset);
             if let Some(json) = json {
                 if json.contacts.len() == 0 {
                     break;
