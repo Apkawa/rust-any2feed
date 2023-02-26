@@ -1,0 +1,51 @@
+{
+  "contacts": [
+    {
+      "closeFriend": true,
+      "id": "5d..",
+      "user": {
+        "id": "5d..",
+        "name": "John Doe",
+        "_links": {
+          "avatar": {
+            "href": "/api/v2/photo/profile/{imageSize}/..",
+            "templated": true
+          }
+        },
+        "fingerprint": "..",
+        "nsfw": false,
+        "contactInviteId": "..",
+        "public": false
+      },
+      "online": false,
+      "pnSettings": {
+        "posts": false,
+        "stories": false,
+        "chat": false
+      }
+    },
+    {
+      "id": "1..3",
+      "user": {
+        "id": "5c..",
+        "name": "Joe Biden",
+        "_links": {
+          "avatar": {
+            "href": "/api/v2/photo/profile/{imageSize}/123..?group=&f=",
+            "templated": true
+          }
+        },
+        "fingerprint": "",
+        "nsfw": false,
+        "contactInviteId": "s..e",
+        "public": false
+      },
+      "online": false,
+      "pnSettings": {
+        "posts": false,
+        "stories": false,
+        "chat": false
+      }
+    }
+  ]
+}

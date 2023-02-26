@@ -23,7 +23,13 @@ const API_MEWE_ME_INFO: &str = concat!(api_mewe!(), "/v2/me/info");
 // const API_MEWE_USER_INFO: &str = concat!(api_mewe!(), "/v2/mycontacts/user/");
 
 const API_MEWE_ALLFEED: &str = concat!(api_mewe!(), "/v2/home/allfeed");
-// const API_MEWE_USER_FEED: &str = concat!(api_mewe!(), "/v2/home/user/{user_id}/postsfeed");
+const API_MEWE_USER_FEED: &str = concat!(api_mewe!(), "/v2/home/user/{user_id}/postsfeed");
+const API_MEWE_GROUP_FEED: &str = concat!(api_mewe!(), "/v3/group/{group_id}/postsfeed");
+
+const API_MEWE_CONTACTS_ALL: &str = concat!(api_mewe!(), "/v2/mycontacts/all");
+const API_MEWE_CONTACTS_FAVORITES: &str = concat!(api_mewe!(), "/v2/mycontacts/closefriends");
+const API_MEWE_GROUPS: &str = concat!(api_mewe!(), "/v2/groups");
+
 
 #[derive(Debug, Default)]
 pub struct MeweApi {
@@ -36,7 +42,8 @@ pub struct MeweApi {
 
 /// Подсматриваем туда https://github.com/goutsune/mewe-wrapper
 impl MeweApi {
-    pub fn new(cookies_path: String) -> Option<MeweApi> {
+    pub fn new(cookies_path: &str) -> Option<MeweApi> {
+        let cookies_path = cookies_path.to_string();
         let jar = import_cookie_from_file(&cookies_path).ok()?;
         let jar = Arc::new(jar);
         let session = reqwest::blocking::Client::builder()
@@ -159,22 +166,79 @@ impl MeweApi {
     pub fn get_my_feeds(&self, limit: Option<usize>, pages: Option<usize>) -> Option<Vec<json::MeweApiFeedList>> {
         self.fetch_feeds(API_MEWE_ALLFEED, limit, pages)
     }
+    pub fn get_user_feed(&self, user_id: &str, limit: Option<usize>, pages: Option<usize>) -> Option<Vec<json::MeweApiFeedList>> {
+        self.fetch_feeds(
+            API_MEWE_USER_FEED.replace("{user_id}", user_id).as_str(),
+            limit, pages)
+    }
+    pub fn get_group_feed(&self, group_id: &str, limit: Option<usize>, pages: Option<usize>) -> Option<Vec<json::MeweApiFeedList>> {
+        self.fetch_feeds(
+            API_MEWE_GROUP_FEED.replace("{group_id}", group_id).as_str(),
+            limit, pages)
+    }
+    pub fn fetch_groups(&self) -> Option<json::MeweApiGroupList> {
+        let response = self.get(API_MEWE_GROUPS).ok()?;
+        if response.status() == 200 {
+            Some(response.json::<json::MeweApiGroupList>().unwrap())
+        } else {
+            None
+        }
+    }
+
+    pub fn fetch_contact(&self, url: &str, limit: usize, offset: Option<usize>) -> Option<json::MeweApiContactList> {
+        let mut url = Url::parse(url).unwrap();
+        url.query_pairs_mut().append_pair("maxResults", limit.to_string().as_str());
+        if let Some(offset) = offset {
+            url.query_pairs_mut().append_pair("offset", offset.to_string().as_str());
+        }
+        let response = self.get(url.as_str()).ok()?;
+
+        if response.status() == 200 {
+            Some(response.json::<json::MeweApiContactList>().unwrap())
+        } else {
+            None
+        }
+    }
+    pub fn fetch_contacts(&self, url: &str, limit: Option<usize>, pages: Option<usize>) -> Option<Vec<json::MeweApiContactUser>> {
+        let pages = pages.unwrap_or(20);
+        let limit = limit.unwrap_or(21);
+        let mut res: Vec<json::MeweApiContactUser> = Vec::with_capacity(limit * pages);
+        for i in 0..pages {
+            let offset = if i == 0 { None } else { Some(i * limit) };
+            let json = self.fetch_contact(url, limit, offset);
+            if let Some(json) = json {
+                if json.contacts.len() == 0 {
+                    break;
+                }
+                res.extend(json.contacts.iter().map(|c| c.user.clone()));
+            } else {
+                return None;
+            }
+        }
+        res.shrink_to_fit();
+        Some(res)
+    }
+
+    pub fn get_contacts(&self, favorites: bool) -> Option<Vec<json::MeweApiContactUser>> {
+        let url = if favorites {
+            API_MEWE_CONTACTS_FAVORITES
+        } else {
+            API_MEWE_CONTACTS_ALL
+        };
+        self.fetch_contacts(url, None, None)
+    }
 }
 
 
 #[cfg(test)]
 mod test {
-    
-
-    
-    
     use crate::importers::mewe::api::MeweApi;
 
+    const COOKIE_PATH: &str = "/home/apkawa/Downloads/mewe.com_cookies.txt";
 
     #[test]
     fn test_identify() {
-        let mut mewe = MeweApi::new(
-            "/home/apkawa/Downloads/mewe.com_cookies.txt".to_string()).unwrap();
+        let mut mewe = MeweApi::new(COOKIE_PATH).unwrap();
         dbg!(&mewe);
         let info = mewe.whoami().unwrap();
         assert_eq!(info.contact_invite_id, "apkawa");
@@ -182,12 +246,39 @@ mod test {
 
     #[test]
     fn test_get_feeds() {
-        let mewe = MeweApi::new(
-            "/home/apkawa/Downloads/mewe.com_cookies.txt".to_string()).unwrap();
+        let mewe = MeweApi::new(COOKIE_PATH).unwrap();
         let feeds = mewe.get_my_feeds(None, None).unwrap();
         dbg!(&feeds);
     }
 
     #[test]
-    fn example_2() {}
+    fn test_get_user_feed() {
+        let mewe = MeweApi::new(COOKIE_PATH).unwrap();
+        let contacts = mewe.get_contacts(true).unwrap();
+        let feeds = mewe.get_user_feed(contacts[0].id.as_str(), None, None).unwrap();
+        dbg!(&feeds);
+    }
+
+    #[test]
+    fn test_get_group_feed() {
+        let mewe = MeweApi::new(COOKIE_PATH).unwrap();
+        let groups = mewe.fetch_groups().unwrap();
+        let feeds = mewe.get_group_feed(groups.confirmed_groups[0].id.as_str(), None, None).unwrap();
+        dbg!(&feeds);
+    }
+
+
+    #[test]
+    fn test_fetch_groups() {
+        let mewe = MeweApi::new(COOKIE_PATH).unwrap();
+        let feeds = mewe.fetch_groups().unwrap();
+        dbg!(&feeds);
+    }
+
+    #[test]
+    fn test_fetch_contacts() {
+        let mewe = MeweApi::new(COOKIE_PATH).unwrap();
+        let contacts = mewe.get_contacts(true).unwrap();
+        dbg!(&contacts);
+    }
 }

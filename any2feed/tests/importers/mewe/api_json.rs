@@ -1,6 +1,6 @@
 use rstest::rstest;
 
-use any2feed::importers::mewe::json::{MeweApiFeedList, MeweApiPost};
+use any2feed::importers::mewe::json::{MeweApiContactList, MeweApiFeedList, MeweApiGroupList, MeweApiPost};
 use crate::importers::mewe;
 
 #[rstest]
@@ -34,5 +34,17 @@ fn test_allfeed() {
 #[test]
 fn test_empty_feed() {
     let json: MeweApiFeedList = serde_json::from_str(mewe::load_json_fixture("allfeed_no_next_page").as_str()).unwrap();
+    dbg!(&json);
+}
+
+#[test]
+fn test_group_list() {
+    let json: MeweApiGroupList = serde_json::from_str(mewe::load_json_fixture("groups").as_str()).unwrap();
+    dbg!(&json);
+}
+
+#[test]
+fn test_contacts() {
+    let json: MeweApiContactList = serde_json::from_str(mewe::load_json_fixture("contacts").as_str()).unwrap();
     dbg!(&json);
 }

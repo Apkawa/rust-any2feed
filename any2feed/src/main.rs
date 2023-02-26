@@ -22,7 +22,7 @@ fn main() {
     ];
 
     let mewe = MeweApi::new(
-        "/home/apkawa/Downloads/mewe.com_cookies.txt".to_string()).unwrap();
+        "/home/apkawa/Downloads/mewe.com_cookies.txt").unwrap();
 
     let mewe = Arc::new(mewe);
     let mewe_2 = Arc::clone(&mewe);

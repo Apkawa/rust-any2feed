@@ -36,8 +36,7 @@ pub struct MeweApiFeedList {
     #[serde(rename="_links")]
     pub links: Option<MeweApiFeedListNextPageLink>,
 
-    #[serde(skip)]
-    pub groups: Option<()>,
+    pub groups: Option<Vec<MeweApiGroup>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -175,4 +174,45 @@ pub struct MeweApiLinkLinks {
     pub url: MeweApiHref,
     pub url_host: MeweApiHref,
     pub thumbnail: Option<MeweApiHref>,
+}
+
+// Groups
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MeweApiGroupList {
+    pub confirmed_groups: Vec<MeweApiGroup>,
+    pub unconfirmed_groups: Vec<MeweApiGroup>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MeweApiGroup {
+    pub id: String,
+    pub name: String,
+    pub is_muted: Option<bool>,
+}
+
+// Contacts
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MeweApiContactList {
+    pub contacts: Vec<MeweApiContact>
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MeweApiContact {
+    pub id: String,
+    pub user: MeweApiContactUser,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct MeweApiContactUser {
+    pub close_friend: Option<bool>,
+    pub id: String,
+    pub contact_invite_id: String,
+    pub name: String,
 }

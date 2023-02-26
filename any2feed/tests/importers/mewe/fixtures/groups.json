@@ -1,0 +1,188 @@
+{
+  "confirmedGroups": [
+    {
+      "id": "5c..b1",
+      "name": "#w",
+      "isPublic": true,
+      "descriptionPlain": "Stupid.",
+      "isConfirmed": true,
+      "membersCount": 55,
+      "color": {
+        "defaultColor": "#368adb",
+        "light": "#79b1e7",
+        "dark": "#0063cf",
+        "background": "#ddebf9"
+      },
+      "publicRole": "Contributor",
+      "publicPermissions": [
+        "post",
+        "comment",
+        "invite"
+      ],
+      "publicUrlId": "wlupki",
+      "isPublicApply": false,
+      "publicUrl": "https://mewe.com/join/w",
+      "permissions": [
+        "post",
+        "comment",
+        "invite"
+      ],
+      "groupThematicType": "Uncategorized",
+      "role": "Contributor",
+      "applyQuestions": [],
+      "mandatoryQuestions": false,
+      "ownerId": "5..0",
+      "rolesPermissions": [
+        {
+          "name": "Contributor",
+          "permissions": [
+            "post",
+            "comment",
+            "invite"
+          ]
+        },
+        {
+          "name": "Limited",
+          "permissions": [
+            "post",
+            "comment",
+            "invite",
+            "req_moderation"
+          ]
+        },
+        {
+          "name": "Viewer",
+          "permissions": [
+            "comment",
+            "invite"
+          ]
+        }
+      ],
+      "isMuted": false,
+      "newPosts": 0,
+      "directoryNotAllowed": true,
+      "chatMode": "on",
+      "hiddenChat": false,
+      "_links": {
+        "publicPage": {
+          "href": "https://mewe.com/join/w"
+        },
+        "self": {
+          "href": "/api/v2/group/5"
+        },
+        "applyLink": {
+          "href": "/api/v2/group/public/w/apply"
+        },
+        "publicUrl": {
+          "href": "https://mewe.com/join/w"
+        },
+        "groupAvatar": {
+          "href": "/api/v2/group/5c/public-image/5c2/{imageSize}/img",
+          "templated": true
+        },
+        "userAvatar": {
+          "href": "/api/v2/photo/profile/{imageSize}/5454?group=545",
+          "templated": true
+        }
+      },
+      "groupMuted": false
+    }
+  ],
+  "unconfirmedGroups": [
+    {
+      "id": "62..e",
+      "name": "dfd",
+      "isPublic": true,
+      "descriptionPlain": ":peach:",
+      "isConfirmed": false,
+      "membersCount": 43,
+      "color": {
+        "defaultColor": "#834fa6",
+        "light": "#ac89c3",
+        "dark": "#591488",
+        "background": "#eae1f0"
+      },
+      "publicRole": "Limited",
+      "publicPermissions": [
+        "post",
+        "comment",
+        "req_moderation"
+      ],
+      "publicUrlId": "n4545",
+      "isPublicApply": true,
+      "publicUrl": "https://mewe.com/join/dfd",
+      "discoveryOptIn": false,
+      "groupThematicType": "Arts",
+      "applyQuestions": [],
+      "mandatoryQuestions": false,
+      "ownerId": "8..9",
+      "rolesPermissions": [
+        {
+          "name": "Contributor",
+          "permissions": [
+            "post",
+            "comment",
+            "invite"
+          ]
+        },
+        {
+          "name": "Limited",
+          "permissions": [
+            "post",
+            "comment",
+            "req_moderation"
+          ]
+        },
+        {
+          "name": "Viewer",
+          "permissions": [
+            "comment",
+            "invite"
+          ]
+        }
+      ],
+      "directoryNotAllowed": true,
+      "invitedBy": {
+        "id": "62..49",
+        "name": "Joe Biden",
+        "_links": {
+          "avatar": {
+            "href": "/api/v2/photo/profile/{imageSize}/.9?group=&f=F",
+            "templated": true
+          }
+        },
+        "fingerprint": "F..U",
+        "firstName": "Joe",
+        "lastName": "Biden",
+        "contactInviteId": "biden",
+        "public": false
+      },
+      "hiddenChat": false,
+      "_links": {
+        "publicPage": {
+          "href": "https://mewe.com/join/dfdf"
+        },
+        "self": {
+          "href": "/api/v2/group/6..c"
+        },
+        "applyLink": {
+          "href": "/api/v2/group/public/ddf/apply"
+        },
+        "publicUrl": {
+          "href": "https://mewe.com/join/dfd"
+        },
+        "groupAvatar": {
+          "href": "/api/v2/group/6..8c/public-image/6..4/{imageSize}/img",
+          "templated": true
+        },
+        "userAvatar": {
+          "href": "/api/v2/photo/profile/{imageSize}/5c24cbf13?group=6..c",
+          "templated": true
+        }
+      },
+      "groupMuted": false,
+      "isInvited": true
+    }
+
+  ]
+}
