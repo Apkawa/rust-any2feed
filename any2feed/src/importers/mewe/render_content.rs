@@ -38,9 +38,24 @@ impl RenderContent for MeweApiPost {
             self.link.as_ref().map(|l| Box::new(l.as_dyn())),
             self.poll.as_ref().map(|l| Box::new(l.as_dyn())),
         ];
-        if self.ref_post.is_some() {
-            if let Some(r) = self.ref_post.as_ref().unwrap().render() { content.push_str(r.as_str()) }
+        // reshared post
+        if let Some(ref_post) = self.ref_post.as_ref() {
+            if let Some(ref_user) = ref_post.user.as_ref() {
+                content.push_str("<p>");
+                content.push_str(format!(r#"<a href="{}">{}</a>"#,
+                                     ref_post.url().unwrap(),
+                                     ref_user.name).as_str());
+                if let Some(group) = ref_post.group.as_ref() {
+                    content.push_str(format!(r#" - <a href="{}">{}</a>"#,
+                                         group.url(),
+                                         group.name).as_str())
+                };
+                content.push_str("</p>");
+            }
+            if let Some(r) = ref_post.render() { content.push_str(r.as_str()) }
         }
+
+        // Medias
         if self.medias.is_some() {
             if let Some(album) = self.album.as_ref() {
                 content.push_str(format!("<p>Album: <b>{album}</b></p>").as_str());
@@ -51,6 +66,7 @@ impl RenderContent for MeweApiPost {
                 }
             }
         }
+        // Files
         if self.files.is_some() {
             for m in self.files.as_ref().unwrap() {
                 if let Some(r) = m.render() { content.push_str(r.as_str()) }

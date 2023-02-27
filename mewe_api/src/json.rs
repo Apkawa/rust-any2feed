@@ -30,6 +30,18 @@ pub struct MeweApiUserInfo {
     pub name: String,
 }
 
+impl MeweApiUserInfo {
+    pub fn url(&self, group_id: Option<&String>) -> String {
+        let user_id = &self.id;
+
+        match group_id {
+            Some(group_id) => format!("https://mewe.com/group/{group_id}/profile/{user_id}"),
+            None => {
+                format!("https://mewe.com/i/{}", self.contact_invite_id)
+            }
+        }
+    }
+}
 
 #[derive(Debug, Deserialize)]
 pub struct MeweApiFeedList {
@@ -39,6 +51,36 @@ pub struct MeweApiFeedList {
     pub links: Option<MeweApiFeedListNextPageLink>,
 
     pub groups: Option<Vec<MeweApiGroup>>,
+}
+
+impl MeweApiFeedList {
+    pub fn fill_user_and_group(&mut self) {
+        let mut users: HashMap<&String, &MeweApiUserInfo> = self.users.iter().map(|u| (&u.id, u)).collect();
+        let mut groups: HashMap<&String, &MeweApiGroup> = HashMap::with_capacity(20);
+        for user in self.users.iter() {
+            users.insert(&user.id, user);
+        }
+        if let Some(list_groups) = self.groups.as_ref() {
+            for group in list_groups.iter() {
+                groups.insert(&group.id, group);
+            }
+        }
+        for post in &mut self.feed {
+            let user = users.get(&post.user_id).copied();
+            let group = post.group_id.as_ref()
+                .and_then(|id| groups.get(&id)).copied();
+            post.user = user.map(|u| (*u).clone());
+            post.group = group.map(|g| (*g).clone());
+            if post.ref_post.is_some() {
+                let mut ref_post = post.ref_post.as_mut().unwrap();
+                let user = users.get(&ref_post.user_id).copied();
+                let group = ref_post.group_id.as_ref()
+                    .and_then(|id| groups.get(&id)).copied();
+                ref_post.user = user.map(|u| (*u).clone());
+                ref_post.group = group.map(|u| (*u).clone());
+            }
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -53,6 +95,8 @@ pub struct MeweApiPost {
     #[serde(rename = "postItemId")]
     pub id: String,
     pub user_id: String,
+    #[serde(skip)]
+    pub user: Option<MeweApiUserInfo>,
     pub text: String,
 
     // Хоть тут и написано что utc, на самом деле приходит с таймзоной клиента
@@ -66,6 +110,9 @@ pub struct MeweApiPost {
     pub edited_at: Option<usize>,
 
     pub group_id: Option<String>,
+    #[serde(skip)]
+    pub group: Option<MeweApiGroup>,
+
     // Media
     pub medias: Option<Vec<MeweApiMedia>>,
     pub medias_count: Option<usize>,
@@ -87,17 +134,8 @@ pub struct MeweApiPost {
 }
 
 impl MeweApiPost {
-    pub fn get_post_url(&self, user: Option<&MeweApiUserInfo>) -> Option<String> {
-        let user_id = &self.user_id;
-        match self.group_id.as_ref() {
-            Some(group_id) => return Some(format!("https://mewe.com/group/{group_id}/profile/{user_id}")),
-            None => {
-                if let Some(MeweApiUserInfo { contact_invite_id, .. }) = user {
-                    return Some(format!("https://mewe.com/i/{contact_invite_id}"));
-                }
-            }
-        }
-        None
+    pub fn url(&self) -> Option<String> {
+        self.user.as_ref().map(|u| u.url(self.group_id.as_ref()))
     }
 }
 
@@ -271,7 +309,7 @@ pub struct MeweApiGroupList {
     pub unconfirmed_groups: Vec<MeweApiGroup>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct MeweApiGroup {
     pub id: String,
@@ -279,6 +317,12 @@ pub struct MeweApiGroup {
     #[serde(rename = "descriptionPlain")]
     pub description: Option<String>,
     pub is_muted: Option<bool>,
+}
+
+impl MeweApiGroup {
+    pub fn url(&self) -> String {
+        format!("https://mewe.com/group/{}", self.id)
+    }
 }
 
 // Contacts

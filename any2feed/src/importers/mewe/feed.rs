@@ -6,13 +6,13 @@ use mewe_api::Url;
 
 use feed::{Attribute, Category, CDATAElement, Content, Element, Entry, Feed, Link, Person};
 
-use mewe_api::json::{MeweApiFeedList, MeweApiGroup, MeweApiPost, MeweApiUserInfo};
+use mewe_api::json::{MeweApiFeedList, MeweApiPost};
 use crate::importers::mewe::render_content::RenderContent;
 
-pub fn mewe_post_to_entry(post: &MeweApiPost,
-                          author: Option<&MeweApiUserInfo>,
-                          group: Option<&MeweApiGroup>) -> Option<Entry> {
-    let post_url = post.get_post_url(author);
+pub fn mewe_post_to_entry(post: &MeweApiPost) -> Option<Entry> {
+    let author = post.user.as_ref();
+    let group = post.group.as_ref();
+    let post_url = post.url();
     let post_id = post_url.as_ref()
         .map_or(post.id.to_string(), |u| format!("{}/{}", u, post.id));
     let title = if post.text.is_empty() { "no title" } else { post.text.as_str() };
@@ -64,25 +64,10 @@ pub fn mewe_post_to_entry(post: &MeweApiPost,
 // Быстрофункция чтобы добить наконец функциональность до смотрибельного
 pub fn mewe_feed_to_feed(feed_list: &Vec<MeweApiFeedList>) -> Option<Feed> {
     let mut entries: Vec<Entry> = Vec::with_capacity(feed_list.len() * 10);
-    let mut authors: HashMap<&String, &MeweApiUserInfo> = HashMap::with_capacity(20);
-    let mut groups: HashMap<&String, &MeweApiGroup> = HashMap::with_capacity(20);
     for list in feed_list.iter() {
-        for user in list.users.iter() {
-            authors.insert(&user.id, user);
-        }
-        if let Some(list_groups) = list.groups.as_ref() {
-            for group in list_groups.iter() {
-                groups.insert(&group.id, group);
-            }
-        }
         for post in list.feed.iter() {
-            let author = authors.get(&post.user_id).copied();
-            let group = post.group_id.as_ref()
-                .and_then(|id| groups.get(&id)).copied();
             let entry = mewe_post_to_entry(
                 post,
-                author,
-                group,
             )
                 .unwrap_or_else(|| panic!("{post:?}"));
             entries.push(entry);

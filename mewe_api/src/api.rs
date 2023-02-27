@@ -151,10 +151,12 @@ impl MeweApi {
                 // Не дрочим
                 thread::sleep(Duration::from_millis(100));
             }
-            let json = self.fetch_feed(next_page.as_str(), limit)?;
+            let mut json = self.fetch_feed(next_page.as_str(), limit)?;
             if let Some(MeweApiFeedListNextPageLink { next_page: Some(page) }) = &json.links {
                 next_page = page.href.clone();
             }
+            // Перераскидываем поля
+            json.fill_user_and_group();
             result.push(json)
         }
 

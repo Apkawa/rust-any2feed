@@ -34,6 +34,15 @@ fn test_allfeed() {
 }
 
 #[test]
+fn test_fill_user_group() {
+    let mut json: MeweApiFeedList = serde_json::from_str(mewe::load_json_fixture("allfeed").as_str()).unwrap();
+    json.fill_user_and_group();
+
+    assert_eq!(json.feed[0].user_id, json.feed[0].user.as_ref().unwrap().id);
+    dbg!(&json);
+}
+
+#[test]
 fn test_empty_feed() {
     let json: MeweApiFeedList = serde_json::from_str(mewe::load_json_fixture("allfeed_no_next_page").as_str()).unwrap();
     dbg!(&json);
