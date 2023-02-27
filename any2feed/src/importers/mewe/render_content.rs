@@ -1,7 +1,7 @@
 use std::collections::HashMap;
-use crate::importers::mewe::json::{MeweApiLink, MeweApiMedia, MeweApiMediaFile, MeweApiMediaPhoto, MeweApiMediaVideo, MeweApiPoll, MeweApiPost};
-use crate::importers::mewe::markdown::md_to_html;
-use crate::importers::mewe::utils::format_url;
+use mewe_api::json::{MeweApiLink, MeweApiMedia, MeweApiMediaFile, MeweApiMediaPhoto, MeweApiMediaVideo, MeweApiPoll, MeweApiPost};
+use mewe_api::markdown::md_to_html;
+use mewe_api::utils::format_url;
 
 
 pub struct RenderContext {}
@@ -98,10 +98,10 @@ impl RenderContent for MeweApiLink {
 
 impl RenderContent for MeweApiMedia {
     fn render(&self) -> Option<String> {
-        let url = &self.photo.render_url();
+        let url = &self.photo.url();
         match self.video.as_ref() {
             Some(video) => {
-                let video_url = &video.render_url();
+                let video_url = &video.url();
                 // let text = photo.links.img
                 let width = usize::min(self.photo.size.width, 640);
                 Some(format!(r#"
@@ -121,27 +121,6 @@ impl RenderContent for MeweApiMedia {
 
 
 
-impl MeweApiMediaPhoto {
-    fn render_url(&self) -> String {
-        let url = &self.links.img.href;
-        let args: HashMap<&str, &str> = HashMap::from(
-            [("imageSize", "200x300"), ("static", "0")]);
-        let url = format_url(url.as_str(), &args);
-        let mime = &self.mime;
-        format!("https://mewe.com{url}&mime={mime}")
-    }
-}
-
-impl MeweApiMediaVideo {
-    fn render_url(&self) -> String {
-        let url = &self.links.link_template.href;
-        let args: HashMap<&str, &str> = HashMap::from(
-            [("resolution", "original")]);
-        let url = format_url(url.as_str(), &args);
-        let name = &self.name;
-        format!("https://mewe.com{url}&mime=video/mp4&name={name}")
-    }
-}
 // File
 
 impl RenderContent for MeweApiMediaFile {

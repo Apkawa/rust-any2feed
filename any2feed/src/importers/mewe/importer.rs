@@ -4,7 +4,7 @@ use toml::toml;
 
 use http_server::Route;
 
-use crate::importers::mewe::MeweApi;
+use mewe_api::MeweApi;
 use crate::importers::mewe::routes::{route_feed, route_media_proxy, route_opml};
 use crate::importers::traits::Importer;
 

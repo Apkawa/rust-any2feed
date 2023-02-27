@@ -1,6 +1,8 @@
+use std::collections::HashMap;
 use chrono::serde::{ts_seconds, ts_seconds_option};
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
+use crate::utils::format_url;
 
 #[derive(Debug, Deserialize)]
 pub struct MeweApiIdentify {
@@ -137,6 +139,17 @@ pub struct MeweApiMediaPhoto {
     pub links: MeweApiMediaPhotoLink,
 }
 
+impl MeweApiMediaPhoto {
+    pub fn url(&self) -> String {
+        let url = &self.links.img.href;
+        let args: HashMap<&str, &str> = HashMap::from(
+            [("imageSize", "200x300"), ("static", "0")]);
+        let url = format_url(url.as_str(), &args);
+        let mime = &self.mime;
+        format!("https://mewe.com{url}&mime={mime}")
+    }
+}
+
 
 #[derive(Debug, Deserialize)]
 pub struct MeweApiMediaPhotoLink {
@@ -154,6 +167,17 @@ pub struct MeweApiMediaVideo {
 
     #[serde(rename = "_links")]
     pub links: MeweApiMediaVideoLink,
+}
+
+impl MeweApiMediaVideo {
+    pub fn url(&self) -> String {
+        let url = &self.links.link_template.href;
+        let args: HashMap<&str, &str> = HashMap::from(
+            [("resolution", "original")]);
+        let url = format_url(url.as_str(), &args);
+        let name = &self.name;
+        format!("https://mewe.com{url}&mime=video/mp4&name={name}")
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -280,4 +304,6 @@ pub struct MeweApiContactUser {
     pub contact_invite_id: String,
     pub name: String,
 }
+
+
 

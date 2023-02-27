@@ -30,6 +30,7 @@ dependencies = [
  "cookie_store",
  "feed",
  "http_server",
+ "mewe_api",
  "pulldown-cmark",
  "regex",
  "reqwest",
@@ -587,6 +588,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
 
 [[package]]
+name = "mewe_api"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "chrono",
+ "cookie",
+ "cookie_store",
+ "pulldown-cmark",
+ "regex",
+ "reqwest",
+ "reqwest_mozilla_cookie",
+ "rstest",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "mime"
 version = "0.3.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -843,6 +861,13 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "winreg",
+]
+
+[[package]]
+name = "reqwest_mozilla_cookie"
+version = "0.1.0"
+dependencies = [
+ "reqwest",
 ]
 
 [[package]]

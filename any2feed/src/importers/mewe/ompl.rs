@@ -1,2 +1,1 @@
-use feed::opml::Outline;
 

@@ -1,2 +1,2 @@
 [workspace]
-members = ["any2feed", "http_server", "feed"]
+members = ["any2feed", "http_server", "feed", "mewe_api", "reqwest_mozilla_cookie"]

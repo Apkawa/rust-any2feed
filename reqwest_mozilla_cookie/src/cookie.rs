@@ -13,7 +13,7 @@ use reqwest::Url;
 /// ```
 /// use reqwest::cookie::CookieStore;
 /// use reqwest::Url;
-/// use any2feed::http_client::cookie::import_cookie_from_string;
+/// use reqwest_mozilla_cookie::cookie::import_cookie_from_string;
 /// let cookie_str = r###"# Netscape HTTP Cookie File
 ///
 /// kremlin.ru	FALSE	/	FALSE		sid	foo	27
@@ -129,7 +129,7 @@ pub fn merge_cookie_to_string(jar: &Jar, url: &Url, cookie_txt: &String) -> Opti
 mod test {
     use reqwest::cookie::CookieStore;
     use reqwest::Url;
-    use crate::http_client::cookie::{import_cookie_from_string, merge_cookie_to_string};
+    use crate::cookie::{import_cookie_from_string, merge_cookie_to_string};
 
     #[test]
     fn test_import_cookie_from_string() {

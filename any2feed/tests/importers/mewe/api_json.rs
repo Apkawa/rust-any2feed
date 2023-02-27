@@ -1,6 +1,6 @@
 use rstest::rstest;
 
-use any2feed::importers::mewe::json::{MeweApiContactList, MeweApiFeedList, MeweApiGroupList, MeweApiPost};
+use mewe_api::json::{MeweApiContactList, MeweApiFeedList, MeweApiGroupList, MeweApiPost};
 use crate::importers::mewe;
 
 #[rstest]

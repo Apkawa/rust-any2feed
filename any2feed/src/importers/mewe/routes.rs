@@ -8,8 +8,8 @@ use http_server::HTTPError::NotFound;
 use http_server::utils::path_params_to_vec;
 use crate::importers::mewe::feed::{mewe_feed_to_feed, replace_mewe_media_urls};
 use crate::importers::mewe::importer::MeweImporter;
-use crate::importers::mewe::json::{MeweApiFeedList, MeweApiFeedListNextPageLink, MeweApiHref};
-use crate::importers::mewe::utils::update_query;
+use mewe_api::json::{MeweApiFeedList, MeweApiFeedListNextPageLink, MeweApiHref};
+use mewe_api::utils::update_query;
 
 pub fn route_opml(importer: & MeweImporter) -> Route {
     let mewe_api = importer.api();

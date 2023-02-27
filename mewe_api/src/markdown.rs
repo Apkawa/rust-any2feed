@@ -3,7 +3,7 @@ use pulldown_cmark::{Parser, Options, html};
 
 ///
 /// ```
-/// use any2feed::importers::mewe::markdown::md_to_html;
+/// use mewe_api::markdown::md_to_html;
 /// let s = "Hello world, this is a ~~complicated~~ *very simple* example.".to_string();
 /// let html = md_to_html(&s);
 /// let expect_html = "<p>Hello world, this is a <del>complicated</del> <em>very simple</em> example.</p>\n";

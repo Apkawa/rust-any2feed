@@ -5,7 +5,7 @@ use reqwest::Url;
 ///
 /// ```
 /// use std::collections::HashMap;
-/// use any2feed::importers::mewe::render_content::format_url;
+/// use mewe_api::utils::format_url;
 /// let url = "/api/v2/photo/k...E/{imageSize}/img?static={static}";
 /// let args: HashMap<&str, &str> = HashMap::from([("imageSize", "200x300"), ("static", "0")]);
 /// let result = format_url(url, &args);
@@ -25,7 +25,7 @@ pub fn format_url(url: &str, args: &HashMap<&str, &str>) -> String {
 /// ```
 /// use std::collections::HashMap;
 /// use reqwest::Url;
-/// use any2feed::importers::mewe::utils::update_query;
+/// use mewe_api::utils::update_query;
 /// let mut url = Url::parse("https://example.com/?foo=1&bar=2&baz=3").unwrap();
 /// let query = HashMap::from([("foo", "2"), ("bar", "3")]);
 /// update_query(&mut url, &query);

@@ -6,7 +6,7 @@ use reqwest::Url;
 
 use feed::{Attribute, Category, CDATAElement, Content, Element, Entry, Feed, Link, Person};
 
-use crate::importers::mewe::json::{MeweApiFeedList, MeweApiGroup, MeweApiPost, MeweApiUserInfo};
+use mewe_api::json::{MeweApiFeedList, MeweApiGroup, MeweApiPost, MeweApiUserInfo};
 use crate::importers::mewe::render_content::RenderContent;
 
 pub fn mewe_post_to_entry(post: &MeweApiPost,

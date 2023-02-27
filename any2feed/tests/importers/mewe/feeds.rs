@@ -1,7 +1,7 @@
 use rstest::rstest;
 use any2feed::importers::mewe::feed::{mewe_feed_to_feed, mewe_post_to_entry};
 
-use any2feed::importers::mewe::json::{MeweApiFeedList, MeweApiPost, MeweApiUserInfo};
+use mewe_api::json::{MeweApiFeedList, MeweApiPost, MeweApiUserInfo};
 use crate::importers::mewe;
 
 #[test]

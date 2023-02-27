@@ -8,10 +8,10 @@ use std::time::Duration;
 use reqwest::{cookie::Jar, Url};
 use reqwest::blocking::Response;
 
-use crate::http_client::cookie::{import_cookie_from_file, update_cookie_from_file};
-use crate::importers::mewe::json;
-use crate::importers::mewe::json::MeweApiFeedListNextPageLink;
-use crate::importers::mewe::utils::update_query;
+use reqwest_mozilla_cookie::{import_cookie_from_file, update_cookie_from_file};
+use crate::json;
+use crate::json::MeweApiFeedListNextPageLink;
+use crate::utils::update_query;
 
 const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
 
@@ -254,7 +254,7 @@ impl MeweApi {
 
 #[cfg(test)]
 mod test {
-    use crate::importers::mewe::api::MeweApi;
+    use crate::MeweApi;
 
     const COOKIE_PATH: &str = "/home/apkawa/Downloads/mewe.com_cookies.txt";
 
