@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use crate::importers::mewe::json::{MeweApiLink, MeweApiMedia, MeweApiMediaPhoto, MeweApiMediaVideo, MeweApiPost};
+use crate::importers::mewe::json::{MeweApiLink, MeweApiMedia, MeweApiMediaFile, MeweApiMediaPhoto, MeweApiMediaVideo, MeweApiPoll, MeweApiPost};
 use crate::importers::mewe::markdown::md_to_html;
 use crate::importers::mewe::utils::format_url;
 
@@ -13,21 +13,50 @@ pub trait RenderContent {
     fn render(&self) -> Option<String>;
 }
 
+// TODO initialize
+// static RE_GIFYCAT: regex::Regex = regex::Regex::new(r#"(https://thumbs.gfycat.com/[^<\s]+)"#).unwrap();
+
+///
+/// ```
+/// use any2feed::importers::mewe::render_content::render_gifycat_gifs;
+/// let res = render_gifycat_gifs("Foo https://thumbs.gfycat.com/a.gif#h=1200w=1600");
+/// assert_eq!(res, r#"Foo <p><img src="https://thumbs.gfycat.com/a.gif#h=1200w=1600" /></p>"#.to_string());
+/// let res = render_gifycat_gifs("<p>Foo https://thumbs.gfycat.com/a.gif#h=1200w=1600</p>");
+/// assert_eq!(res, r#"<p>Foo <p><img src="https://thumbs.gfycat.com/a.gif#h=1200w=1600" /></p></p>"#.to_string());
+/// ```
+pub fn render_gifycat_gifs(text: &str) -> String {
+    let re = regex::Regex::new(r#"(https://thumbs.gfycat.com/[^<\s]+)\b"#).unwrap();
+    re.replace(text, r#"<p><img src="$1" /></p>"#).to_string()
+}
 
 impl RenderContent for MeweApiPost {
     fn render(&self) -> Option<String> {
         let mut content = md_to_html(&self.text);
+        content = render_gifycat_gifs(content.as_str());
+
         let parts: Vec<Option<Box<&dyn RenderContent>>> = vec![
             self.link.as_ref().map(|l| Box::new(l.as_dyn())),
+            self.poll.as_ref().map(|l| Box::new(l.as_dyn())),
         ];
         if self.ref_post.is_some() {
             if let Some(r) = self.ref_post.as_ref().unwrap().render() { content.push_str(r.as_str()) }
         }
         if self.medias.is_some() {
+            if let Some(album) = self.album.as_ref() {
+                content.push_str(format!("<p>Album: <b>{album}</b></p>").as_str());
+            }
             for m in self.medias.as_ref().unwrap() {
+                if let Some(r) = m.render() {
+                    content.push_str(r.as_str())
+                }
+            }
+        }
+        if self.files.is_some() {
+            for m in self.files.as_ref().unwrap() {
                 if let Some(r) = m.render() { content.push_str(r.as_str()) }
             }
         }
+
 
         let parts = parts.iter()
             .filter(|i| i.is_some())
@@ -90,6 +119,8 @@ impl RenderContent for MeweApiMedia {
 }
 
 
+
+
 impl MeweApiMediaPhoto {
     fn render_url(&self) -> String {
         let url = &self.links.img.href;
@@ -109,5 +140,37 @@ impl MeweApiMediaVideo {
         let url = format_url(url.as_str(), &args);
         let name = &self.name;
         format!("https://mewe.com{url}&mime=video/mp4&name={name}")
+    }
+}
+// File
+
+impl RenderContent for MeweApiMediaFile {
+    fn render(&self) -> Option<String> {
+        let name = &self.file_name;
+        let url = &self.links.url.href;
+        let size = &((self.length as f64) / 1024.0 / 1024.0);
+
+        Some(format!(r#"<p>File: <a href="https://mewe.com{url}">{name} ({size:.2} MB)</a></p>"#))
+    }
+}
+
+
+// Poll
+impl RenderContent for MeweApiPoll {
+    fn render(&self) -> Option<String> {
+        let poll_options: String = self.options
+            .iter()
+            // TODO percent
+            .map(|o| format!("<li>{} - {}</li>\n", o.text, o.votes))
+            .collect();
+        let question = &self.question;
+        Some(format!(r#"
+        <p>
+            Question: {question}
+            <ul>
+                {poll_options}
+            </ul>
+        </p>
+        "#))
     }
 }

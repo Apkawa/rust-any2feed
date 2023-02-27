@@ -11,6 +11,8 @@ use crate::importers::mewe;
 #[case("post_poll")]
 #[case("post_ref_post")]
 #[case("post_text")]
+#[case("post_file")]
+#[case("post_sticker")]
 fn test_json(#[case] json_name: &str) {
     let json: MeweApiPost = serde_json::from_str(mewe::load_json_fixture(json_name).as_str()).unwrap();
     dbg!(&json);

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use chrono::Local;
+use chrono::{NaiveDateTime, DateTime, Utc, Local, TimeZone};
 use regex::Regex;
 use reqwest::Url;
 
@@ -19,8 +19,8 @@ pub fn mewe_post_to_entry(post: &MeweApiPost,
     let mut entry = Entry::new(
         post_id,
         title.to_string(),
-        // TODO dt
-        post.updated_at.to_rfc3339(),
+        //
+        post.edited_at.map(|e| Utc.timestamp_opt(e as i64, 0).unwrap()).unwrap_or(post.updated_at).to_rfc3339(),
     );
     entry.published = Some(Element(post.created_at.to_rfc3339()));
     let mut categories: Vec<Category> = Vec::with_capacity(2);
@@ -119,7 +119,7 @@ pub fn mewe_feed_to_feed(feed_list: &Vec<MeweApiFeedList>) -> Option<Feed> {
 /// assert_eq!(new_text, expect_text);
 /// ```
 pub fn replace_mewe_media_urls(text: &str, new_url: &str) -> String {
-    let re = Regex::new(r#"(?P<host>https://mewe.com)(?P<m>/api/v2/(?:photo|proxy/video)/)"#).unwrap();
+    let re = Regex::new(r#"(?P<host>https://mewe.com)(?P<m>/api/v2/(?:photo|proxy/video|doc/shared)/)"#).unwrap();
     let res = re.replace_all(text, &format!("{new_url}$m"));
     res.to_string()
 }

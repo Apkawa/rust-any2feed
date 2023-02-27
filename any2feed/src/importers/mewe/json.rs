@@ -1,4 +1,4 @@
-use chrono::serde::ts_seconds;
+use chrono::serde::{ts_seconds, ts_seconds_option};
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 
@@ -33,7 +33,7 @@ pub struct MeweApiUserInfo {
 pub struct MeweApiFeedList {
     pub feed: Vec<MeweApiPost>,
     pub users: Vec<MeweApiUserInfo>,
-    #[serde(rename="_links")]
+    #[serde(rename = "_links")]
     pub links: Option<MeweApiFeedListNextPageLink>,
 
     pub groups: Option<Vec<MeweApiGroup>>,
@@ -42,7 +42,7 @@ pub struct MeweApiFeedList {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MeweApiFeedListNextPageLink {
-    pub next_page: Option<MeweApiHref>
+    pub next_page: Option<MeweApiHref>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -59,6 +59,10 @@ pub struct MeweApiPost {
     #[serde(with = "ts_seconds")]
     pub updated_at: DateTime<Utc>,
 
+    // #[serde(with = "ts_seconds_option")]
+    // pub edited_at: Option<DateTime<Utc>>,
+    pub edited_at: Option<usize>,
+
     pub group_id: Option<String>,
     // Media
     pub medias: Option<Vec<MeweApiMedia>>,
@@ -68,9 +72,13 @@ pub struct MeweApiPost {
     pub link: Option<MeweApiLink>,
     // Ref post
     pub ref_post: Option<Box<MeweApiPost>>,
-    // Pool
+    // Poll
+    pub poll: Option<MeweApiPoll>,
     // Files
-    //
+    pub files: Option<Vec<MeweApiMediaFile>>,
+    // Sticker
+    // TODO
+    pub stickers: Option<Vec<MeweApiSticker>>,
 
     pub album: Option<String>,
     pub hash_tags: Option<Vec<String>>,
@@ -82,10 +90,10 @@ impl MeweApiPost {
         match self.group_id.as_ref() {
             Some(group_id) => return Some(format!("https://mewe.com/group/{group_id}/profile/{user_id}")),
             None => {
-                if let Some(MeweApiUserInfo{contact_invite_id, ..}) = user {
-                    return Some(format!("https://mewe.com/i/{contact_invite_id}"))
+                if let Some(MeweApiUserInfo { contact_invite_id, .. }) = user {
+                    return Some(format!("https://mewe.com/i/{contact_invite_id}"));
                 }
-            },
+            }
         }
         None
     }
@@ -153,8 +161,24 @@ pub struct MeweApiMediaVideo {
 pub struct MeweApiMediaVideoLink {
     pub link_template: MeweApiHref,
 }
+// Media File
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MeweApiMediaFile {
+    pub id: String,
+    pub file_name: String,
+    pub mime: String,
+    pub length: usize,
+    pub file_type: String,
+    #[serde(rename = "_links")]
+    pub links: MeweApiMediaFileLinks,
+}
 
+#[derive(Debug, Deserialize)]
+pub struct MeweApiMediaFileLinks {
+    pub url: MeweApiHref,
+}
 
 // LINK
 
@@ -174,6 +198,44 @@ pub struct MeweApiLinkLinks {
     pub url: MeweApiHref,
     pub url_host: MeweApiHref,
     pub thumbnail: Option<MeweApiHref>,
+}
+// Poll
+
+#[derive(Debug, Deserialize)]
+pub struct MeweApiPollOptionPhoto {
+    pub id: String,
+    pub size: MeweApiMediaSize,
+
+    #[serde(rename = "_links")]
+    pub links: MeweApiMediaPhotoLink,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct MeweApiPollOption {
+    pub text: String,
+    pub image: Option<MeweApiPollOptionPhoto>,
+    pub votes: usize,
+    pub selected: Option<bool>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct MeweApiPoll {
+    pub question: String,
+    pub options: Vec<MeweApiPollOption>,
+}
+
+// Sticker
+#[derive(Debug, Deserialize)]
+pub struct MeweApiSticker {
+    pub id: String,
+    /// for get sticker see https://cdn.mewe.com/emoji/build-info.json
+    /// As example:
+    /// For { "package": "stickers-summer-fun_free", "id": "lit"}
+    /// https://cdn.mewe.com/emoji/stickers-summer-fun_free/lit.1sum9.svg
+    /// https://cdn.mewe.com/emoji/stickers-summer-fun_free/lit.1sum9.png
+    ///
+    /// We need get `1sum9` from build-info for construct url. maybe hardcoded.
+    pub package: String,
 }
 
 // Groups
@@ -200,7 +262,7 @@ pub struct MeweApiGroup {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MeweApiContactList {
-    pub contacts: Vec<MeweApiContact>
+    pub contacts: Vec<MeweApiContact>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -218,3 +280,4 @@ pub struct MeweApiContactUser {
     pub contact_invite_id: String,
     pub name: String,
 }
+

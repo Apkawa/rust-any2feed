@@ -1,0 +1,35 @@
+{
+  "postItemId": "4..5",
+  "userId": "5..9",
+  "text": "post with file",
+  "files": [
+    {
+      "id": "6..7",
+      "fileName": "book.pdf",
+      "mime": "application/pdf",
+      "length": 3328568,
+      "fileType": "pdf",
+      "_links": {
+        "url": {
+          "href": "/api/v2/doc/shared/4..5/book.pdf"
+        }
+      }
+    }
+  ],
+  "groupId": "1..",
+  "permissions": {
+    "comment": true,
+    "remove": true,
+    "edit": true,
+    "canFeature": true,
+    "canEmojify": true,
+    "repost": true,
+    "download": true,
+    "follow": true,
+    "canAddEmoji": true
+  },
+  "createdAt": 1677488900,
+  "updatedAt": 1677488900,
+  "follows": true,
+  "language": "en"
+}

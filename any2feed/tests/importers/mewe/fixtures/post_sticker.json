@@ -1,0 +1,26 @@
+{
+  "postItemId": "7..a",
+  "userId": "..9",
+  "text": "post with sticker",
+  "groupId": "63..",
+  "permissions": {
+    "comment": true,
+    "remove": true,
+    "edit": true,
+    "canFeature": true,
+    "canEmojify": true,
+    "repost": true,
+    "follow": true,
+    "canAddEmoji": true
+  },
+  "createdAt": 1677469210,
+  "updatedAt": 1677499210,
+  "follows": true,
+  "stickers": [
+    {
+      "package": "stickers-summer-fun_free",
+      "id": "lit"
+    }
+  ],
+  "language": "en"
+}
