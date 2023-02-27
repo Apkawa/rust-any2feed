@@ -5,6 +5,7 @@ use mewe_api::Url;
 use feed::{Attribute, Category, CDATAElement, Content, Element, Entry, Feed, Link, Person};
 
 use mewe_api::json::{MeweApiFeedList, MeweApiPost};
+use mewe_api::utils::replace_user_mention_to_name;
 use crate::importers::mewe::render_content::RenderContent;
 
 pub fn mewe_post_to_entry(post: &MeweApiPost) -> Option<Entry> {
@@ -14,10 +15,11 @@ pub fn mewe_post_to_entry(post: &MeweApiPost) -> Option<Entry> {
     let post_url = post.url();
     let post_id = post_url.as_ref()
         .map_or(post.id.to_string(), |u| format!("{}/{}", u, post.id));
-    let title = if post.text.is_empty() { "no title" } else { post.text.as_str() };
+    let title = if post.text.is_empty() { "no title".to_string() } else { replace_user_mention_to_name(post.text.as_str()) };
+
     let mut entry = Entry::new(
         post_id,
-        title.to_string(),
+        title,
         //
         post.edited_at.map(|e| Utc.timestamp_opt(e as i64, 0).unwrap()).unwrap_or(post.updated_at).to_rfc3339(),
     );

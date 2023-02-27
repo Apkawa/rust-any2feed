@@ -188,10 +188,12 @@ impl MeweApiMediaPhoto {
     pub fn url(&self) -> String {
         let url = &self.links.img.href;
         let args: HashMap<&str, &str> = HashMap::from(
-            [("imageSize", "200x300"), ("static", "0")]);
+            [
+                ("imageSize", "800x800"), // 400x400, 800x800, 1600x1600
+                ("static", "0")
+            ]);
         let url = format_url(url.as_str(), &args);
-        let mime = &self.mime;
-        format!("https://mewe.com{url}&mime={mime}")
+        format!("https://mewe.com{url}")
     }
 }
 

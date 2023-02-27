@@ -46,3 +46,27 @@ pub fn update_query(url: &mut Url, query: &HashMap<&str, &str>) {
         .clear()
         .extend_pairs(query_params);
 }
+
+///
+/// ```
+/// use mewe_api::utils::replace_user_mention_to_name;
+///
+/// let res = replace_user_mention_to_name("@{{u_5c26fe32dfd8gff8f7657c}Пользователь пользователя}");
+/// assert_eq!(res, "@Пользователь пользователя".to_string())
+/// ```
+pub fn replace_user_mention_to_name(text: &str) -> String {
+    let re = Regex::new(r#"@\{\{u_(\w+?)}([\w\s]+?)}"#).unwrap();
+    re.replace(text, "@$2").to_string()
+}
+
+///
+/// ```
+/// use mewe_api::utils::replace_user_mention_to_html_url;
+///
+/// let res = replace_user_mention_to_html_url("@{{u_5c26fe32dfd8gff8f7657c}Пользователь пользователя}");
+/// assert_eq!(res, r#"<a href="https://mewe.com/i/id=5c26fe32dfd8gff8f7657c">@Пользователь пользователя</a>"#.to_string())
+/// ```
+pub fn replace_user_mention_to_html_url(text: &str) -> String {
+    let re = Regex::new(r#"@\{\{u_(\w+?)}([\w\s]+?)}"#).unwrap();
+    re.replace(text, r#"<a href="https://mewe.com/i/id=$1">@$2</a>"#).to_string()
+}

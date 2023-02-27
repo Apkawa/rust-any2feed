@@ -1,4 +1,5 @@
 use pulldown_cmark::{Parser, Options, html};
+use crate::utils::replace_user_mention_to_html_url;
 
 
 ///
@@ -18,6 +19,6 @@ pub fn md_to_html(md_text: &String) -> String {
     let mut html_output = String::new();
     html::push_html(&mut html_output, parser);
 
-    html_output
+    replace_user_mention_to_html_url(html_output.as_str())
 }
 
