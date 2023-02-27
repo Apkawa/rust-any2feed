@@ -24,16 +24,11 @@ dependencies = [
 name = "any2feed"
 version = "0.1.0"
 dependencies = [
- "bytes",
  "chrono",
- "cookie",
- "cookie_store",
  "feed",
  "http_server",
  "mewe_api",
- "pulldown-cmark",
  "regex",
- "reqwest",
  "rstest",
  "serde",
  "serde_json",
@@ -591,10 +586,7 @@ checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
 name = "mewe_api"
 version = "0.1.0"
 dependencies = [
- "bytes",
  "chrono",
- "cookie",
- "cookie_store",
  "pulldown-cmark",
  "regex",
  "reqwest",

@@ -4,18 +4,12 @@ use std::{env};
 use std::fs::read_to_string;
 
 
-
 use any2feed::config::MainConfig;
-
 use any2feed::importers::mewe::importer::MeweImporter;
-
 use any2feed::importers::traits::Importer;
 
 
 use http_server::{HTTPRequest, HTTPResponse, Route, run, ServerConfig};
-
-
-
 
 
 fn main_view(_request: &HTTPRequest) -> http_server::Result<HTTPResponse> {
@@ -30,8 +24,8 @@ fn main() {
         panic!("Need config path arg");
     }
     let config_path = &args[1];
-
     let config_str = read_to_string(config_path.as_str()).unwrap();
+    dbg!(&config_path, &config_str);
     let config: MainConfig = toml::from_str(&config_str).unwrap();
 
     let mut routes = vec![

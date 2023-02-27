@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use chrono::{Utc, Local, TimeZone};
 use regex::Regex;
-use reqwest::Url;
+use mewe_api::Url;
 
 use feed::{Attribute, Category, CDATAElement, Content, Element, Entry, Feed, Link, Person};
 
