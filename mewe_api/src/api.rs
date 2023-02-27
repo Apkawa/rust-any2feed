@@ -44,9 +44,9 @@ pub struct MeweApi {
 
 /// Подсматриваем туда https://github.com/goutsune/mewe-wrapper
 impl MeweApi {
-    pub fn new(cookies_path: &str) -> Option<MeweApi> {
+    pub fn new(cookies_path: &str) -> crate::Result<MeweApi> {
         let cookies_path = cookies_path.to_string();
-        let jar = import_cookie_from_file(&cookies_path).ok()?;
+        let jar = import_cookie_from_file(&cookies_path)?;
         let jar = Arc::new(jar);
         let session = reqwest::blocking::Client::builder()
             .user_agent(USER_AGENT)
@@ -60,7 +60,7 @@ impl MeweApi {
         };
         mewe_api.identify()?;
         mewe_api.whoami()?;
-        Some(mewe_api)
+        Ok(mewe_api)
     }
 
     fn save_cookies(&self, scope_url: &str) -> Option<()> {
@@ -70,7 +70,7 @@ impl MeweApi {
         )
     }
 
-    pub fn get(&self, url: &str) -> reqwest::Result<Response> {
+    pub fn get(&self, url: &str) -> crate::Result<Response> {
         let mut rb = self.session.get(url);
 
         for (k, v) in self.headers.lock().unwrap().iter() {
@@ -95,52 +95,46 @@ impl MeweApi {
             // Если был какой либо set-cookie, сохраняем актуальный стор
             self.save_cookies(url);
         }
-        if result.status() != 200 {
-            dbg!(&result);
-            // dbg!(&result.text());
-        }
-        Ok(result)
-    }
-
-    pub fn whoami(&mut self) -> Option<json::MeweApiSelfProfileInfo> {
-        let info: json::MeweApiSelfProfileInfo = self.get(API_MEWE_ME_INFO).ok()?.json().unwrap();
-        self.me_info = Some(info.clone());
-        Some(info)
-    }
-
-
-    pub fn identify(&self) -> Option<()> {
-        let result = self.get(API_MEWE_IDENTIFY).ok()?;
         if result.status() == 200 {
-            let json = {
-                result.json::<json::MeweApiIdentify>().ok()?
-            };
-            if json.authenticated {
-                return Some(());
-            }
+            Ok(result)
+        } else {
+            dbg!(&result);
+            dbg!(&result.text());
+            Err(crate::MeweApiError::ApiError { kind: crate::ApiErrorKind::StatusError })
         }
-        None
     }
 
-    pub fn fetch_feed(&self, url: &str, limit: Option<usize>) -> Option<json::MeweApiFeedList> {
+    pub fn whoami(&mut self) -> crate::Result<json::MeweApiSelfProfileInfo> {
+        let info: json::MeweApiSelfProfileInfo = self.get(API_MEWE_ME_INFO)?.json()?;
+        self.me_info = Some(info.clone());
+        Ok(info)
+    }
+
+
+    pub fn identify(&self) -> crate::Result<bool> {
+        let json = self.get(API_MEWE_IDENTIFY)?
+            .json::<json::MeweApiIdentify>()?;
+        if json.authenticated {
+            return Ok(true);
+        } else {
+            Err(crate::MeweApiError::ApiError { kind: crate::ApiErrorKind::IdentifyFail })
+        }
+    }
+
+    pub fn fetch_feed(&self, url: &str, limit: Option<usize>) -> crate::Result<json::MeweApiFeedList> {
         let mut url = Url::parse(url).unwrap();
         if let Some(limit) = limit {
             let limit = limit.to_string();
             let query = HashMap::from([("limit", limit.as_str())]);
             update_query(&mut url, &query);
         }
-        let response = self.get(url.as_str()).ok()?;
-        if response.status() == 200 {
-            Some(response.json::<json::MeweApiFeedList>().unwrap())
-        } else {
-            dbg!(&response.text());
-            None
-        }
+        let response = self.get(url.as_str())?;
+        Ok(response.json::<json::MeweApiFeedList>().unwrap())
     }
 
     // Todo iterator
     pub fn fetch_feeds(&self, url: &str, limit: Option<usize>, pages: Option<usize>)
-                       -> Option<Vec<json::MeweApiFeedList>> {
+                       -> crate::Result<Vec<json::MeweApiFeedList>> {
         self.identify()?;
         let pages = pages.unwrap_or(1);
 
@@ -160,90 +154,72 @@ impl MeweApi {
             result.push(json)
         }
 
-        if !result.is_empty() {
-            Some(result)
-        } else {
-            None
-        }
+        Ok(result)
     }
 
-    pub fn get_my_feeds(&self, limit: Option<usize>, pages: Option<usize>) -> Option<Vec<json::MeweApiFeedList>> {
+    pub fn get_my_feeds(&self, limit: Option<usize>, pages: Option<usize>)
+                        -> crate::Result<Vec<json::MeweApiFeedList>> {
         self.fetch_feeds(API_MEWE_ALLFEED, limit, pages)
     }
-    pub fn get_user_feed(&self, user_id: &str, limit: Option<usize>, pages: Option<usize>) -> Option<Vec<json::MeweApiFeedList>> {
+    pub fn get_user_feed(&self, user_id: &str, limit: Option<usize>, pages: Option<usize>)
+                         -> crate::Result<Vec<json::MeweApiFeedList>> {
         self.fetch_feeds(
             API_MEWE_USER_FEED.replace("{user_id}", user_id).as_str(),
             limit, pages)
     }
-    pub fn get_group_feed(&self, group_id: &str, limit: Option<usize>, pages: Option<usize>) -> Option<Vec<json::MeweApiFeedList>> {
+    pub fn get_group_feed(&self, group_id: &str, limit: Option<usize>, pages: Option<usize>)
+                          -> crate::Result<Vec<json::MeweApiFeedList>> {
         self.fetch_feeds(
             API_MEWE_GROUP_FEED.replace("{group_id}", group_id).as_str(),
             limit, pages)
     }
-    pub fn fetch_groups(&self) -> Option<json::MeweApiGroupList> {
-        let response = self.get(API_MEWE_GROUPS).ok()?;
-        if response.status() == 200 {
-            Some(response.json::<json::MeweApiGroupList>().unwrap())
-        } else {
-            None
-        }
+
+    pub fn fetch_groups(&self) -> crate::Result<json::MeweApiGroupList> {
+        let response = self.get(API_MEWE_GROUPS)?;
+        Ok(response.json::<json::MeweApiGroupList>().unwrap())
     }
-    pub fn fetch_group_info(&self, group_id: &str) -> Option<json::MeweApiGroup> {
+
+    pub fn fetch_group_info(&self, group_id: &str) -> crate::Result<json::MeweApiGroup> {
         let url = API_MEWE_GROUP_INFO.replace("{group_id}", group_id);
-        let response = self.get(url.as_str()).ok()?;
-        if response.status() == 200 {
-            Some(response.json::<json::MeweApiGroup>().unwrap())
-        } else {
-            None
-        }
+        let response = self.get(url.as_str())?;
+        Ok(response.json::<json::MeweApiGroup>().unwrap())
     }
 
-    pub fn fetch_contact_info(&self, invite_id: &str) -> Option<json::MeweApiContactUser> {
+    pub fn fetch_contact_info(&self, invite_id: &str) -> crate::Result<json::MeweApiContactUser> {
         let url = API_MEWE_CONTACT_INFO.replace("{invite_id}", invite_id);
-        let response = self.get(url.as_str()).ok()?;
-        if response.status() == 200 {
-            Some(response.json::<json::MeweApiContactUser>().unwrap())
-        } else {
-            None
-        }
+        let response = self.get(url.as_str())?;
+        Ok(response.json::<json::MeweApiContactUser>().unwrap())
     }
 
-
-    pub fn fetch_contact_page(&self, url: &str, limit: usize, offset: Option<usize>) -> Option<json::MeweApiContactList> {
+    pub fn fetch_contact_page(&self, url: &str, limit: usize, offset: Option<usize>) -> crate::Result<json::MeweApiContactList> {
         let mut url = Url::parse(url).unwrap();
         url.query_pairs_mut().append_pair("maxResults", limit.to_string().as_str());
         if let Some(offset) = offset {
             url.query_pairs_mut().append_pair("offset", offset.to_string().as_str());
         }
-        let response = self.get(url.as_str()).ok()?;
+        let response = self.get(url.as_str())?;
 
-        if response.status() == 200 {
-            Some(response.json::<json::MeweApiContactList>().unwrap())
-        } else {
-            None
-        }
+        Ok(response.json::<json::MeweApiContactList>().unwrap())
     }
-    pub fn fetch_contacts(&self, url: &str, limit: Option<usize>, pages: Option<usize>) -> Option<Vec<json::MeweApiContactUser>> {
+
+    pub fn fetch_contacts(&self, url: &str, limit: Option<usize>, pages: Option<usize>)
+        -> crate::Result<Vec<json::MeweApiContactUser>> {
         let pages = pages.unwrap_or(20);
         let limit = limit.unwrap_or(21);
         let mut res: Vec<json::MeweApiContactUser> = Vec::with_capacity(limit * pages);
         for i in 0..pages {
             let offset = if i == 0 { None } else { Some(i * limit) };
-            let json = self.fetch_contact_page(url, limit, offset);
-            if let Some(json) = json {
-                if json.contacts.is_empty() {
-                    break;
-                }
-                res.extend(json.contacts.iter().map(|c| c.user.clone()));
-            } else {
-                return None;
+            let json = self.fetch_contact_page(url, limit, offset)?;
+            if json.contacts.is_empty() {
+                break;
             }
+            res.extend(json.contacts.iter().map(|c| c.user.clone()));
         }
         res.shrink_to_fit();
-        Some(res)
+        Ok(res)
     }
 
-    pub fn get_contacts(&self, favorites: bool) -> Option<Vec<json::MeweApiContactUser>> {
+    pub fn get_contacts(&self, favorites: bool) -> crate::Result<Vec<json::MeweApiContactUser>> {
         let url = if favorites {
             API_MEWE_CONTACTS_FAVORITES
         } else {
@@ -314,5 +290,11 @@ mod test {
         let mewe = MeweApi::new(COOKIE_PATH).unwrap();
         let contacts = mewe.get_contacts(true).unwrap();
         dbg!(&contacts);
+    }
+
+    #[test]
+    fn test_error() {
+        let Err(err) = MeweApi::new("/foo/bar") else { unreachable!()};
+        dbg!(&err);
     }
 }

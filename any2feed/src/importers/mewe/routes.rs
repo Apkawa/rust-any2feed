@@ -79,7 +79,7 @@ pub fn route_feed(importer: & MeweImporter) -> Route {
                      "Mewe me feed".to_string())
                 }
                 [Some("user"), Some(invite_id)] => {
-                    if let Some(info) = mewe_api.fetch_contact_info(invite_id) {
+                    if let Ok(info) = mewe_api.fetch_contact_info(invite_id) {
                         user_id = Some(info.id); // Апи получения информации по id пользователя не нашел
                         (format!("https://mewe.com/i/{invite_id}"),
                          info.name
@@ -89,7 +89,7 @@ pub fn route_feed(importer: & MeweImporter) -> Route {
                     }
                 }
                 [Some("group"), Some(id)] => {
-                    if let Some(info) = mewe_api.fetch_group_info(id) {
+                    if let Ok(info) = mewe_api.fetch_group_info(id) {
                         (format!("https://mewe.com/group/{id}"),
                          info.name
                         )

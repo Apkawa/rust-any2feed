@@ -14,9 +14,7 @@ use std::collections::HashMap;
 /// ]
 /// )));
 /// let c = parse_match_captures(&re, "/foo/bar/123/");
-/// assert_eq!(c,
-///     Some()
-/// );
+/// // assert_eq!(c,Some(()));
 /// assert_eq!(c.unwrap().get("1").unwrap(), &Some("bar".to_string()));
 /// assert_eq!(parse_match_captures(&re, "/foo/baz/565"), None);
 /// ```
