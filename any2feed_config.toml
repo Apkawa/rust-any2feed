@@ -1,0 +1,4 @@
+port = 12345
+
+[mewe]
+cookies_path = "/home/apkawa/Downloads/mewe.com_cookies.txt"

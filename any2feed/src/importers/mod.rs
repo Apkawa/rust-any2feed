@@ -1,4 +1,4 @@
 
-mod traits;
+pub mod traits;
 pub mod mewe;
 
