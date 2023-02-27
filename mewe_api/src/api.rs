@@ -153,7 +153,7 @@ impl MeweApi {
             }
             let mut json = self.fetch_feed(next_page.as_str(), limit)?;
             if let Some(MeweApiFeedListNextPageLink { next_page: Some(page) }) = &json.links {
-                next_page = page.href.clone();
+                next_page = ["https://mewe.com/", page.href.as_str()].join("");
             }
             // Перераскидываем поля
             json.fill_user_and_group();
@@ -272,6 +272,16 @@ mod test {
     fn test_get_feeds() {
         let mewe = MeweApi::new(COOKIE_PATH).unwrap();
         let feeds = mewe.get_my_feeds(None, None).unwrap();
+        assert_eq!(feeds.len(), 1);
+        dbg!(&feeds);
+    }
+
+    #[test]
+    fn test_get_feeds_with_limit_and_pages() {
+        let mewe = MeweApi::new(COOKIE_PATH).unwrap();
+        let feeds = mewe.get_my_feeds(Some(5), Some(2)).unwrap();
+        assert_eq!(feeds.len(), 2);
+        assert_eq!(feeds[0].feed.len(), 5);
         dbg!(&feeds);
     }
 
