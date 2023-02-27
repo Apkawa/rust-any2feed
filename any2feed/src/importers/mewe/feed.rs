@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use chrono::{NaiveDateTime, DateTime, Utc, Local, TimeZone};
+use chrono::{Utc, Local, TimeZone};
 use regex::Regex;
 use reqwest::Url;
 
@@ -36,12 +36,12 @@ pub fn mewe_post_to_entry(post: &MeweApiPost,
     if let Some(group) = group {
         let name = group.name.clone();
         categories.push(Category {
-            term: format!("{name}"),
+            term: name,
             // label: Some(Attribute(name)),
             ..Category::default()
         })
     }
-    if categories.len() > 0 {
+    if !categories.is_empty() {
         entry.categories = Some(Element(categories));
     }
     if let Some(content) = post.render() {
@@ -76,12 +76,9 @@ pub fn mewe_feed_to_feed(feed_list: &Vec<MeweApiFeedList>) -> Option<Feed> {
             }
         }
         for post in list.feed.iter() {
-            let author = authors.get(&post.user_id)
-                .map(|a| *a);
+            let author = authors.get(&post.user_id).copied();
             let group = post.group_id.as_ref()
-                .map(|id| groups.get(&id))
-                .flatten()
-                .map(|o| *o);
+                .and_then(|id| groups.get(&id)).copied();
             let entry = mewe_post_to_entry(
                 post,
                 author,

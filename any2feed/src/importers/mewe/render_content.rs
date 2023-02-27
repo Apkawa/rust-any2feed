@@ -1,7 +1,7 @@
-use std::collections::HashMap;
-use mewe_api::json::{MeweApiLink, MeweApiMedia, MeweApiMediaFile, MeweApiMediaPhoto, MeweApiMediaVideo, MeweApiPoll, MeweApiPost};
+
+use mewe_api::json::{MeweApiLink, MeweApiMedia, MeweApiMediaFile, MeweApiPoll, MeweApiPost};
 use mewe_api::markdown::md_to_html;
-use mewe_api::utils::format_url;
+
 
 
 pub struct RenderContext {}

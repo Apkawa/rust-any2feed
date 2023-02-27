@@ -1,6 +1,6 @@
 use std::sync::Arc;
 use serde::Deserialize;
-use toml::toml;
+
 
 use http_server::Route;
 
@@ -41,9 +41,9 @@ impl Importer for MeweImporter {
 
     fn routes(&self) -> Vec<Route> {
         vec![
-            route_opml(&self),
-            route_feed(&self),
-            route_media_proxy(&self),
+            route_opml(self),
+            route_feed(self),
+            route_media_proxy(self),
         ]
     }
 }

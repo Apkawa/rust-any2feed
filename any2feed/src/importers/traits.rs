@@ -1,4 +1,4 @@
-use feed::Feed;
+
 use http_server::Route;
 
 pub trait Importer {

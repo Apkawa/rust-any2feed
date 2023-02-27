@@ -66,7 +66,7 @@ pub fn route_feed(importer: & MeweImporter) -> Route {
             let pages = r.query_params.get("pages").and_then(|l| l.parse().ok());
 
             let pairs = path_params_to_vec(
-                &r.path_params.as_ref().unwrap()
+                r.path_params.as_ref().unwrap()
             );
             let pairs: Vec<Option<&str>> = pairs.iter()
                 .map(|o|

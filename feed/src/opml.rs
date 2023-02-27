@@ -134,7 +134,7 @@ impl Display for Outline {
 
         let outlines = outlines.as_ref().unwrap_or(&vec![])
             .iter().map(|c| c.to_string()).collect::<String>();
-        let (start, end) = if outlines.len() > 0 {
+        let (start, end) = if !outlines.is_empty() {
             (">\n", "\n</outline>")
         } else {
             ("", " />")
@@ -159,7 +159,7 @@ mod test {
         opml.outlines.push(outline);
 
         dbg!(&opml);
-        println!("{}", opml.to_string());
+        println!("{}", opml);
     }
 
     #[test]
@@ -172,6 +172,6 @@ mod test {
                 .add_child("diez", Some("https://du.hast.much"))
             );
         dbg!(&opml);
-        println!("{}", opml.to_string());
+        println!("{}", opml);
     }
 }

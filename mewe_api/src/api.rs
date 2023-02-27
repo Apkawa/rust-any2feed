@@ -229,7 +229,7 @@ impl MeweApi {
             let offset = if i == 0 { None } else { Some(i * limit) };
             let json = self.fetch_contact_page(url, limit, offset);
             if let Some(json) = json {
-                if json.contacts.len() == 0 {
+                if json.contacts.is_empty() {
                     break;
                 }
                 res.extend(json.contacts.iter().map(|c| c.user.clone()));
