@@ -39,7 +39,8 @@ fn main() {
     routes.extend(mewe_importers.routes());
 
     let run_args = ServerConfig {
-        port: config.port,
+        port: config.server.port,
+        threads: config.server.threads,
         routes,
         ..ServerConfig::default()
     };

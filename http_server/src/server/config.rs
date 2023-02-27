@@ -23,23 +23,6 @@ impl Debug for Route {
     }
 }
 
-///
-/// ```
-/// use http_server::config::match_path;
-/// assert!(match_path("/foo/", "/foo/"));
-/// assert!(!match_path("/foo/", "/foo/bar"));
-/// assert!(match_path("/foo/*", "/foo/bar"));
-/// ```
-#[deprecated]
-pub fn match_path(pattern: &str, path: &str) -> bool {
-    if pattern.ends_with('*') {
-        // Примитивный матчинг через *
-        path.starts_with(pattern.trim_end_matches('*'))
-    } else {
-        path == pattern
-    }
-}
-
 
 impl Route {
     pub fn new(pattern: &str,
@@ -66,6 +49,7 @@ impl Route {
 #[derive(Default, Debug)]
 pub struct ServerConfig {
     pub port: Option<u16>,
+    pub threads: Option<u8>,
     pub routes: Vec<Route>,
 }
 

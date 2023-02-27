@@ -1,25 +1,14 @@
 use std::sync::Arc;
-use serde::Deserialize;
-
 
 use http_server::Route;
 
 use mewe_api::MeweApi;
+use crate::importers::mewe::config::Config;
 use crate::importers::mewe::routes::{route_feed, route_media_proxy, route_opml};
 use crate::importers::traits::Importer;
 
 pub struct MeweImporter {
     api: Arc<MeweApi>,
-}
-
-#[derive(Debug, Deserialize)]
-struct Config {
-    mewe: MeweConfig
-}
-
-#[derive(Debug, Deserialize)]
-struct MeweConfig {
-    cookies_path: String,
 }
 
 impl MeweImporter {

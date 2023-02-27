@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use chrono::{Utc, Local, TimeZone};
 use regex::Regex;
 use mewe_api::Url;
@@ -12,6 +10,7 @@ use crate::importers::mewe::render_content::RenderContent;
 pub fn mewe_post_to_entry(post: &MeweApiPost) -> Option<Entry> {
     let author = post.user.as_ref();
     let group = post.group.as_ref();
+
     let post_url = post.url();
     let post_id = post_url.as_ref()
         .map_or(post.id.to_string(), |u| format!("{}/{}", u, post.id));
@@ -33,6 +32,7 @@ pub fn mewe_post_to_entry(post: &MeweApiPost) -> Option<Entry> {
             });
         categories.extend(it);
     }
+
     if let Some(group) = group {
         let name = group.name.clone();
         categories.push(Category {

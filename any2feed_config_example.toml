@@ -1,0 +1,10 @@
+[server]
+port = 12345
+threads = 4
+
+[mewe]
+# Recomend use https://chrome.google.com/webstore/detail/get-cookiestxt/bgaddhkoddajcdgocldbbfleckgcbcid
+# extension and export cookies from incognito mode
+cookies_path = "/path/to/mewe.com_cookies.txt"
+limit = 10
+pages = 1

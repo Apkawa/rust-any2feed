@@ -59,7 +59,7 @@ pub fn run(config: ServerConfig) -> std::io::Result<()> {
     println!("Run server: {}", addr);
     let listener = TcpListener::bind(addr)?;
 
-    let pool = ThreadPool::new(4);
+    let pool = ThreadPool::new(config.threads.unwrap_or(4) as usize);
     let config = Arc::new(config);
     // accept connections and process them serially
     for stream in listener.incoming() {

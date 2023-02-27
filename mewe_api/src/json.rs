@@ -54,6 +54,13 @@ pub struct MeweApiFeedList {
 }
 
 impl MeweApiFeedList {
+    pub fn next_page(&self) -> Option<String> {
+        if let Some(MeweApiFeedListNextPageLink { next_page: Some(page) }) = &self.links {
+            Some(["https://mewe.com/", page.href.as_str()].join(""))
+        } else {
+            None
+        }
+    }
     pub fn fill_user_and_group(&mut self) {
         let mut users: HashMap<&String, &MeweApiUserInfo> = self.users.iter().map(|u| (&u.id, u)).collect();
         let mut groups: HashMap<&String, &MeweApiGroup> = HashMap::with_capacity(20);
