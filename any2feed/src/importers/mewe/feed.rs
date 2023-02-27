@@ -13,10 +13,12 @@ pub fn mewe_post_to_entry(post: &MeweApiPost,
                           author: Option<&MeweApiUserInfo>,
                           group: Option<&MeweApiGroup>) -> Option<Entry> {
     let post_url = post.get_post_url(author);
-    let post_id = post_url.as_ref().map_or(post.id.to_string(), |u| format!("{}/{}", u, post.id));
+    let post_id = post_url.as_ref()
+        .map_or(post.id.to_string(), |u| format!("{}/{}", u, post.id));
+    let title = if post.text.is_empty() { "no title" } else { post.text.as_str() };
     let mut entry = Entry::new(
         post_id,
-        post.text.to_string(),
+        title.to_string(),
         // TODO dt
         post.updated_at.to_rfc3339(),
     );
@@ -25,7 +27,7 @@ pub fn mewe_post_to_entry(post: &MeweApiPost,
     if let Some(hash_tags) = &post.hash_tags {
         let it = hash_tags.iter()
             .map(|t| Category {
-                term: format!("hashtag/{t}"),
+                term: format!("hashtag-{t}"),
                 label: Some(Attribute(t.to_string())),
                 ..Category::default()
             });
@@ -34,8 +36,8 @@ pub fn mewe_post_to_entry(post: &MeweApiPost,
     if let Some(group) = group {
         let name = group.name.clone();
         categories.push(Category {
-            term: format!("group/{name}"),
-            label: Some(Attribute(name)),
+            term: format!("{name}"),
+            // label: Some(Attribute(name)),
             ..Category::default()
         })
     }
