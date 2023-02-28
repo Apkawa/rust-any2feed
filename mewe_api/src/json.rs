@@ -62,6 +62,7 @@ impl MeweApiFeedList {
         }
     }
     pub fn fill_user_and_group(&mut self) {
+        // todo into serde
         let mut users: HashMap<&String, &MeweApiUserInfo> = self.users.iter().map(|u| (&u.id, u)).collect();
         let mut groups: HashMap<&String, &MeweApiGroup> = HashMap::with_capacity(20);
         for user in self.users.iter() {
