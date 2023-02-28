@@ -9,6 +9,7 @@ use http_server::utils::path_params_to_vec;
 use crate::importers::mewe::feed::{mewe_feed_to_feed, replace_mewe_media_urls};
 use crate::importers::mewe::importer::MeweImporter;
 use mewe_api::json::{MeweApiFeedList, MeweApiFeedListNextPageLink, MeweApiHref};
+use mewe_api::Url;
 use mewe_api::utils::update_query;
 
 pub fn route_opml(importer: & MeweImporter) -> Route {
@@ -121,9 +122,6 @@ pub fn route_feed(importer: & MeweImporter) -> Route {
             };
 
             let mut feeds = mewe_feed_to_feed(&mewe_feeds).unwrap();
-            feeds.link.push(
-                Link::with_rel(rel_url, LinkRel::Alternate)
-            );
 
             feeds.title = CDATAElement(title);
 
@@ -142,7 +140,25 @@ pub fn route_feed(importer: & MeweImporter) -> Route {
                     feeds.link.push(Link::with_rel(req_url.to_string(), LinkRel::Next))
                 }
             }
+
+            let feed_type = {
+                let u = Url::parse(rel_url.as_str()).unwrap();
+                u.path().to_string()
+            };
+
+            feeds.link.push(
+                Link::with_rel(rel_url, LinkRel::Alternate)
+            );
             feeds.link.push(Link::with_rel(r.url().to_string(), LinkRel::_Self));
+
+
+            for entry in feeds.entries.iter_mut() {
+                let mut u = r.url();
+                u.query_pairs_mut().clear();
+                // Делаем id уникальными в разрезе каждого фида,
+                // чтобы иметь возможность иметь дубликаты в разных фидах.
+                entry.id = format!("{}/{}", feed_type, entry.id);
+            }
 
             let res = feeds.to_string();
             let new_url = format!("http://{}/mewe/media", r.config.as_ref().unwrap().addr());

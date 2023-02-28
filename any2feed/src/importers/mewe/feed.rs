@@ -13,8 +13,7 @@ pub fn mewe_post_to_entry(post: &MeweApiPost) -> Option<Entry> {
     let group = post.group.as_ref();
 
     let post_url = post.url();
-    let post_id = post_url.as_ref()
-        .map_or(post.id.to_string(), |u| format!("{}/{}", u, post.id));
+    let post_id = post.id.clone();
     let title = if post.text.is_empty() { "no title".to_string() } else { replace_user_mention_to_name(post.text.as_str()) };
 
     let mut entry = Entry::new(
