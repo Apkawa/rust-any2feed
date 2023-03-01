@@ -1,6 +1,7 @@
 // https://validator.w3.org/feed/docs/atom.html
 
 use std::fmt::{Display, Formatter};
+use chrono::Local;
 use unicode_segmentation::UnicodeSegmentation;
 
 
@@ -81,8 +82,16 @@ impl Entry {
             } else {
                 title
             }
-
         };
+        let id = {
+            let mut id = id;
+            if cfg!(debug_assertions) { // Отладочный режим, делаем id неуникальными
+                id.push_str("/");
+                id.push_str(&Local::now().to_rfc3339());
+            }
+            id
+        };
+
         Entry {
             id,
             title: CDATAElement(title),
@@ -125,6 +134,7 @@ impl Person {
         }
     }
 }
+
 #[derive(Debug)]
 pub enum LinkRel {
     Alternate,

@@ -5,11 +5,9 @@ use crate::importers::traits::RenderContent;
 
 pub fn channel_post_to_entry(post: &ChannelPost) -> Entry {
     let title = post.text.lines().map(|l| l.trim()).collect::<Vec<_>>().join(" ");
-    let mut id = post.id.clone();
-    // Для отладки
-    id.push_str(&Local::now().to_rfc3339());
+
     let mut entry = Entry::new(
-        id,
+        post.id.clone(),
         title,
         post.datetime.clone(),
     );
