@@ -16,9 +16,8 @@ pub fn channel_post_to_entry(post: &ChannelPost) -> Entry {
 
     entry.content = Some(Content::Html(post.render().unwrap()));
 
-    if let Some(from_author) = post.from_author.as_ref() {
-        entry.author = Element(Person::new(from_author.clone(), None, None))
-    }
+    // TODO автора поста в канале лучше отображать где нибудь незаметно в тексте
+    // entry.author = Element(Person::new(from_author.clone(), None, None))
 
     return entry;
 }
@@ -35,6 +34,15 @@ pub fn channel_to_feed(channel: &Channel) -> Feed {
         ..Feed::default()
     };
     feed.link.push(Link::new(channel.preview_url()));
-    feed.entries = channel.posts.iter().map(channel_post_to_entry).collect();
+    feed.entries = channel.posts.iter().map(|p| {
+        let mut e = channel_post_to_entry(p);
+        e.author = Element(
+            Person::new(
+                channel.title.clone(),
+                Some(channel.preview_url()),
+                None)
+        );
+        e
+    }).collect();
     return feed;
 }

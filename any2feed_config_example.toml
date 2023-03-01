@@ -8,3 +8,25 @@ threads = 4
 cookies_path = "/path/to/mewe.com_cookies.txt"
 limit = 10
 pages = 1
+
+[telegram]
+# List of channels useful for opml export and override o
+channels = [
+    "oper_goblin",
+    "dvachannel",
+    # With config
+    { slug = "foo_channel", pages = 2 },
+    # Only slug
+    { slug = "foo_channel" }
+]
+# For initial sync channel all records
+pages = 1
+
+# Add and/or override per channel config
+[telegram.extra.channel_name]
+# Num page for specific channel
+pages = 5
+
+# Maybe empty
+[telegram.extra.channel_name_2]
+[telegram.extra.channel_name_3]
