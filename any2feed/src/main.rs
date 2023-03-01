@@ -6,6 +6,7 @@ use std::fs::read_to_string;
 
 use any2feed::config::MainConfig;
 use any2feed::importers::mewe::importer::MeweImporter;
+use any2feed::importers::telegram::TelegramImporter;
 use any2feed::importers::traits::Importer;
 
 
@@ -37,6 +38,9 @@ fn main() {
 
     let mewe_importers = MeweImporter::with_config(&config_str);
     routes.extend(mewe_importers.routes());
+
+    let telegram_importer = TelegramImporter::with_config(&config_str);
+    routes.extend(telegram_importer.routes());
 
     let run_args = ServerConfig {
         port: config.server.port,

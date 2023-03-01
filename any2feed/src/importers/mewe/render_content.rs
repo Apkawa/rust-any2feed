@@ -1,17 +1,7 @@
 
 use mewe_api::json::{MeweApiLink, MeweApiMedia, MeweApiMediaFile, MeweApiPoll, MeweApiPost};
 use mewe_api::markdown::md_to_html;
-
-
-
-pub struct RenderContext {}
-
-pub trait RenderContent {
-    fn as_dyn(&self) -> &dyn RenderContent where Self: Sized {
-        self
-    }
-    fn render(&self) -> Option<String>;
-}
+use crate::importers::traits::RenderContent;
 
 // TODO initialize
 // static RE_GIFYCAT: regex::Regex = regex::Regex::new(r#"(https://thumbs.gfycat.com/[^<\s]+)"#).unwrap();
@@ -123,7 +113,7 @@ impl RenderContent for MeweApiMedia {
                 Some(format!(r#"
             <video width="{width}" height="auto" controls=1
                 poster="{url}"\>
-            <source src="{video_url}" type="video/mp4" />
+                <source src="{video_url}" type="video/mp4" />
             </video>
                 "#))
             }

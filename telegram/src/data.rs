@@ -7,10 +7,21 @@ pub struct Channel {
     pub posts: Vec<ChannelPost>,
 }
 
+impl Channel {
+    pub fn preview_url(&self) -> String {
+        format!("https://t.me/s/{}", self.slug)
+    }
+    pub fn url(&self) -> String {
+        format!("https://t.me/{}", self.slug)
+    }
+}
+
 #[derive(Debug, Default)]
 pub struct ChannelPost {
+    /// channel_slug/id
     pub id: String,
     pub text: String,
+    pub html: String,
     pub datetime: String,
 
     pub media: Option<Vec<Media>>,
@@ -21,10 +32,20 @@ pub struct ChannelPost {
     pub from_author: Option<String>,
 }
 
+impl ChannelPost {
+    pub fn preview_url(&self) -> String {
+        format!("https://t.me/s/{}", self.id)
+    }
+    pub fn url(&self) -> String {
+        format!("https://t.me/{}", self.id)
+    }
+}
+
 #[derive(Debug)]
 pub enum Media {
     Photo(String),
     Video { url: String, thumb_url: String },
+    VideoGif { url: String, thumb_url: String },
     VideoTooBig { thumb_url: String },
 }
 
@@ -36,11 +57,11 @@ pub struct File {
 
 #[derive(Debug, Default)]
 pub struct LinkPreview {
+    pub url: String,
     pub title: String,
     pub description: String,
-    pub image_url: Option<String>,
     pub site_name: String,
-    pub url: String,
+    pub media: Option<Media>,
 }
 
 #[derive(Debug, Default)]
@@ -53,6 +74,7 @@ pub struct ForwardedFrom {
 pub struct Poll {
     pub question: String,
     pub r#type: String,
+    pub options: Vec<PollOption>
 }
 
 #[derive(Debug, Default)]

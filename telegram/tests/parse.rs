@@ -1,6 +1,5 @@
-
 use telegram::data::Media;
-use telegram::parse::{parse_link_preview, parse_media_video, parse_message};
+use telegram::parse::{parse_link_preview, parse_media_video, parse_message, parse_poll};
 use telegram::preview_api::TelegramChannelPreviewApi;
 use test_utils::fixture::load_fixture;
 
@@ -32,15 +31,36 @@ fn test_parse_link_preview() {
     assert!(!link.title.is_empty());
     assert!(!link.description.is_empty());
     assert!(!link.url.is_empty());
-    assert!(!link.site_name.is_empty());
-    assert!(link.image_url.is_some());
+    assert!(link.media.is_some());
+}
 
+#[test]
+fn test_parse_link_preview_video() {
+    let html = load_fixture("telegram_preview/link_preview_video.html");
+    let link = parse_link_preview(html.as_str());
+    dbg!(&link);
+    assert!(!link.title.is_empty());
+    assert!(!link.description.is_empty());
+    assert!(!link.url.is_empty());
+    assert!(!link.site_name.is_empty());
+    assert!(link.media.is_some());
 }
 
 #[test]
 fn test_parse_media_video() {
     let html = load_fixture("telegram_preview/media_video.html");
     if let Media::Video { url, thumb_url } = parse_media_video(html.as_str()) {
+        assert!(url.starts_with("https://cdn4.telegram-cdn.org/"));
+        assert!(thumb_url.starts_with("https://cdn4.telegram-cdn.org/"));
+    } else {
+        unreachable!();
+    }
+}
+
+#[test]
+fn test_parse_media_video_gif() {
+    let html = load_fixture("telegram_preview/media_video_gif.html");
+    if let Media::VideoGif { url, thumb_url } = parse_media_video(html.as_str()) {
         assert!(url.starts_with("https://cdn4.telegram-cdn.org/"));
         assert!(thumb_url.starts_with("https://cdn4.telegram-cdn.org/"));
     } else {
@@ -69,6 +89,21 @@ fn test_parse_circle_video() {
     }
 }
 
+#[test]
+fn test_parse_poll() {
+    let html = load_fixture("telegram_preview/poll.html");
+    let poll = parse_poll(html.as_str());
+    dbg!(&poll);
+}
+
+#[test]
+fn test_parse_message_poll() {
+    let html = load_fixture("telegram_preview/message_poll.html");
+    let post = parse_message(html.as_str()).unwrap();
+    dbg!(&post);
+    assert!(post.poll.is_some());
+}
+
 #[cfg(test)]
 mod parametrize {
     use rstest::rstest;
@@ -76,13 +111,14 @@ mod parametrize {
     use test_utils::fixture::load_fixture;
 
     #[rstest]
+    #[case("poll")]
     #[case("text")]
-    // TODO media file
-    // #[case("media_file")]
-    // TODO poll
-    // #[case("poll")]
-    #[case("media_link_preview")]
-    #[case("media_link_preview_text_only")]
+    #[case("media_file")]
+    // TODO sticker
+    // #[case("sticker")]
+    #[case("link_preview")]
+    #[case("link_preview_text_only")]
+    #[case("link_preview_video")]
     #[case("media_forwarded_from")]
     #[case("media_photo_and_video")]
     #[case("link_preview")]
@@ -91,7 +127,6 @@ mod parametrize {
         let result = parse_message(html.as_str()).unwrap();
         assert!(!result.id.is_empty());
         assert!(!result.datetime.is_empty());
-        assert!(!result.text.is_empty());
         dbg!(&result);
     }
 }

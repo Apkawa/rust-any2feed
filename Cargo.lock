@@ -32,6 +32,7 @@ dependencies = [
  "rstest",
  "serde",
  "serde_json",
+ "telegram",
  "test_utils",
  "toml",
 ]

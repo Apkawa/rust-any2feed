@@ -1,4 +1,5 @@
 use std::sync::Arc;
+use feed::opml::Outline;
 
 use http_server::Route;
 
@@ -34,5 +35,9 @@ impl Importer for MeweImporter {
             route_feed(self),
             route_media_proxy(self),
         ]
+    }
+
+    fn opml_outlines(&self) -> Vec<Outline> {
+        todo!()
     }
 }

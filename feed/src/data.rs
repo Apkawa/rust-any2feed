@@ -72,6 +72,7 @@ impl Entry {
     ) -> Entry {
         // TODO correct truncate unicode
         let title = {
+            let title = if title.is_empty() { "no title".to_string() } else { title };
             if title.len() > 60 {
                 UnicodeSegmentation::graphemes(title.as_str(), true)
                     .take(55)

@@ -74,7 +74,7 @@ mod test {
 
     #[test]
     fn test_preview_api() {
-        let api = TelegramChannelPreviewApi::new("dvachannel");
+        let api = TelegramChannelPreviewApi::new("fighter_bomber");
         let channel = api.fetch().unwrap();
         dbg!(&channel);
     }

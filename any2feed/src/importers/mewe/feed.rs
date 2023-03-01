@@ -6,7 +6,7 @@ use feed::{Attribute, Category, CDATAElement, Content, Element, Entry, Feed, Lin
 
 use mewe_api::json::{MeweApiFeedList, MeweApiPost};
 use mewe_api::utils::replace_user_mention_to_name;
-use crate::importers::mewe::render_content::RenderContent;
+use crate::importers::traits::RenderContent;
 
 pub fn mewe_post_to_entry(post: &MeweApiPost) -> Option<Entry> {
     let author = post.user.as_ref();
@@ -14,7 +14,7 @@ pub fn mewe_post_to_entry(post: &MeweApiPost) -> Option<Entry> {
 
     let post_url = post.url();
     let post_id = post.id.clone();
-    let title = if post.text.is_empty() { "no title".to_string() } else { replace_user_mention_to_name(post.text.as_str()) };
+    let title = replace_user_mention_to_name(post.text.as_str());
 
     let mut entry = Entry::new(
         post_id,
