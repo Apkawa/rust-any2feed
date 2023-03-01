@@ -121,6 +121,7 @@ mod parametrize {
     #[case("link_preview_video")]
     #[case("media_forwarded_from")]
     #[case("media_photo_and_video")]
+    #[case("media_round_video")]
     #[case("link_preview")]
     fn test_message(#[case] name: &str) {
         let html = load_fixture(format!("telegram_preview/message_{name}.html").as_str());

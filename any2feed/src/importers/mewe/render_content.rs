@@ -21,6 +21,7 @@ pub fn render_gifycat_gifs(text: &str) -> String {
 
 impl RenderContent for MeweApiPost {
     fn render(&self) -> Option<String> {
+        // TODO переработать эту замороченность
         let mut content = md_to_html(&self.text);
         content = render_gifycat_gifs(content.as_str());
 

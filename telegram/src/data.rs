@@ -44,6 +44,7 @@ impl ChannelPost {
 #[derive(Debug)]
 pub enum Media {
     Photo(String),
+    Voice(String),
     Video { url: String, thumb_url: String },
     VideoGif { url: String, thumb_url: String },
     VideoTooBig { thumb_url: String },
@@ -74,7 +75,7 @@ pub struct ForwardedFrom {
 pub struct Poll {
     pub question: String,
     pub r#type: String,
-    pub options: Vec<PollOption>
+    pub options: Vec<PollOption>,
 }
 
 #[derive(Debug, Default)]

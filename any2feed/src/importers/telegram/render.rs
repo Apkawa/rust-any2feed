@@ -26,13 +26,19 @@ impl RenderContent for ChannelPost {
 
 impl RenderContent for Media {
     fn render(&self) -> Option<String> {
-        match self {
+        match &self {
             Media::Photo(url) => Some(format!(r#"<img src="{url}" />"#)),
+            Media::Voice(url) => Some(format!(r#"<audio controls src="{url}"></audio>"#)),
             Media::Video { url, thumb_url } | Media::VideoGif { url, thumb_url } => {
+                let attrs = if let Media::VideoGif { .. } = &self {
+                    "autoplay muted loop playsinline".to_string()
+                } else {
+                    "controls".to_string()
+                };
                 Some(format!(r#"
-                <video poster="{thumb_url}" controls>
+                <video style="max-width: 800px; height: auto" poster="{thumb_url}" {attrs}>
                    <source src="{url}" type="video/mp4">
-                   <object data="{url}" width="470" height="255">
+                   <object data="{url}" >
                 </video>
                 "#))
             }

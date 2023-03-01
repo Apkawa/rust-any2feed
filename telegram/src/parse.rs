@@ -61,9 +61,9 @@ pub fn parse_media_video(html: &str) -> Media {
     for el_ref in parser.select(&selector) {
         let el = el_ref.value();
         match get_class_name_by_prefix(el, cls_prefix) {
-            Some("video" | "roundvideo") => {
+            Some(t @ ("video" | "roundvideo")) => {
                 video_url = Some(el.attr("src").unwrap().to_string());
-                is_gif = el.attr("autoplay").is_some() && el.attr("loop").is_some();
+                is_gif = t == "video" && el.attr("autoplay").is_some() && el.attr("loop").is_some();
             }
             Some("video_thumb" | "roundvideo_thumb") => thumb_url = Some(get_background_url_from_style(el.attr("style").unwrap()).unwrap().to_string()),
             _ => unreachable!(),
@@ -176,12 +176,14 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
         format!(
             "{p}text, \
              {p}video_player, \
+             {p}roundvideo_player, \
              .js-widget_message, \
              .tgme_widget_message_photo_wrap, \
              .tgme_widget_message_link_preview, \
              .tgme_widget_message_forwarded_from_name, \
-             .tgme_widget_message_document,
-             .tgme_widget_message_poll,
+             .tgme_widget_message_document, \
+             .tgme_widget_message_poll, \
+             .tgme_widget_message_voice, \
              time.time \
              ", p = class_prefix).as_str()
     ).unwrap();
@@ -214,6 +216,12 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
                     filename: el_ref.select(&document_title_sel).next().unwrap().inner_html(),
                     size: el_ref.select(&document_extra_sel).next().unwrap().inner_html(),
                 })
+            }
+            Some("voice") => {
+                if let Some(src) = el.attr("src"){
+                    post.media.get_or_insert_with(|| Vec::new())
+                        .push(Media::Voice(src.to_string()))
+                }
             }
             _ => {}
         }
