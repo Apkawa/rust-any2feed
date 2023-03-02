@@ -6,17 +6,50 @@ repos:
       - id: commitizen-branch
         stages: [ push ]
 
-  - repo: https://github.com/doublify/pre-commit-rust
-    rev: master
-    hooks:
-      - id: fmt
-      - id: cargo-check
-#      - id: cargo-clippy
-
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
     hooks:
+      - id: check-merge-conflict
+      - id: check-symlinks
       - id: check-yaml
-      - id: check-ast
+      - id: check-json
       - id: end-of-file-fixer
       - id: trailing-whitespace
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.31.1
+    hooks:
+      - id: markdownlint
+
+  - repo: local
+    hooks:
+      - id: cargo_fmt
+        name: cargo fmt
+        language: system
+        types: [ file, rust ]
+        entry: ./_scripts/cargo.sh fmt
+        pass_filenames: false
+        always_run: true
+
+      - id: cargo_clippy_check
+        name: cargo clippy
+        language: system
+        types: [ file, rust ]
+        entry: ./_scripts/cargo.sh  clippy --all-targets --all # -- -D warnings # Use -D warnings option to ensure the job fails when encountering warnings
+        pass_filenames: false
+        always_run: true
+
+      - id: cargo_check
+        name: cargo check
+        language: system
+        types: [ file, rust ]
+        entry: ./_scripts/cargo.sh  check
+        pass_filenames: false
+        always_run: true
+
+      - id: test
+        name: test
+        language: system
+        types: [ file, rust ]
+        entry: ./_scripts/cargo.sh test --lib
+        pass_filenames: false

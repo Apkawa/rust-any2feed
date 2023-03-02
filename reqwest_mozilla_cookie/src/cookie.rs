@@ -114,12 +114,9 @@ mod test {
 
     /// Reordering cookie str for reproduce test
     fn reorder_cookies(cookies_str: &str) -> String {
-        let mut v: Vec<_> = cookies_str.split(';')
-            .map(|s| s.trim())
-            .collect();
+        let mut v: Vec<_> = cookies_str.split(';').map(|s| s.trim()).collect();
         v.sort();
         v.join("; ")
-
     }
 
     #[test]
@@ -137,7 +134,10 @@ mod test {
         let url = Url::parse("https://.kremlin.ru").unwrap();
         let cookies = jar.cookies(&url).unwrap();
         // TODO reproduce order
-        assert_eq!(reorder_cookies(cookies.to_str().unwrap()), "bar=baz; sid=foo");
+        assert_eq!(
+            reorder_cookies(cookies.to_str().unwrap()),
+            "bar=baz; sid=foo"
+        );
     }
 
     #[test]
@@ -160,6 +160,9 @@ mod test {
         // assert_eq!(new_str, "sid=foo; bar=baz");
         let jar = import_cookie_from_string(&new_str).unwrap();
         let cookies = jar.cookies(&url).unwrap();
-        assert_eq!(reorder_cookies(cookies.to_str().unwrap()), "bar=baz; lalala=1; sid=foo2");
+        assert_eq!(
+            reorder_cookies(cookies.to_str().unwrap()),
+            "bar=baz; lalala=1; sid=foo2"
+        );
     }
 }

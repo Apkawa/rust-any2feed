@@ -226,10 +226,7 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
         }
         match get_class_name_by_prefix(el, "tgme_widget_message_") {
             Some("photo_wrap") => {
-                if let Some(photo) = el
-                    .attr("style")
-                    .and_then(get_background_url_from_style)
-                {
+                if let Some(photo) = el.attr("style").and_then(get_background_url_from_style) {
                     post.media
                         .get_or_insert_with(Vec::new)
                         .push(Media::Photo(photo.to_string()))
@@ -268,7 +265,8 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
         match get_class_name_by_prefix(el, "js-") {
             Some("widget_message") => post.id = el.attr("data-post").unwrap().to_string(),
             Some("message_text") => {
-                post.text = el_ref.text().into_iter().collect();
+                let t = el_ref.text().into_iter().collect::<Vec<_>>();
+                post.text = t.join(" ");
                 post.html = el_ref.inner_html();
             }
             Some("message_video_player" | "message_roundvideo_player") => {

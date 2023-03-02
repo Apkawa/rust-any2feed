@@ -36,7 +36,6 @@ impl TelegramChannelPreviewApi {
     }
 
     pub fn get(&self, url: &str) -> reqwest::Result<Response> {
-
         self.session.get(url).send()
     }
 

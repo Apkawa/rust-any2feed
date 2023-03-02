@@ -21,7 +21,9 @@ fn test_parse_html() {
 fn test_parse_text() {
     let html = load_fixture("telegram_preview/message_text.html");
     let result = parse_message(html.as_str()).unwrap();
-    assert!(&result.text.starts_with("<b>Неопознанный летающий объект"));
+    dbg!(&result);
+    assert!(&result.html.starts_with("<b>Неопознанный летающий объект"));
+    assert!(&result.text.starts_with("Неопознанный летающий объект"));
 }
 
 #[test]

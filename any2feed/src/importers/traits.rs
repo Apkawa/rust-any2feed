@@ -28,10 +28,6 @@ impl<T: RenderContent> RenderContent for Option<T> {
 
 impl<T: RenderContent> RenderContent for Vec<T> {
     fn render(&self) -> Option<String> {
-        Some(
-            self.iter()
-                .filter_map(|s| s.render())
-                .collect::<String>(),
-        )
+        Some(self.iter().filter_map(|s| s.render()).collect::<String>())
     }
 }
