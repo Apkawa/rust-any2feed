@@ -36,7 +36,7 @@ impl TelegramChannelPreviewApi {
     }
 
     pub fn get(&self, url: &str) -> reqwest::Result<Response> {
-        
+
         self.session.get(url).send()
     }
 
@@ -63,7 +63,8 @@ impl TelegramChannelPreviewApi {
         channel
     }
 
-    pub fn fetch(&self) -> reqwest::Result<Channel> {
+    pub fn fetch(&self, _pages: Option<usize>) -> reqwest::Result<Channel> {
+        // TODO handle pages
         let html = self.get(self.preview_url().as_str())?.text()?;
         Ok(self.parse_html_page(html.as_str()))
     }
@@ -76,7 +77,7 @@ mod test {
     #[test]
     fn test_preview_api() {
         let api = TelegramChannelPreviewApi::new("fighter_bomber");
-        let channel = api.fetch().unwrap();
+        let channel = api.fetch(None).unwrap();
         dbg!(&channel);
     }
 }

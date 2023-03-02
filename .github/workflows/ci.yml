@@ -54,14 +54,14 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
 
-      - name: Install prerequisites ${{ matrix.job.target }}
+      - name: Install prerequisites for ubuntu
         shell: bash
         if: startsWith(matrix.job.os, 'ubuntu')
         run: |
-           sudo apt-get -y update 
+           sudo apt-get -y update
            sudo apt-get -y install libssl-dev pkg-config
 
-      - name: Install prerequisites ${{ matrix.job.target }}
+      - name: Install prerequisites for macos
         shell: bash
         if: startsWith(matrix.job.os, 'macos')
         run: |
@@ -101,7 +101,7 @@ jobs:
           case ${{ matrix.job.target }} in
             *-pc-windows-*) EXE_suffix=".exe" ;;
           esac;
-          
+
           # Figure out what strip tool to use if any
           STRIP="strip"
           case ${{ matrix.job.target }} in
@@ -109,13 +109,13 @@ jobs:
             aarch64-unknown-linux-gnu) STRIP="aarch64-linux-gnu-strip" ;;
             *-pc-windows-msvc) STRIP="" ;;
           esac;
-          
+
           # Setup paths
           BIN_DIR="${{ env.CICD_INTERMEDIATES_DIR }}/stripped-release-bin/"
           mkdir -p "${BIN_DIR}"
           BIN_NAME="${{ env.PROJECT_NAME }}${EXE_suffix}"
           BIN_PATH="${BIN_DIR}/${BIN_NAME}"
-          
+
           # Copy the release build binary to the result location
           cp "target/${{ matrix.job.target }}/release/${BIN_NAME}" "${BIN_DIR}"
           # Also strip if possible

@@ -7,8 +7,10 @@ use http_server::{HTTPResponse, Route};
 use std::sync::Arc;
 use telegram::preview_api::TelegramChannelPreviewApi;
 
-pub fn route_feed(_importer: &TelegramImporter) -> Route {
+pub fn route_feed(importer: &TelegramImporter) -> Route {
+    let config = Arc::clone(&importer.config);
     Route::new("/telegram/feed/(.+)/", move |r| {
+        // TODO надо что то сделать с этой цепочкой, не очень красиво
         let channel_slug = r
             .path_params
             .as_ref()
@@ -18,7 +20,7 @@ pub fn route_feed(_importer: &TelegramImporter) -> Route {
             .as_ref()
             .unwrap();
         let api = TelegramChannelPreviewApi::new(channel_slug.as_str());
-        let channel = api.fetch();
+        let channel = api.fetch(config.pages);
         if let Ok(channel) = channel {
             let feed = channel_to_feed(&channel);
             let content = feed.to_string();
