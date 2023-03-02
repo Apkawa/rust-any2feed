@@ -18,9 +18,10 @@ For mvp  (minimal viable product)
 
 * Sources:
     - [x] mewe 
-    - [ ] telegram channels 
-      - [ ] by preview channel like https://t.me/s/bestogirl
-      - [ ] by telegram client api
+    - [x] telegram channels 
+      - [x] by preview channel like https://t.me/s/bestogirl
+      <!-- - [ ] by telegram client api -->
+    - [ ] danbooru/gelbooru
     - [ ] pixiv
     - [ ] twitter
     - [ ] tumblr
@@ -28,8 +29,17 @@ For mvp  (minimal viable product)
     - [ ] dtf
     - [ ] vk
     - [ ] 2ch
+* [ ] CLI
+* [ ] Configure via env
+* [ ] Pluggable interface
 * [ ] Cache storage
-* [x] Config 
+* [x] Config
+
+# Usage
+
+```
+./any2feed ./any2feed_config.toml
+```
 
 
 
