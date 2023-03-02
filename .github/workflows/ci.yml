@@ -56,14 +56,14 @@ jobs:
 
       - name: Install prerequisites ${{ matrix.target }}
         shell: bash
-        if: startsWith(matrix.os == 'ubuntu')
+        if: startsWith(matrix.os, 'ubuntu')
         run: |
            sudo apt-get -y update 
            sudo apt-get -y install libssl-dev pkg-config
 
       - name: Install prerequisites ${{ matrix.target }}
         shell: bash
-        if: startsWith(matrix.os == 'macos')
+        if: startsWith(matrix.os, 'macos')
         run: |
           brew install openssl
 
