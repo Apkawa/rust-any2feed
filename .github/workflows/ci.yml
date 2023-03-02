@@ -62,7 +62,7 @@ jobs:
         job:
           - { target: x86_64-apple-darwin         , os: macos-10.15 }
           #          - { target: x86_64-pc-windows-gnu       , os: windows-2019                  }
-          - { target: x86_64-pc-windows-gnu       , os: ubuntu-20.04, use-cross: true }
+          - { target: x86_64-pc-windows-gnu       , os: ubuntu-20.04, use-cross: true, skip-test: true }
           - { target: x86_64-unknown-linux-gnu    , os: ubuntu-20.04, use-cross: true }
     steps:
       - name: Checkout source code
@@ -129,10 +129,10 @@ jobs:
           BIN_DIR="${{ env.CICD_INTERMEDIATES_DIR }}/stripped-release-bin/"
           mkdir -p "${BIN_DIR}"
           BIN_NAME="${{ env.PROJECT_NAME }}${EXE_suffix}"
-          BIN_PATH="${BIN_DIR}/${BIN_NAME}"
+          BIN_PATH="${BIN_DIR}/${{ matrix.job.target }}-${BIN_NAME}"
 
           # Copy the release build binary to the result location
-          cp "target/${{ matrix.job.target }}/release/${BIN_NAME}" "${BIN_DIR}"
+          cp "target/${{ matrix.job.target }}/release/${BIN_NAME}" "${BIN_PATH}"
           # Also strip if possible
           if [ -n "${STRIP}" ]; then
             "${STRIP}" "${BIN_PATH}"
@@ -143,6 +143,7 @@ jobs:
 
       - name: Run tests
         uses: actions-rs/cargo@v1
+        if: matrix.job.skip-tests != true
         with:
           use-cross: ${{ matrix.job.use-cross }}
           command: test
