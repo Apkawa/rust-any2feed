@@ -3,8 +3,6 @@ mod render;
 mod routes;
 mod config;
 
-use std::borrow::{Borrow, BorrowMut};
-use std::ops::Deref;
 use std::sync::Arc;
 use ::feed::opml::Outline;
 use http_server::Route;

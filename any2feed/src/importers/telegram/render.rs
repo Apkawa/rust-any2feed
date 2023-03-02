@@ -43,7 +43,11 @@ impl RenderContent for Media {
                 "#))
             }
             Media::VideoTooBig { thumb_url } => {
-                Some(format!(r#"<img src="{thumb_url}" />"#))
+                // TODO прокинуть урл вида t.me/channel/id чтобы перейти в телегу на просмотр видео
+                Some(format!(r#"
+                <p><i>MEDIA TOO BIG</i></p>
+                <img src="{thumb_url}" />
+                "#))
             }
         }
     }

@@ -1,7 +1,5 @@
 use serde::Deserialize;
 use std::collections::HashMap;
-use std::ops::Deref;
-use toml::Value;
 
 #[derive(Debug)]
 pub(crate) struct Config {
