@@ -278,6 +278,7 @@ impl MeweApi {
     }
 }
 
+#[cfg(feature = "test_local")]
 #[cfg(test)]
 mod test {
     use crate::MeweApi;
