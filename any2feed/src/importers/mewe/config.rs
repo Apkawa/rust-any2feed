@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
-    pub mewe: MeweConfig
+    pub mewe: MeweConfig,
 }
 
 #[derive(Debug, Deserialize)]

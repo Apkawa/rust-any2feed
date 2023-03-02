@@ -1,7 +1,7 @@
-use std::fmt::{Display, Formatter};
-use chrono::{DateTime, Local, Utc};
-use crate::{Attribute, CDATAElement, Element};
 use crate::traits::{FeedAttribute, FeedElement};
+use crate::{Attribute, CDATAElement, Element};
+use chrono::{DateTime, Local, Utc};
+use std::fmt::{Display, Formatter};
 
 /// http://opml.org/spec2.opml
 ///
@@ -28,7 +28,10 @@ pub struct OPML {
 
 impl OPML {
     pub fn new(title: &str) -> OPML {
-        OPML { title: CDATAElement(title.to_string()), ..OPML::default() }
+        OPML {
+            title: CDATAElement(title.to_string()),
+            ..OPML::default()
+        }
     }
     pub fn add_outline(mut self, outline: Outline) -> OPML {
         self.outlines.push(outline);
@@ -41,7 +44,7 @@ impl Display for OPML {
         let OPML {
             title,
             created,
-            outlines
+            outlines,
         } = self;
 
         let created = Element(created.unwrap_or_else(|| DateTime::from(Local::now())))
@@ -49,7 +52,9 @@ impl Display for OPML {
         let title = title.render_tag("title");
         let outlines = outlines.iter().map(|c| c.to_string()).collect::<String>();
 
-        write!(f, r#"<?xml version="1.0" encoding="utf-8"?>
+        write!(
+            f,
+            r#"<?xml version="1.0" encoding="utf-8"?>
 <opml version="1.0">
   <head>
     {title}
@@ -63,7 +68,6 @@ impl Display for OPML {
         )
     }
 }
-
 
 #[derive(Default, Debug)]
 pub struct Outline {
@@ -129,11 +133,16 @@ impl Display for Outline {
             description.render_attr("description"),
             text.render_attr("text"),
             xml_url.render_attr("xmlUrl"),
-            r#type.render_attr("type")
-        ].join(" ");
+            r#type.render_attr("type"),
+        ]
+        .join(" ");
 
-        let outlines = outlines.as_ref().unwrap_or(&vec![])
-            .iter().map(|c| c.to_string()).collect::<String>();
+        let outlines = outlines
+            .as_ref()
+            .unwrap_or(&vec![])
+            .iter()
+            .map(|c| c.to_string())
+            .collect::<String>();
         let (start, end) = if !outlines.is_empty() {
             (">\n", "\n</outline>")
         } else {
@@ -143,10 +152,9 @@ impl Display for Outline {
     }
 }
 
-
 #[cfg(test)]
 mod test {
-    use crate::opml::{OPML, Outline};
+    use crate::opml::{Outline, OPML};
 
     #[test]
     fn test_opml_render() {
@@ -164,13 +172,12 @@ mod test {
 
     #[test]
     fn test_opml_outline_fluent_pattern() {
-        let outline3 = Outline::new("level 2")
-            .add_child("level 3", Some("https://example.com"));
-        let opml = OPML::new("Foo bar")
-            .add_outline(Outline::new("Foo")
+        let outline3 = Outline::new("level 2").add_child("level 3", Some("https://example.com"));
+        let opml = OPML::new("Foo bar").add_outline(
+            Outline::new("Foo")
                 .add_outline(outline3)
-                .add_child("diez", Some("https://du.hast.much"))
-            );
+                .add_child("diez", Some("https://du.hast.much")),
+        );
         dbg!(&opml);
         println!("{}", opml);
     }

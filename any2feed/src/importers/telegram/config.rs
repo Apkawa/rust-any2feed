@@ -14,10 +14,12 @@ impl Config {
         // Нормализация настроек
         let mut channels: HashMap<String, ExtraChannelConfig> = HashMap::with_capacity(
             // Вычисляем заранее размер таблицы
-            config_toml.channels.as_ref()
-                .map(|c| c.len()).unwrap_or(0)
-                + config_toml.extra.as_ref()
-                .map(|e| e.channel_map.len()).unwrap_or(0)
+            config_toml.channels.as_ref().map(|c| c.len()).unwrap_or(0)
+                + config_toml
+                    .extra
+                    .as_ref()
+                    .map(|e| e.channel_map.len())
+                    .unwrap_or(0),
         );
 
         use self::ChannelConfig::*;
@@ -38,13 +40,17 @@ impl Config {
         // Добираем словарь из [telegram.extra.channel_name]
         if let Some(ExtraChannelMap { channel_map }) = config_toml.extra {
             for (slug, extra) in channel_map {
-                let mut config = channels.entry(slug)
+                let mut config = channels
+                    .entry(slug)
                     .or_insert_with(|| ExtraChannelConfig::default());
                 config.pages = extra.pages;
             }
         }
 
-        Config { channels, pages: config_toml.pages }
+        Config {
+            channels,
+            pages: config_toml.pages,
+        }
     }
 }
 
@@ -80,9 +86,9 @@ enum ChannelConfig {
 
 #[cfg(test)]
 mod test {
+    use crate::importers::telegram::config::Config;
     use std::fs::read_to_string;
     use test_utils::fixture::path_from_git_root;
-    use crate::importers::telegram::config::Config;
 
     #[test]
     fn test_config_empty() {

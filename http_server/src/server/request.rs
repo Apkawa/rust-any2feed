@@ -1,12 +1,11 @@
-
-use HTTPError::*;
+use crate::server::config::ServerConfig;
+use crate::server::error;
+use crate::server::error::HTTPError;
 use std::collections::HashMap;
 use std::net::TcpStream;
 use std::sync::Arc;
 use url::Url;
-use crate::server::config::ServerConfig;
-use crate::server::error;
-use crate::server::error::HTTPError;
+use HTTPError::*;
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum HTTPMethod {
@@ -37,7 +36,6 @@ impl HTTPMethod {
         }
     }
 }
-
 
 #[derive(Debug, Default)]
 pub struct HTTPRequest<'a> {
@@ -75,7 +73,8 @@ impl HTTPRequest<'_> {
         let mut request = match req_head[..] {
             [method, path, _http_version] => {
                 let url = Url::parse(format!("http://example.com{path}").as_str()).unwrap();
-                let query_params: HashMap<String, String> = url.query_pairs()
+                let query_params: HashMap<String, String> = url
+                    .query_pairs()
                     .into_iter()
                     .map(|(k, v)| (k.to_string(), v.to_string()))
                     .collect();
@@ -95,7 +94,9 @@ impl HTTPRequest<'_> {
         for l in &lines[1..] {
             let v = l.split_once(':');
             match v {
-                Some((k, v)) => request.headers.insert(k.trim().to_string(), v.trim().to_string()),
+                Some((k, v)) => request
+                    .headers
+                    .insert(k.trim().to_string(), v.trim().to_string()),
                 _ => {
                     return Err(InvalidRequest);
                 }
@@ -105,9 +106,11 @@ impl HTTPRequest<'_> {
     }
 
     pub fn url(&self) -> Url {
-        let s = format!("http://{}{}", self.config.as_ref().unwrap().addr(), self.full_path);
+        let s = format!(
+            "http://{}{}",
+            self.config.as_ref().unwrap().addr(),
+            self.full_path
+        );
         Url::parse(s.as_str()).unwrap()
     }
 }
-
-

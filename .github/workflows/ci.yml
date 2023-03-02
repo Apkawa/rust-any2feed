@@ -14,7 +14,7 @@ on:
       - '*'
 
 jobs:
-  checks:
+  cargo_fmt:
     name: Ensure 'cargo fmt' has been run
     runs-on: ubuntu-20.04
     steps:
@@ -23,9 +23,21 @@ jobs:
           toolchain: stable
           default: true
           profile: minimal
-          components: rustfmt,clippy
+          components: rustfmt
       - uses: actions/checkout@v3
       - run: cargo fmt -- --check
+
+  cargo_clippy:
+    name: Ensure 'cargo clippy' has been run
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          profile: minimal
+          components: clippy
+      - uses: actions/checkout@v3
       - run: cargo clippy -- --check
 
   build:

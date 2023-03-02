@@ -10,9 +10,11 @@ pub trait Importer {
     fn opml_outlines(&self) -> Vec<Outline>;
 }
 
-
 pub trait RenderContent {
-    fn as_dyn(&self) -> &dyn RenderContent where Self: Sized {
+    fn as_dyn(&self) -> &dyn RenderContent
+    where
+        Self: Sized,
+    {
         self
     }
     fn render(&self) -> Option<String>;
@@ -29,7 +31,7 @@ impl<T: RenderContent> RenderContent for Vec<T> {
         Some(
             self.into_iter()
                 .filter_map(|s| s.render())
-                .collect::<String>()
+                .collect::<String>(),
         )
     }
 }

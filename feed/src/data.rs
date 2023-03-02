@@ -1,9 +1,8 @@
 // https://validator.w3.org/feed/docs/atom.html
 
-use std::fmt::{Display, Formatter};
 use chrono::Local;
+use std::fmt::{Display, Formatter};
 use unicode_segmentation::UnicodeSegmentation;
-
 
 #[derive(Debug)]
 pub enum Content {
@@ -24,10 +23,8 @@ pub struct Element<T>(pub T);
 #[derive(Debug, Default)]
 pub struct CDATAElement<T>(pub T);
 
-
 #[derive(Debug, Default)]
 pub struct Attribute<T>(pub T);
-
 
 #[derive(Debug, Default)]
 pub struct Feed {
@@ -67,13 +64,14 @@ pub struct Entry {
 }
 
 impl Entry {
-    pub fn new(id: String,
-               title: String,
-               updated: String,
-    ) -> Entry {
+    pub fn new(id: String, title: String, updated: String) -> Entry {
         // TODO correct truncate unicode
         let title = {
-            let title = if title.is_empty() { "no title".to_string() } else { title };
+            let title = if title.is_empty() {
+                "no title".to_string()
+            } else {
+                title
+            };
             if title.len() > 60 {
                 UnicodeSegmentation::graphemes(title.as_str(), true)
                     .take(55)
@@ -85,7 +83,8 @@ impl Entry {
         };
         let id = {
             let mut id = id;
-            if cfg!(debug_assertions) { // Отладочный режим, делаем id неуникальными
+            if cfg!(debug_assertions) {
+                // Отладочный режим, делаем id неуникальными
                 id.push_str("/");
                 id.push_str(&Local::now().to_rfc3339());
             }
@@ -157,7 +156,13 @@ impl Default for LinkRel {
 
 impl Display for LinkRel {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", format!("{:?}", self).trim_start_matches('_').to_ascii_lowercase())
+        write!(
+            f,
+            "{}",
+            format!("{:?}", self)
+                .trim_start_matches('_')
+                .to_ascii_lowercase()
+        )
     }
 }
 
@@ -173,13 +178,19 @@ pub struct Link {
 
 impl Link {
     pub fn new(href: String) -> Link {
-        Link { href: Attribute(href), ..Link::default() }
+        Link {
+            href: Attribute(href),
+            ..Link::default()
+        }
     }
     pub fn with_rel(href: String, rel: LinkRel) -> Link {
-        Link { href: Attribute(href), rel: Some(Attribute(rel)), ..Link::default() }
+        Link {
+            href: Attribute(href),
+            rel: Some(Attribute(rel)),
+            ..Link::default()
+        }
     }
 }
-
 
 #[derive(Debug, Default)]
 pub struct Generator {

@@ -1,2 +1,2 @@
-pub mod importers;
 pub mod config;
+pub mod importers;

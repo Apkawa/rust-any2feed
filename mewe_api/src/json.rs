@@ -1,8 +1,8 @@
-use std::collections::HashMap;
-use chrono::serde::{ts_seconds};
+use crate::utils::format_url;
+use chrono::serde::ts_seconds;
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
-use crate::utils::format_url;
+use std::collections::HashMap;
 
 #[derive(Debug, Deserialize)]
 pub struct MeweApiIdentify {
@@ -55,7 +55,10 @@ pub struct MeweApiFeedList {
 
 impl MeweApiFeedList {
     pub fn next_page(&self) -> Option<String> {
-        if let Some(MeweApiFeedListNextPageLink { next_page: Some(page) }) = &self.links {
+        if let Some(MeweApiFeedListNextPageLink {
+            next_page: Some(page),
+        }) = &self.links
+        {
             Some(["https://mewe.com/", page.href.as_str()].join(""))
         } else {
             None
@@ -63,7 +66,8 @@ impl MeweApiFeedList {
     }
     pub fn fill_user_and_group(&mut self) {
         // todo into serde
-        let mut users: HashMap<&String, &MeweApiUserInfo> = self.users.iter().map(|u| (&u.id, u)).collect();
+        let mut users: HashMap<&String, &MeweApiUserInfo> =
+            self.users.iter().map(|u| (&u.id, u)).collect();
         let mut groups: HashMap<&String, &MeweApiGroup> = HashMap::with_capacity(20);
         for user in self.users.iter() {
             users.insert(&user.id, user);
@@ -75,15 +79,21 @@ impl MeweApiFeedList {
         }
         for post in &mut self.feed {
             let user = users.get(&post.user_id).copied();
-            let group = post.group_id.as_ref()
-                .and_then(|id| groups.get(&id)).copied();
+            let group = post
+                .group_id
+                .as_ref()
+                .and_then(|id| groups.get(&id))
+                .copied();
             post.user = user.map(|u| (*u).clone());
             post.group = group.map(|g| (*g).clone());
             if post.ref_post.is_some() {
                 let mut ref_post = post.ref_post.as_mut().unwrap();
                 let user = users.get(&ref_post.user_id).copied();
-                let group = ref_post.group_id.as_ref()
-                    .and_then(|id| groups.get(&id)).copied();
+                let group = ref_post
+                    .group_id
+                    .as_ref()
+                    .and_then(|id| groups.get(&id))
+                    .copied();
                 ref_post.user = user.map(|u| (*u).clone());
                 ref_post.group = group.map(|u| (*u).clone());
             }
@@ -188,16 +198,14 @@ pub struct MeweApiMediaPhoto {
 impl MeweApiMediaPhoto {
     pub fn url(&self) -> String {
         let url = &self.links.img.href;
-        let args: HashMap<&str, &str> = HashMap::from(
-            [
-                ("imageSize", "800x800"), // 400x400, 800x800, 1600x1600
-                ("static", "0")
-            ]);
+        let args: HashMap<&str, &str> = HashMap::from([
+            ("imageSize", "800x800"), // 400x400, 800x800, 1600x1600
+            ("static", "0"),
+        ]);
         let url = format_url(url.as_str(), &args);
         format!("https://mewe.com{url}")
     }
 }
-
 
 #[derive(Debug, Deserialize)]
 pub struct MeweApiMediaPhotoLink {
@@ -220,8 +228,7 @@ pub struct MeweApiMediaVideo {
 impl MeweApiMediaVideo {
     pub fn url(&self) -> String {
         let url = &self.links.link_template.href;
-        let args: HashMap<&str, &str> = HashMap::from(
-            [("resolution", "original")]);
+        let args: HashMap<&str, &str> = HashMap::from([("resolution", "original")]);
         let url = format_url(url.as_str(), &args);
         let name = &self.name;
         format!("https://mewe.com{url}&mime=video/mp4&name={name}")
@@ -358,6 +365,3 @@ pub struct MeweApiContactUser {
     pub contact_invite_id: String,
     pub name: String,
 }
-
-
-

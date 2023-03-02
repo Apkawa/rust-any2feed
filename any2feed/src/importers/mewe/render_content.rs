@@ -1,7 +1,6 @@
-
+use crate::importers::traits::RenderContent;
 use mewe_api::json::{MeweApiLink, MeweApiMedia, MeweApiMediaFile, MeweApiPoll, MeweApiPost};
 use mewe_api::markdown::md_to_html;
-use crate::importers::traits::RenderContent;
 
 // TODO initialize
 // static RE_GIFYCAT: regex::Regex = regex::Regex::new(r#"(https://thumbs.gfycat.com/[^<\s]+)"#).unwrap();
@@ -33,17 +32,24 @@ impl RenderContent for MeweApiPost {
         if let Some(ref_post) = self.ref_post.as_ref() {
             if let Some(ref_user) = ref_post.user.as_ref() {
                 content.push_str("<p>");
-                content.push_str(format!(r#"<a href="{}">{}</a>"#,
-                                     ref_post.url().unwrap(),
-                                     ref_user.name).as_str());
+                content.push_str(
+                    format!(
+                        r#"<a href="{}">{}</a>"#,
+                        ref_post.url().unwrap(),
+                        ref_user.name
+                    )
+                    .as_str(),
+                );
                 if let Some(group) = ref_post.group.as_ref() {
-                    content.push_str(format!(r#" - <a href="{}">{}</a>"#,
-                                         group.url(),
-                                         group.name).as_str())
+                    content.push_str(
+                        format!(r#" - <a href="{}">{}</a>"#, group.url(), group.name).as_str(),
+                    )
                 };
                 content.push_str("</p>");
             }
-            if let Some(r) = ref_post.render() { content.push_str(r.as_str()) }
+            if let Some(r) = ref_post.render() {
+                content.push_str(r.as_str())
+            }
         }
 
         // Medias
@@ -60,22 +66,22 @@ impl RenderContent for MeweApiPost {
         // Files
         if self.files.is_some() {
             for m in self.files.as_ref().unwrap() {
-                if let Some(r) = m.render() { content.push_str(r.as_str()) }
+                if let Some(r) = m.render() {
+                    content.push_str(r.as_str())
+                }
             }
         }
 
-
-        let parts = parts.iter()
+        let parts = parts
+            .iter()
             .filter(|i| i.is_some())
             .filter_map(|i| i.as_ref().unwrap().render())
-            .collect::<String>()
-            ;
+            .collect::<String>();
 
         content.push_str(parts.as_str());
         Some(content)
     }
 }
-
 
 impl RenderContent for MeweApiLink {
     fn render(&self) -> Option<String> {
@@ -86,7 +92,8 @@ impl RenderContent for MeweApiLink {
                 String::new()
             }
         };
-        let content = format!(r#"
+        let content = format!(
+            r#"
         <blockquote>
           <p style="white-space:pre-wrap;"><b>{title}</b></p>
           <p style="white-space:pre-wrap;">
@@ -95,9 +102,10 @@ impl RenderContent for MeweApiLink {
           {thumbnail}
           <p style="white-space:pre-wrap;">{description}</p>
         </blockquote>"#,
-                              thumbnail = thumbnail,
-                              title = &self.title, url = &self.links.url.href,
-                              description = &self.description
+            thumbnail = thumbnail,
+            title = &self.title,
+            url = &self.links.url.href,
+            description = &self.description
         );
         Some(content)
     }
@@ -111,22 +119,19 @@ impl RenderContent for MeweApiMedia {
                 let video_url = &video.url();
                 // let text = photo.links.img
                 let width = usize::min(self.photo.size.width, 640);
-                Some(format!(r#"
+                Some(format!(
+                    r#"
             <video width="{width}" height="auto" controls=1
                 poster="{url}"\>
                 <source src="{video_url}" type="video/mp4" />
             </video>
-                "#))
+                "#
+                ))
             }
-            None => {
-                Some(format!(r#"<img src="{url}" />"#))
-            }
+            None => Some(format!(r#"<img src="{url}" />"#)),
         }
     }
 }
-
-
-
 
 // File
 
@@ -136,27 +141,31 @@ impl RenderContent for MeweApiMediaFile {
         let url = &self.links.url.href;
         let size = &((self.length as f64) / 1024.0 / 1024.0);
 
-        Some(format!(r#"<p>File: <a href="https://mewe.com{url}">{name} ({size:.2} MB)</a></p>"#))
+        Some(format!(
+            r#"<p>File: <a href="https://mewe.com{url}">{name} ({size:.2} MB)</a></p>"#
+        ))
     }
 }
-
 
 // Poll
 impl RenderContent for MeweApiPoll {
     fn render(&self) -> Option<String> {
-        let poll_options: String = self.options
+        let poll_options: String = self
+            .options
             .iter()
             // TODO percent
             .map(|o| format!("<li>{} - {}</li>\n", o.text, o.votes))
             .collect();
         let question = &self.question;
-        Some(format!(r#"
+        Some(format!(
+            r#"
         <p>
             Question: {question}
             <ul>
                 {poll_options}
             </ul>
         </p>
-        "#))
+        "#
+        ))
     }
 }

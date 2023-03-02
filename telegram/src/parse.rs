@@ -1,7 +1,7 @@
+use crate::data::{ChannelPost, File, ForwardedFrom, LinkPreview, Media, Poll, PollOption};
 use regex::Regex;
 use scraper::node::Element;
 use scraper::Selector;
-use crate::data::{ChannelPost, File, ForwardedFrom, LinkPreview, Media, Poll, PollOption};
 
 ///
 /// ```
@@ -18,7 +18,9 @@ use crate::data::{ChannelPost, File, ForwardedFrom, LinkPreview, Media, Poll, Po
 /// ```
 pub fn get_class_name_by_prefix<'a>(el: &'a Element, prefix: &str) -> Option<&'a str> {
     let prefix = prefix.trim_start_matches(".");
-    el.classes().find(|p| p.starts_with(prefix)).map(|s| s.trim_start_matches(prefix))
+    el.classes()
+        .find(|p| p.starts_with(prefix))
+        .map(|s| s.trim_start_matches(prefix))
 }
 
 /// ```
@@ -49,7 +51,6 @@ pub fn get_background_url_from_style(style: &str) -> Option<&str> {
     re.captures(style).map(|c| c.get(1).unwrap().as_str())
 }
 
-
 pub fn parse_media_video(html: &str) -> Media {
     let mut video_url: Option<String> = None;
     let mut thumb_url: Option<String> = None;
@@ -57,7 +58,13 @@ pub fn parse_media_video(html: &str) -> Media {
     let parser = scraper::Html::parse_fragment(html);
     let cls_prefix = ".tgme_widget_message_";
     let selector = Selector::parse(
-        format!("{p}video, {p}video_thumb, {p}roundvideo, {p}roundvideo_thumb", p = cls_prefix).as_str()).unwrap();
+        format!(
+            "{p}video, {p}video_thumb, {p}roundvideo, {p}roundvideo_thumb",
+            p = cls_prefix
+        )
+        .as_str(),
+    )
+    .unwrap();
     for el_ref in parser.select(&selector) {
         let el = el_ref.value();
         match get_class_name_by_prefix(el, cls_prefix) {
@@ -65,19 +72,31 @@ pub fn parse_media_video(html: &str) -> Media {
                 video_url = Some(el.attr("src").unwrap().to_string());
                 is_gif = t == "video" && el.attr("autoplay").is_some() && el.attr("loop").is_some();
             }
-            Some("video_thumb" | "roundvideo_thumb") => thumb_url = Some(get_background_url_from_style(el.attr("style").unwrap()).unwrap().to_string()),
+            Some("video_thumb" | "roundvideo_thumb") => {
+                thumb_url = Some(
+                    get_background_url_from_style(el.attr("style").unwrap())
+                        .unwrap()
+                        .to_string(),
+                )
+            }
             _ => unreachable!(),
         }
     }
     match (video_url, thumb_url) {
         (Some(v), Some(t)) => {
             if is_gif {
-                Media::VideoGif { url: v, thumb_url: t }
-            } else { Media::Video { url: v, thumb_url: t } }
+                Media::VideoGif {
+                    url: v,
+                    thumb_url: t,
+                }
+            } else {
+                Media::Video {
+                    url: v,
+                    thumb_url: t,
+                }
+            }
         }
-        (None, Some(t)) => {
-            Media::VideoTooBig { thumb_url: t }
-        }
+        (None, Some(t)) => Media::VideoTooBig { thumb_url: t },
         _ => {
             println!("{}", html);
             unreachable!()
@@ -85,18 +104,19 @@ pub fn parse_media_video(html: &str) -> Media {
     }
 }
 
-
 pub fn parse_link_preview(html: &str) -> LinkPreview {
     let mut link = LinkPreview::default();
     let parser = scraper::Html::parse_fragment(html);
-    let selector = Selector::parse(".tgme_widget_message_link_preview, \
+    let selector = Selector::parse(
+        ".tgme_widget_message_link_preview, \
              .link_preview_site_name, \
              .link_preview_image, \
              .link_preview_video_thumb, \
              .link_preview_video, \
              .link_preview_title, \
-             .link_preview_description"
-    ).unwrap();
+             .link_preview_description",
+    )
+    .unwrap();
     let mut image_url: Option<String> = None;
     let mut video_url: Option<String> = None;
     let mut video_thumb_url: Option<String> = None;
@@ -111,12 +131,13 @@ pub fn parse_link_preview(html: &str) -> LinkPreview {
             Some("title") => link.title = el_ref.inner_html(),
             Some("description") => link.description = el_ref.inner_html(),
             Some("image") => {
-                image_url = get_background_url_from_style(el.attr("style").unwrap()).map(|s| s.to_string())
+                image_url =
+                    get_background_url_from_style(el.attr("style").unwrap()).map(|s| s.to_string())
             }
             Some("video") => video_url = el.attr("src").map(|s| s.to_string()),
             Some("video_thumb") => {
-                video_thumb_url = get_background_url_from_style(el.attr("style").unwrap())
-                    .map(|s| s.to_string())
+                video_thumb_url =
+                    get_background_url_from_style(el.attr("style").unwrap()).map(|s| s.to_string())
             }
 
             _ => {}
@@ -127,7 +148,7 @@ pub fn parse_link_preview(html: &str) -> LinkPreview {
         // TODO check gif
         (None, Some(url), Some(thumb_url)) => Some(Media::Video { url, thumb_url }),
         (None, None, Some(thumb_url)) => Some(Media::VideoTooBig { thumb_url }),
-        _ => None
+        _ => None,
     };
     link
 }
@@ -139,10 +160,11 @@ pub fn parse_poll(html: &str) -> Poll {
         ".tgme_widget_message_poll_question, \
         .tgme_widget_message_poll_type, \
         .tgme_widget_message_poll_option \
-    ").unwrap();
+    ",
+    )
+    .unwrap();
     let option_percent_sel = Selector::parse(".tgme_widget_message_poll_option_percent").unwrap();
     let option_val_sel = Selector::parse(".tgme_widget_message_poll_option_text").unwrap();
-
 
     for el_ref in parser.select(&selector) {
         let el = el_ref.value();
@@ -152,7 +174,11 @@ pub fn parse_poll(html: &str) -> Poll {
             Some("option") => {
                 let o = PollOption {
                     name: el_ref.select(&option_val_sel).next().unwrap().inner_html(),
-                    percent: el_ref.select(&option_percent_sel).next().unwrap().inner_html(),
+                    percent: el_ref
+                        .select(&option_percent_sel)
+                        .next()
+                        .unwrap()
+                        .inner_html(),
                 };
                 poll.options.push(o)
             }
@@ -165,7 +191,6 @@ pub fn parse_poll(html: &str) -> Poll {
 
     poll
 }
-
 
 pub fn parse_message(html: &str) -> Option<ChannelPost> {
     let mut post = ChannelPost::default();
@@ -185,8 +210,12 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
              .tgme_widget_message_poll, \
              .tgme_widget_message_voice, \
              time.time \
-             ", p = class_prefix).as_str()
-    ).unwrap();
+             ",
+            p = class_prefix
+        )
+        .as_str(),
+    )
+    .unwrap();
     let document_title_sel = Selector::parse(".tgme_widget_message_document_title").unwrap();
     let document_extra_sel = Selector::parse(".tgme_widget_message_document_extra").unwrap();
 
@@ -197,29 +226,41 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
         }
         match get_class_name_by_prefix(el, "tgme_widget_message_") {
             Some("photo_wrap") => {
-                if let Some(photo) = el.attr("style")
+                if let Some(photo) = el
+                    .attr("style")
                     .map(|s| get_background_url_from_style(s))
-                    .flatten() {
-                    post.media.get_or_insert_with(|| Vec::new())
+                    .flatten()
+                {
+                    post.media
+                        .get_or_insert_with(|| Vec::new())
                         .push(Media::Photo(photo.to_string()))
                 }
             }
-            Some("link_preview") => post.link_preview = Some(parse_link_preview(el_ref.html().as_str())),
+            Some("link_preview") => {
+                post.link_preview = Some(parse_link_preview(el_ref.html().as_str()))
+            }
             Some("forwarded_from_name") => {
                 post.forwarded_from = Some(ForwardedFrom {
                     name: el_ref.text().into_iter().collect(),
                     url: el.attr("href").unwrap().to_string(),
                 })
             }
-            Some("document") => {
-                post.file.get_or_insert_with(|| Vec::new()).push(File {
-                    filename: el_ref.select(&document_title_sel).next().unwrap().inner_html(),
-                    size: el_ref.select(&document_extra_sel).next().unwrap().inner_html(),
-                })
-            }
+            Some("document") => post.file.get_or_insert_with(|| Vec::new()).push(File {
+                filename: el_ref
+                    .select(&document_title_sel)
+                    .next()
+                    .unwrap()
+                    .inner_html(),
+                size: el_ref
+                    .select(&document_extra_sel)
+                    .next()
+                    .unwrap()
+                    .inner_html(),
+            }),
             Some("voice") => {
-                if let Some(src) = el.attr("src"){
-                    post.media.get_or_insert_with(|| Vec::new())
+                if let Some(src) = el.attr("src") {
+                    post.media
+                        .get_or_insert_with(|| Vec::new())
                         .push(Media::Voice(src.to_string()))
                 }
             }
@@ -233,7 +274,8 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
             }
             Some("message_video_player" | "message_roundvideo_player") => {
                 if !has_class(el, "link_preview_video_player") {
-                    post.media.get_or_insert_with(|| Vec::new())
+                    post.media
+                        .get_or_insert_with(|| Vec::new())
                         .push(parse_media_video(el_ref.html().as_str()))
                 }
             }
@@ -243,4 +285,3 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
     }
     Some(post)
 }
-

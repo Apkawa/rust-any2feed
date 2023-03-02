@@ -11,10 +11,11 @@ fn test_parse_html() {
     assert_eq!(result.slug, "foo");
     assert_eq!(result.title, "Военное обозрение");
     assert!(result.description.starts_with("Официальный канал сайта"));
-    assert!(result.image_url.starts_with("https://cdn4.telegram-cdn.org/file/"));
+    assert!(result
+        .image_url
+        .starts_with("https://cdn4.telegram-cdn.org/file/"));
     assert!(result.posts.len() > 0);
 }
-
 
 #[test]
 fn test_parse_text() {

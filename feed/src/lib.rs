@@ -1,8 +1,8 @@
 pub mod data;
-pub mod traits;
 pub mod render;
+pub mod traits;
 
-pub mod utils;
 pub mod opml;
+pub mod utils;
 
 pub use data::*;

@@ -1,15 +1,8 @@
-use std::fmt::{Display, Formatter};
-use crate::data::{
-    Person,
-    Content,
-    Entry,
-    Feed,
-    Category,
-};
-use crate::Link;
+use crate::data::{Category, Content, Entry, Feed, Person};
 use crate::traits::{FeedAttribute, FeedElement};
 use crate::utils::escape;
-
+use crate::Link;
+use std::fmt::{Display, Formatter};
 
 impl Display for Feed {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -38,16 +31,19 @@ impl Display for Feed {
             icon.render_tag("icon"),
             logo.render_tag("logo"),
             rights.render_tag("rights"),
-            categories.as_ref()
-                .map_or(String::new(),
-                        |l|
-                            l.0.iter()
-                                .map(|c| c.to_string()).collect(),
-                ),
+            categories.as_ref().map_or(String::new(), |l| {
+                l.0.iter().map(|c| c.to_string()).collect()
+            }),
             entries.iter().map(|e| format!("{e}")).collect::<String>(),
-        ].into_iter().filter(|s| !s.is_empty()).collect::<Vec<String>>().join("\n");
+        ]
+        .into_iter()
+        .filter(|s| !s.is_empty())
+        .collect::<Vec<String>>()
+        .join("\n");
 
-        write!(f, r#"<?xml version="1.0" encoding="utf-8"?>
+        write!(
+            f,
+            r#"<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <id>{id}</id>
   <updated>{updated}</updated>
@@ -70,44 +66,42 @@ impl Display for Entry {
             categories,
             contributor,
             published,
-            rights
+            rights,
         } = self;
 
         let parts = [
             title.render_tag("title"),
             author.render_tag("author"),
             content.render_tag("content"),
-            link.as_ref().map_or(String::new(),
-                                 |l| l.to_string(),
-            ),
+            link.as_ref().map_or(String::new(), |l| l.to_string()),
             summary.render_tag("summary"),
-            categories.as_ref()
-                .map_or(String::new(),
-                        |l|
-                            l.0.iter()
-                                .map(|c| c.to_string()).collect(),
-                ),
+            categories.as_ref().map_or(String::new(), |l| {
+                l.0.iter().map(|c| c.to_string()).collect()
+            }),
             contributor.render_tag("contributor"),
             published.render_tag("published"),
             rights.render_tag("rights"),
-        ].join("\n");
-        write!(f, r#"
+        ]
+        .join("\n");
+        write!(
+            f,
+            r#"
     <entry>
         <id>{id}</id>
         <updated>{updated}</updated>
         {parts}
     </entry>
-        "#)
+        "#
+        )
     }
 }
-
 
 impl Display for Category {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let Category {
             term,
             scheme,
-            label
+            label,
         } = self;
         let term = escape(term);
         let scheme = scheme.render_attr("scheme");
@@ -116,13 +110,12 @@ impl Display for Category {
     }
 }
 
-
 impl FeedElement for Content {
     fn render_tag(&self, tag: &str) -> String {
         let (t, c) = match self {
-            Content::Text(x) => { ("text", x) }
-            Content::Html(x) => { ("html", x) }
-            Content::Xhtml(x) => { ("xhtml", x) }
+            Content::Text(x) => ("text", x),
+            Content::Html(x) => ("html", x),
+            Content::Xhtml(x) => ("xhtml", x),
         };
         format!(r#"<{tag} type="{t}"><![CDATA[{c}]]></{tag}>"#)
     }
@@ -136,7 +129,7 @@ impl Display for Link {
             length,
             mime_type,
             rel,
-            hreflang
+            hreflang,
         } = self;
         let parts = [
             href.render_attr("href"),
@@ -145,23 +138,17 @@ impl Display for Link {
             mime_type.render_attr("type"),
             rel.render_attr("rel"),
             hreflang.render_attr("hreflang"),
-        ].join(" ");
+        ]
+        .join(" ");
         write!(f, r#"<link {parts}/>"#)
     }
 }
 
-
-
 impl Display for Person {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let Person {
-            name,
-            url,
-            email,
-        } = self;
+        let Person { name, url, email } = self;
         let url = url.render_tag("url");
         let email = email.render_tag("email");
         write!(f, r#"<name>{name}</name>{url}{email}"#)
     }
 }
-

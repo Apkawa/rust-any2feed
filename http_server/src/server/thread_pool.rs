@@ -1,9 +1,7 @@
 /// https://doc.rust-lang.org/book/ch20-02-multithreaded.html
 /// https://doc.rust-lang.org/book/ch20-03-graceful-shutdown-and-cleanup.html
-use std::sync::{Arc, mpsc, Mutex};
+use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
-
-
 
 pub struct ThreadPool {
     /// Кладем воркеров, они нужны больше для аккуратной остановки
@@ -22,25 +20,33 @@ impl ThreadPool {
         // получатель может быть только один, но его кладем в ссылку и мьютекс и затем размножим.
         let reciver = Arc::new(Mutex::new(reciver));
         for i in 0..size {
-            let worker = Worker::new(i,
-                                     // И множим ссылку на получателя
-                                     Arc::clone(&reciver));
+            let worker = Worker::new(
+                i,
+                // И множим ссылку на получателя
+                Arc::clone(&reciver),
+            );
             // Если закоментировать эту часть - все будет работать по причине того что
             // thread::spawn замыкает в себя ссылку на reciver
             // но когда родительский процесс умирает - умирают и дети
             // Но без этого не будет работать graceful stop (дать процессу возможность до конца отработать)
             threads.push(worker);
         }
-        ThreadPool { workers: threads, sender: Some(sender) }
+        ThreadPool {
+            workers: threads,
+            sender: Some(sender),
+        }
     }
     pub fn execute<F>(&self, f: F)
-        where F: FnOnce() + Send + 'static,
+    where
+        F: FnOnce() + Send + 'static,
     {
         let job = Box::new(f);
-        self.sender.as_ref() // as_ref тут нужен чтобы достать в unwrap sender по ссылке, а не по значению (копирование)
+        self.sender
+            .as_ref() // as_ref тут нужен чтобы достать в unwrap sender по ссылке, а не по значению (копирование)
             .unwrap()
             // Ставим в очередь задачу
-            .send(job).unwrap();
+            .send(job)
+            .unwrap();
     }
 }
 
@@ -69,8 +75,7 @@ impl Worker {
     fn new(id: usize, reciver: Arc<Mutex<mpsc::Receiver<Job>>>) -> Worker {
         println!("Worker {id}: started");
         // Спавним поток
-        let thread = thread::spawn(
-            move // перемещаем ссылку reciver внутрь замыкания
+        let thread = thread::spawn(move // перемещаем ссылку reciver внутрь замыкания
                 || loop { // И поток зависает в бесконечном цикле
                 let job = reciver.lock().unwrap().recv();
                 match job {
@@ -86,7 +91,9 @@ impl Worker {
                     }
                 }
             });
-        Worker { id, thread: Some(thread) }
+        Worker {
+            id,
+            thread: Some(thread),
+        }
     }
 }
-

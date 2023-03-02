@@ -12,17 +12,16 @@ fn example_feed() {
         updated: "2001-07-08T00:34:60".to_string(),
         icon: Some(Element("icon".to_string())),
         logo: Some(Element("icon".to_string())),
-        entries: vec![
-            Entry::new(
-                "id".to_string(),
-                "title".to_string(),
-                "2001-07-08T00:34:60".to_string(),
-            )
-        ],
+        entries: vec![Entry::new(
+            "id".to_string(),
+            "title".to_string(),
+            "2001-07-08T00:34:60".to_string(),
+        )],
         ..Feed::default()
     };
     let s = f.to_string();
-    assert_eq!(r#"<?xml version="1.0" encoding="utf-8"?>
+    assert_eq!(
+        r#"<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <link href="https://foo.exe"     />
@@ -40,7 +39,9 @@ fn example_feed() {
         <author><name></name></author>
     </entry>
 
-</feed>"#, s);
+</feed>"#,
+        s
+    );
 }
 
 #[test]
@@ -60,9 +61,11 @@ fn person() {
         url: Some(Element("https://example.com".to_string())),
         email: None,
     };
-    assert_eq!(p.to_string(), "<name>Foo</name><url>https://example.com</url>");
+    assert_eq!(
+        p.to_string(),
+        "<name>Foo</name><url>https://example.com</url>"
+    );
 }
-
 
 fn entry() {
     let _entry = Entry::new(
@@ -79,5 +82,8 @@ fn entry_with_looong_text() {
         r#"Задремала тут днём, и приснилось что меве это такая гостинница на краю мира, наполненная деревянными автоматонами, которые помогают за ней присматривать. Из человеческого персонала там девушка которая старательно пытается быть монашкой, непонятный угрюмый подросток, который единственный понимает как эти автоматоны работают, и пара тётушек, которые ходят с лицом будто пережили войну."#.to_string(),
         "2001-07-08T00:34:60".to_string(),
     );
-    assert_eq!(entry.title.0, "Задремала тут днём, и приснилось что меве это такая гос...");
+    assert_eq!(
+        entry.title.0,
+        "Задремала тут днём, и приснилось что меве это такая гос..."
+    );
 }

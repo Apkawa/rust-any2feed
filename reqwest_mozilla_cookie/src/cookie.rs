@@ -7,7 +7,6 @@ use reqwest::cookie::{CookieStore, Jar};
 
 use reqwest::Url;
 
-
 /// В формате  Netscape HTTP Cookie File http://fileformats.archiveteam.org/wiki/Netscape_cookies.txt
 /// https://curl.se/rfc/cookie_spec.html
 /// ```
@@ -31,23 +30,17 @@ pub fn import_cookie_from_string(cookie_str: &String) -> io::Result<Jar> {
         if line.is_empty() || line.starts_with('#') {
             continue;
         }
-        let req_head = line
-            .split('\t')
-            .collect::<Vec<&str>>();
-        let [
-        host,
-        _subdomains,
-        path,
-        _is_secure,
-        _expire,
-        name,
-        value
-        ] = match req_head[..] {
-            [host, subdomains, path,
-            is_secure, expire, name, value,
-            ..
-            ] => [host, subdomains, path, is_secure, expire, name, value],
-            _ => { return Err(Error::new(ErrorKind::InvalidData, format!("invalid csv file {line}"))); }
+        let req_head = line.split('\t').collect::<Vec<&str>>();
+        let [host, _subdomains, path, _is_secure, _expire, name, value] = match req_head[..] {
+            [host, subdomains, path, is_secure, expire, name, value, ..] => {
+                [host, subdomains, path, is_secure, expire, name, value]
+            }
+            _ => {
+                return Err(Error::new(
+                    ErrorKind::InvalidData,
+                    format!("invalid csv file {line}"),
+                ));
+            }
         };
 
         let url = format!("https://{host}").parse::<Url>().unwrap();
@@ -73,12 +66,12 @@ pub fn update_cookie_from_file(jar: &Jar, url: &Url, path: &String) -> Option<()
 pub fn merge_cookie_to_string(jar: &Jar, url: &Url, cookie_txt: &String) -> Option<String> {
     let domain = url.domain().unwrap().trim_start_matches('.');
     let cookies = jar.cookies(url)?;
-    let mut cookies_map = cookies.to_str().ok()?
+    let mut cookies_map = cookies
+        .to_str()
+        .ok()?
         .split(';')
-        .map(|s| s.trim().split_once('=').unwrap()
-        )
+        .map(|s| s.trim().split_once('=').unwrap())
         .collect::<HashMap<&str, &str>>();
-
 
     let lines = cookie_txt.lines().map(|l| l.trim());
     let mut new_lines: Vec<String> = Vec::with_capacity(10);
@@ -87,22 +80,11 @@ pub fn merge_cookie_to_string(jar: &Jar, url: &Url, cookie_txt: &String) -> Opti
             new_lines.push(line.to_string());
             continue;
         }
-        let req_head = line
-            .split('\t')
-            .collect::<Vec<&str>>();
-        let [
-        host,
-        subdomains,
-        path,
-        is_secure,
-        expire,
-        name,
-        value
-        ] = match req_head[..] {
-            [host, subdomains, path,
-            is_secure, expire, name, value,
-            ..
-            ] => [host, subdomains, path, is_secure, expire, name, value],
+        let req_head = line.split('\t').collect::<Vec<&str>>();
+        let [host, subdomains, path, is_secure, expire, name, value] = match req_head[..] {
+            [host, subdomains, path, is_secure, expire, name, value, ..] => {
+                [host, subdomains, path, is_secure, expire, name, value]
+            }
             _ => {
                 return None;
             }
@@ -124,12 +106,11 @@ pub fn merge_cookie_to_string(jar: &Jar, url: &Url, cookie_txt: &String) -> Opti
     Some(new_lines.join("\n"))
 }
 
-
 #[cfg(test)]
 mod test {
+    use crate::cookie::{import_cookie_from_string, merge_cookie_to_string};
     use reqwest::cookie::CookieStore;
     use reqwest::Url;
-    use crate::cookie::{import_cookie_from_string, merge_cookie_to_string};
 
     #[test]
     fn test_import_cookie_from_string() {
@@ -140,7 +121,8 @@ mod test {
         kremlin.ru	FALSE	/	FALSE		sid	foo	27
         kremlin.ru	FALSE	/	FALSE		bar	baz	27
         .kremlin.ru	FALSE	/foo	FALSE		foo	test	27
-        "###.to_string();
+        "###
+        .to_string();
         let jar = import_cookie_from_string(&cookie_str).unwrap();
         let url = Url::parse("https://.kremlin.ru").unwrap();
         let cookies = jar.cookies(&url).unwrap();
@@ -157,7 +139,8 @@ mod test {
         kremlin.ru	FALSE	/	FALSE		sid	foo	27
         kremlin.ru	FALSE	/	FALSE		bar	baz	27
         .kremlin.ru	FALSE	/foo	FALSE		foo	test	27
-        "###.to_string();
+        "###
+        .to_string();
         let url = Url::parse("https://kremlin.ru").unwrap();
         let jar = import_cookie_from_string(&cookie_str).unwrap();
         jar.add_cookie_str("foo=foobaz", &url);

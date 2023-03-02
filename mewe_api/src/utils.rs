@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use regex::Regex;
 use reqwest::Url;
+use std::collections::HashMap;
 
 ///
 /// ```
@@ -35,16 +35,15 @@ pub fn format_url(url: &str, args: &HashMap<&str, &str>) -> String {
 /// assert_eq!(pairs.join("&"), "bar=3&baz=3&foo=2");
 /// ```
 pub fn update_query(url: &mut Url, query: &HashMap<&str, &str>) {
-    let mut query_params: HashMap<String, String> = url.query_pairs()
+    let mut query_params: HashMap<String, String> = url
+        .query_pairs()
         .into_iter()
         .map(|(k, v)| (k.to_string(), v.to_string()))
         .collect();
     for (k, v) in query {
         query_params.insert(k.to_string(), v.to_string());
     }
-    url.query_pairs_mut()
-        .clear()
-        .extend_pairs(query_params);
+    url.query_pairs_mut().clear().extend_pairs(query_params);
 }
 
 ///
@@ -68,5 +67,6 @@ pub fn replace_user_mention_to_name(text: &str) -> String {
 /// ```
 pub fn replace_user_mention_to_html_url(text: &str) -> String {
     let re = Regex::new(r#"@\{\{u_(\w+?)}([\w\s]+?)}"#).unwrap();
-    re.replace(text, r#"<a href="https://mewe.com/i/id=$1">@$2</a>"#).to_string()
+    re.replace(text, r#"<a href="https://mewe.com/i/id=$1">@$2</a>"#)
+        .to_string()
 }

@@ -1,17 +1,13 @@
-use std::{env};
-
+use std::env;
 
 use std::fs::read_to_string;
-
 
 use any2feed::config::MainConfig;
 use any2feed::importers::mewe::importer::MeweImporter;
 use any2feed::importers::telegram::TelegramImporter;
 use any2feed::importers::traits::Importer;
 
-
-use http_server::{HTTPRequest, HTTPResponse, Route, run, ServerConfig};
-
+use http_server::{run, HTTPRequest, HTTPResponse, Route, ServerConfig};
 
 fn main_view(_request: &HTTPRequest) -> http_server::Result<HTTPResponse> {
     Ok(HTTPResponse::with_content("OK".to_string()))
@@ -31,9 +27,9 @@ fn main() {
 
     let mut routes = vec![
         Route::new("/", main_view),
-        Route::new("/hello",
-                   |_r|
-                       Ok(HTTPResponse::with_content("Hello world".to_string()))),
+        Route::new("/hello", |_r| {
+            Ok(HTTPResponse::with_content("Hello world".to_string()))
+        }),
     ];
 
     let mewe_importers = MeweImporter::with_config(&config_str);

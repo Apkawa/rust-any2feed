@@ -1,22 +1,24 @@
-use telegram::data::{ChannelPost, File, LinkPreview, Media, Poll};
 use crate::importers::traits::RenderContent;
+use telegram::data::{ChannelPost, File, LinkPreview, Media, Poll};
 
 impl RenderContent for ChannelPost {
     fn render(&self) -> Option<String> {
         let mut content = String::with_capacity(self.html.len() * 2);
 
         if let Some(f) = self.forwarded_from.as_ref() {
-            content.push_str(format!(r#"<a href="{}">Forwarded from {}</a>"#, f.url, f.name).as_str());
+            content
+                .push_str(format!(r#"<a href="{}">Forwarded from {}</a>"#, f.url, f.name).as_str());
         }
         let parts = [
             Some(format!("<p>{}</p>", &self.html)),
             self.media.render(),
             self.link_preview.render(),
             self.poll.render(),
-        ].into_iter()
-            .filter(|s| s.is_some())
-            .map(|s| s.unwrap())
-            .collect::<String>();
+        ]
+        .into_iter()
+        .filter(|s| s.is_some())
+        .map(|s| s.unwrap())
+        .collect::<String>();
 
         content.push_str(parts.as_str());
         content.shrink_to_fit();
@@ -35,19 +37,23 @@ impl RenderContent for Media {
                 } else {
                     "controls".to_string()
                 };
-                Some(format!(r#"
+                Some(format!(
+                    r#"
                 <video style="max-width: 800px; height: auto" poster="{thumb_url}" {attrs}>
                    <source src="{url}" type="video/mp4">
                    <object data="{url}" >
                 </video>
-                "#))
+                "#
+                ))
             }
             Media::VideoTooBig { thumb_url } => {
                 // TODO прокинуть урл вида t.me/channel/id чтобы перейти в телегу на просмотр видео
-                Some(format!(r#"
+                Some(format!(
+                    r#"
                 <p><i>MEDIA TOO BIG</i></p>
                 <img src="{thumb_url}" />
-                "#))
+                "#
+                ))
             }
         }
     }
@@ -62,7 +68,8 @@ impl RenderContent for LinkPreview {
                 String::new()
             }
         };
-        let content = format!(r#"
+        let content = format!(
+            r#"
         <blockquote>
           <p style="white-space:pre-wrap;"><b>{title}</b></p>
           <p style="white-space:pre-wrap;">
@@ -71,11 +78,11 @@ impl RenderContent for LinkPreview {
           {thumbnail}
           <p style="white-space:pre-wrap;">{description}</p>
         </blockquote>"#,
-                              thumbnail = thumbnail,
-                              title = &self.title,
-                              url = &self.url,
-                              description = &self.description,
-                              site_name = &self.site_name,
+            thumbnail = thumbnail,
+            title = &self.title,
+            url = &self.url,
+            description = &self.description,
+            site_name = &self.site_name,
         );
         Some(content)
     }
@@ -89,11 +96,13 @@ impl RenderContent for File {
 
 impl RenderContent for Poll {
     fn render(&self) -> Option<String> {
-        let options: String = self.options
+        let options: String = self
+            .options
             .iter()
             .map(|o| format!("<li>{} - {}</li>\n", o.name, o.percent))
             .collect();
-        Some(format!(r#"
+        Some(format!(
+            r#"
         <p>
             <span>{t}: {question}</span>
             <ul>
@@ -101,6 +110,10 @@ impl RenderContent for Poll {
             </ul>
 
         </p>
-        "#, t = self.r#type, question = self.question, options = options))
+        "#,
+            t = self.r#type,
+            question = self.question,
+            options = options
+        ))
     }
 }

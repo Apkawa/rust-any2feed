@@ -14,5 +14,3 @@ fn test_entry_text() {
     let e = channel_post_to_entry(&p);
     dbg!(e);
 }
-
-

@@ -1,10 +1,10 @@
+use crate::server::error;
+use crate::server::request::HTTPRequest;
+use crate::server::response::HTTPResponse;
+use crate::utils::parse_match_captures;
 use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
 use std::sync::{Arc, Mutex};
-use crate::server::request::HTTPRequest;
-use crate::server::error;
-use crate::server::response::HTTPResponse;
-use crate::utils::parse_match_captures;
 
 pub type ViewCallback = dyn Fn(&HTTPRequest) -> error::Result<HTTPResponse> + Send;
 
@@ -23,10 +23,11 @@ impl Debug for Route {
     }
 }
 
-
 impl Route {
-    pub fn new(pattern: &str,
-               callback: impl Fn(&HTTPRequest) -> error::Result<HTTPResponse> + Send + 'static) -> Self {
+    pub fn new(
+        pattern: &str,
+        callback: impl Fn(&HTTPRequest) -> error::Result<HTTPResponse> + Send + 'static,
+    ) -> Self {
         Self {
             pattern: pattern.to_string(),
             re: regex::Regex::new(format!(r#"^{pattern}$"#).as_str()).unwrap(),
@@ -52,7 +53,6 @@ pub struct ServerConfig {
     pub threads: Option<u8>,
     pub routes: Vec<Route>,
 }
-
 
 impl ServerConfig {
     pub fn addr(&self) -> String {

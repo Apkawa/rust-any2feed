@@ -1,4 +1,3 @@
-
 ///
 /// ```
 /// use feed::utils::escape;

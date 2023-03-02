@@ -19,7 +19,9 @@ pub fn get_git_root() -> Option<PathBuf> {
         if p.exists() && p.is_dir() {
             return Some(dir);
         }
-        if !dir.pop() { break; }
+        if !dir.pop() {
+            break;
+        }
     }
     None
 }
@@ -45,7 +47,8 @@ pub fn path_from_git_root(path: &str) -> Option<PathBuf> {
 /// assert!(str.len() > 0)
 /// ```
 pub fn load_fixture(name: &str) -> String {
-    let fixture_path = get_git_root().unwrap()
+    let fixture_path = get_git_root()
+        .unwrap()
         .join(format!("test_utils/src/fixtures/{name}"));
     dbg!(&fixture_path);
     read_to_string(fixture_path).unwrap()
@@ -60,5 +63,3 @@ pub fn load_fixture(name: &str) -> String {
 pub fn load_json_fixture(name: &str) -> String {
     load_fixture(format!("{name}.json").as_str())
 }
-
-

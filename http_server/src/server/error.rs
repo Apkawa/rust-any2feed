@@ -8,5 +8,3 @@ pub enum HTTPError {
     InvalidRequest,
     NotFound,
 }
-
-

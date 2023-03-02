@@ -1,10 +1,10 @@
-use std::sync::Arc;
-use reqwest::cookie::Jar;
+use crate::data::Channel;
+use crate::parse::parse_message;
 use reqwest::blocking::Response;
+use reqwest::cookie::Jar;
 use scraper;
 use scraper::Selector;
-use crate::data::{Channel};
-use crate::parse::parse_message;
+use std::sync::Arc;
 
 const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
 
@@ -15,14 +15,14 @@ pub struct TelegramChannelPreviewApi {
     pub name: Option<String>,
 }
 
-
 impl TelegramChannelPreviewApi {
     pub fn new(slug: &str) -> TelegramChannelPreviewApi {
         let jar = Jar::default();
         let session = reqwest::blocking::Client::builder()
             .user_agent(USER_AGENT)
             .cookie_provider(Arc::new(jar))
-            .build().unwrap();
+            .build()
+            .unwrap();
 
         TelegramChannelPreviewApi {
             slug: slug.to_string(),
@@ -55,7 +55,9 @@ impl TelegramChannelPreviewApi {
             }
         }
         for el_ref in parser.select(&Selector::parse(".js-widget_message_wrap").unwrap()) {
-            channel.posts.push(parse_message(el_ref.html().as_str()).unwrap());
+            channel
+                .posts
+                .push(parse_message(el_ref.html().as_str()).unwrap());
         }
 
         channel
@@ -66,7 +68,6 @@ impl TelegramChannelPreviewApi {
         Ok(self.parse_html_page(html.as_str()))
     }
 }
-
 
 #[cfg(test)]
 mod test {

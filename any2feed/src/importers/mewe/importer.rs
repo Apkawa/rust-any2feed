@@ -1,12 +1,12 @@
-use std::sync::Arc;
 use feed::opml::Outline;
+use std::sync::Arc;
 
 use http_server::Route;
 
-use mewe_api::MeweApi;
 use crate::importers::mewe::config::Config;
 use crate::importers::mewe::routes::{route_feed, route_media_proxy, route_opml};
 use crate::importers::traits::Importer;
+use mewe_api::MeweApi;
 
 pub struct MeweImporter {
     api: Arc<MeweApi>,
@@ -25,16 +25,12 @@ impl Importer for MeweImporter {
         let mewe = MeweApi::new(config.mewe.cookies_path.as_str()).unwrap();
 
         MeweImporter {
-            api: Arc::new(mewe)
+            api: Arc::new(mewe),
         }
     }
 
     fn routes(&self) -> Vec<Route> {
-        vec![
-            route_opml(self),
-            route_feed(self),
-            route_media_proxy(self),
-        ]
+        vec![route_opml(self), route_feed(self), route_media_proxy(self)]
     }
 
     fn opml_outlines(&self) -> Vec<Outline> {

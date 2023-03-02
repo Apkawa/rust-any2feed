@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-
 ///
 /// ```
 /// use std::collections::HashMap;
@@ -19,7 +18,10 @@ use std::collections::HashMap;
 /// assert_eq!(parse_match_captures(&re, "/foo/baz/565"), None);
 /// ```
 /// currently no supported named captures https://github.com/rust-lang/regex/issues/955
-pub fn parse_match_captures(re: &regex::Regex, text: &str) -> Option<HashMap<String, Option<String>>> {
+pub fn parse_match_captures(
+    re: &regex::Regex,
+    text: &str,
+) -> Option<HashMap<String, Option<String>>> {
     let cap = re.captures(text)?;
     let mut res: HashMap<String, Option<String>> = HashMap::with_capacity(cap.len());
     for (i, c) in cap.iter().enumerate() {
@@ -46,9 +48,7 @@ pub fn parse_match_captures(re: &regex::Regex, text: &str) -> Option<HashMap<Str
 ///     ]);
 /// ```
 pub fn path_params_to_vec(path_params: &HashMap<String, Option<String>>) -> Vec<Option<String>> {
-    let mut pairs: Vec<_> = path_params.iter()
-        .map(|(k, v)| (k, v))
-        .collect();
+    let mut pairs: Vec<_> = path_params.iter().map(|(k, v)| (k, v)).collect();
     pairs.sort();
 
     pairs.into_iter().map(|(_k, v)| v.clone()).collect()
