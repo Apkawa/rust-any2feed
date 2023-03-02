@@ -1,0 +1,12 @@
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+tag_format = "v$version"
+version_files = [
+    "any2feed/__init__.py"
+]
+changelog_file = 'CHANGELOG.md'
+changelog_incremental = false
+major_version_zero = true
+update_changelog_on_bump = true
+annotated_tag = true
