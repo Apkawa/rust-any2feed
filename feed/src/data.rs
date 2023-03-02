@@ -85,7 +85,7 @@ impl Entry {
             let mut id = id;
             if cfg!(debug_assertions) {
                 // Отладочный режим, делаем id неуникальными
-                id.push_str("/");
+                id.push('/');
                 id.push_str(&Local::now().to_rfc3339());
             }
             id

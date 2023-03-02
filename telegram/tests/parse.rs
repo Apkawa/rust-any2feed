@@ -14,7 +14,7 @@ fn test_parse_html() {
     assert!(result
         .image_url
         .starts_with("https://cdn4.telegram-cdn.org/file/"));
-    assert!(result.posts.len() > 0);
+    assert!(!result.posts.is_empty());
 }
 
 #[test]

@@ -36,8 +36,8 @@ impl TelegramChannelPreviewApi {
     }
 
     pub fn get(&self, url: &str) -> reqwest::Result<Response> {
-        let rb = self.session.get(url).send();
-        rb
+        
+        self.session.get(url).send()
     }
 
     pub fn parse_html_page(&self, html: &str) -> Channel {

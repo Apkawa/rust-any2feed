@@ -34,7 +34,7 @@ impl Config {
                         slug
                     }
                 };
-                channels.entry(slug).or_insert(config).pages = config.pages.clone()
+                channels.entry(slug).or_insert(config).pages = config.pages
             }
         }
         // Добираем словарь из [telegram.extra.channel_name]
@@ -42,7 +42,7 @@ impl Config {
             for (slug, extra) in channel_map {
                 let mut config = channels
                     .entry(slug)
-                    .or_insert_with(|| ExtraChannelConfig::default());
+                    .or_insert_with(ExtraChannelConfig::default);
                 config.pages = extra.pages;
             }
         }

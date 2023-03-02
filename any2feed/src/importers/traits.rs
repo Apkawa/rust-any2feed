@@ -22,14 +22,14 @@ pub trait RenderContent {
 
 impl<T: RenderContent> RenderContent for Option<T> {
     fn render(&self) -> Option<String> {
-        self.as_ref().map(|s| s.render()).flatten()
+        self.as_ref().and_then(|s| s.render())
     }
 }
 
 impl<T: RenderContent> RenderContent for Vec<T> {
     fn render(&self) -> Option<String> {
         Some(
-            self.into_iter()
+            self.iter()
                 .filter_map(|s| s.render())
                 .collect::<String>(),
         )

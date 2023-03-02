@@ -22,7 +22,7 @@ impl Importer for TelegramImporter {
     }
 
     fn routes(&self) -> Vec<Route> {
-        vec![route_feed(&self), route_opml(&self)]
+        vec![route_feed(self), route_opml(self)]
     }
 
     fn opml_outlines(&self) -> Vec<Outline> {

@@ -125,7 +125,7 @@ impl MeweApi {
             .get(API_MEWE_IDENTIFY)?
             .json::<json::MeweApiIdentify>()?;
         if json.authenticated {
-            return Ok(true);
+            Ok(true)
         } else {
             Err(crate::MeweApiError::ApiError {
                 kind: crate::ApiErrorKind::IdentifyFail,

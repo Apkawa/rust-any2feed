@@ -16,8 +16,7 @@ impl RenderContent for ChannelPost {
             self.poll.render(),
         ]
         .into_iter()
-        .filter(|s| s.is_some())
-        .map(|s| s.unwrap())
+        .flatten()
         .collect::<String>();
 
         content.push_str(parts.as_str());

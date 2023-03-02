@@ -20,7 +20,7 @@ pub fn channel_post_to_entry(post: &ChannelPost) -> Entry {
     // TODO автора поста в канале лучше отображать где нибудь незаметно в тексте
     // entry.author = Element(Person::new(from_author.clone(), None, None))
 
-    return entry;
+    entry
 }
 
 pub fn channel_to_feed(channel: &Channel) -> Feed {
@@ -50,5 +50,5 @@ pub fn channel_to_feed(channel: &Channel) -> Feed {
             e
         })
         .collect();
-    return feed;
+    feed
 }

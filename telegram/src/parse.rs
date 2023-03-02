@@ -17,7 +17,7 @@ use scraper::Selector;
 /// assert_eq!(get_class_name_by_prefix(el_ref.value(), "lalala"), None);
 /// ```
 pub fn get_class_name_by_prefix<'a>(el: &'a Element, prefix: &str) -> Option<&'a str> {
-    let prefix = prefix.trim_start_matches(".");
+    let prefix = prefix.trim_start_matches('.');
     el.classes()
         .find(|p| p.starts_with(prefix))
         .map(|s| s.trim_start_matches(prefix))
@@ -228,11 +228,10 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
             Some("photo_wrap") => {
                 if let Some(photo) = el
                     .attr("style")
-                    .map(|s| get_background_url_from_style(s))
-                    .flatten()
+                    .and_then(get_background_url_from_style)
                 {
                     post.media
-                        .get_or_insert_with(|| Vec::new())
+                        .get_or_insert_with(Vec::new)
                         .push(Media::Photo(photo.to_string()))
                 }
             }
@@ -245,7 +244,7 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
                     url: el.attr("href").unwrap().to_string(),
                 })
             }
-            Some("document") => post.file.get_or_insert_with(|| Vec::new()).push(File {
+            Some("document") => post.file.get_or_insert_with(Vec::new).push(File {
                 filename: el_ref
                     .select(&document_title_sel)
                     .next()
@@ -260,7 +259,7 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
             Some("voice") => {
                 if let Some(src) = el.attr("src") {
                     post.media
-                        .get_or_insert_with(|| Vec::new())
+                        .get_or_insert_with(Vec::new)
                         .push(Media::Voice(src.to_string()))
                 }
             }
@@ -275,7 +274,7 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
             Some("message_video_player" | "message_roundvideo_player") => {
                 if !has_class(el, "link_preview_video_player") {
                     post.media
-                        .get_or_insert_with(|| Vec::new())
+                        .get_or_insert_with(Vec::new)
                         .push(parse_media_video(el_ref.html().as_str()))
                 }
             }
