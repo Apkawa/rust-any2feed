@@ -7,6 +7,7 @@ use reqwest::cookie::{CookieStore, Jar};
 
 use reqwest::Url;
 
+#[allow(clippy::tabs_in_doc_comments)]
 /// В формате  Netscape HTTP Cookie File http://fileformats.archiveteam.org/wiki/Netscape_cookies.txt
 /// https://curl.se/rfc/cookie_spec.html
 /// ```
@@ -23,7 +24,7 @@ use reqwest::Url;
 /// let cookies = jar.cookies(&url).unwrap();
 /// assert_eq!(cookies.to_str().unwrap(), "sid=foo");
 /// ```
-pub fn import_cookie_from_string(cookie_str: &String) -> io::Result<Jar> {
+pub fn import_cookie_from_string(cookie_str: &str) -> io::Result<Jar> {
     let jar = Jar::default();
 
     for line in cookie_str.lines().map(|l| l.trim()) {
@@ -63,7 +64,7 @@ pub fn update_cookie_from_file(jar: &Jar, url: &Url, path: &String) -> Option<()
     write(path, new_cookie_str).ok()
 }
 
-pub fn merge_cookie_to_string(jar: &Jar, url: &Url, cookie_txt: &String) -> Option<String> {
+pub fn merge_cookie_to_string(jar: &Jar, url: &Url, cookie_txt: &str) -> Option<String> {
     let domain = url.domain().unwrap().trim_start_matches('.');
     let cookies = jar.cookies(url)?;
     let mut cookies_map = cookies

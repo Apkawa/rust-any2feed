@@ -67,14 +67,6 @@ fn person() {
     );
 }
 
-fn entry() {
-    let _entry = Entry::new(
-        "id".to_string(),
-        "title".to_string(),
-        "2001-07-08T00:34:60".to_string(),
-    );
-}
-
 #[test]
 fn entry_with_looong_text() {
     let entry = Entry::new(

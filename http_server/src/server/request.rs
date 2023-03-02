@@ -64,7 +64,7 @@ impl HTTPRequest<'_> {
     /// assert_eq!(r.query_params.len(), 2);
     /// assert_eq!(r.query_params.get("a").unwrap(), "1");
     /// ```
-    pub fn parse(lines: &Vec<String>) -> error::Result<HTTPRequest> {
+    pub fn parse(lines: &[String]) -> error::Result<HTTPRequest> {
         let req_head = lines[0]
             .split_whitespace()
             .filter(|c| !c.is_empty())

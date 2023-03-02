@@ -9,7 +9,7 @@ use pulldown_cmark::{html, Options, Parser};
 /// let expect_html = "<p>Hello world, this is a <del>complicated</del> <em>very simple</em> example.</p>\n";
 /// assert_eq!(html, expect_html)
 /// ```
-pub fn md_to_html(md_text: &String) -> String {
+pub fn md_to_html(md_text: &str) -> String {
     let mut options = Options::empty();
     options.insert(Options::ENABLE_STRIKETHROUGH);
     let parser = Parser::new_ext(md_text, options);

@@ -12,6 +12,8 @@ test_local = []
 [dependencies]
 reqwest_mozilla_cookie = { version = "0.1.0", path = "../reqwest_mozilla_cookie" }
 # Реализовывать https будет слишком больно. Пока берем блокирующий вариант для простоты
+
+openssl = { version = "0.10.45", features = ["vendored"] }
 reqwest = { version = "0.11", features = ["blocking", "json", "cookies"] }
 # json тоже самостоятельно парсить не будем
 serde = { version = "1.0.152", features = ["derive"] }

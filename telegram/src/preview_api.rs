@@ -41,8 +41,10 @@ impl TelegramChannelPreviewApi {
 
     pub fn parse_html_page(&self, html: &str) -> Channel {
         let parser = scraper::Html::parse_document(html);
-        let mut channel = Channel::default();
-        channel.slug = self.slug.clone();
+        let mut channel = Channel {
+            slug: self.slug.clone(),
+            ..Channel::default()
+        };
         for el in parser.select(&Selector::parse("meta[property^='og:']").unwrap()) {
             let v = el.value();
             let prop = v.attr("property").unwrap();

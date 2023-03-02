@@ -193,7 +193,6 @@ pub fn route_media_proxy(importer: &MeweImporter) -> Route {
                     content: Some(media_res.bytes().unwrap()),
                     content_type,
                     headers: media_headers,
-                    ..HTTPResponse::default()
                 })
             }
             404 => Err(NotFound),

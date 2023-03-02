@@ -34,12 +34,12 @@ impl Route {
             callback: Arc::new(Mutex::new(callback)),
         }
     }
-    pub fn match_path(&self, path: &String) -> bool {
+    pub fn match_path(&self, path: &str) -> bool {
         self.re.is_match(path)
     }
 
-    pub fn parse_path(&self, path: &String) -> Option<HashMap<String, Option<String>>> {
-        parse_match_captures(&self.re, path.as_str())
+    pub fn parse_path(&self, path: &str) -> Option<HashMap<String, Option<String>>> {
+        parse_match_captures(&self.re, path)
     }
 
     pub fn run_cb(&self, request: &HTTPRequest) -> error::Result<HTTPResponse> {

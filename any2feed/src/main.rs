@@ -42,7 +42,6 @@ fn main() {
         port: config.server.port,
         threads: config.server.threads,
         routes,
-        ..ServerConfig::default()
     };
 
     run(run_args).unwrap();
