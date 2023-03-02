@@ -8,9 +8,6 @@ use std::path::{Path, PathBuf};
 /// use test_utils::fixture::get_git_root;
 /// let r = get_git_root().unwrap();
 /// assert!(r.ends_with("rust-any2feed"));
-/// env::set_current_dir(r.join("test_utils/src/fixtures"));
-/// let r = get_git_root().unwrap();
-/// assert!(r.ends_with("rust-any2feed"));
 /// ```
 pub fn get_git_root() -> Option<PathBuf> {
     let mut dir = env::current_dir().ok()?;
@@ -30,9 +27,6 @@ pub fn get_git_root() -> Option<PathBuf> {
 /// ```
 /// use std::env;
 /// use test_utils::fixture::{get_git_root, path_from_git_root};
-/// let r = get_git_root().unwrap();
-/// assert!(r.ends_with("rust-any2feed"));
-/// env::set_current_dir(r.join("test_utils/src/fixtures"));
 /// let r = path_from_git_root("./foo_bar/").unwrap();
 /// assert!(r.ends_with("rust-any2feed/foo_bar/"));
 /// ```

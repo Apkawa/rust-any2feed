@@ -60,8 +60,9 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { target: x86_64-apple-darwin         , os: macos-10.15                   }
-          - { target: x86_64-pc-windows-gnu       , os: windows-2019                  }
+          - { target: x86_64-apple-darwin         , os: macos-10.15 }
+          #          - { target: x86_64-pc-windows-gnu       , os: windows-2019                  }
+          - { target: x86_64-pc-windows-gnu       , os: ubuntu-20.04, use-cross: true }
           - { target: x86_64-unknown-linux-gnu    , os: ubuntu-20.04, use-cross: true }
     steps:
       - name: Checkout source code
@@ -71,8 +72,8 @@ jobs:
         shell: bash
         if: startsWith(matrix.job.os, 'ubuntu')
         run: |
-           sudo apt-get -y update
-           sudo apt-get -y install libssl-dev pkg-config
+          sudo apt-get -y update
+          sudo apt-get -y install libssl-dev pkg-config
 
       - name: Install prerequisites for macos
         shell: bash
@@ -150,14 +151,14 @@ jobs:
       - name: "Artifact upload: "
         uses: actions/upload-artifact@master
         with:
-          name: ${{ steps.strip.outputs.BIN_NAME }}
+          name: ${{ matrix.job.target }}-${{ steps.strip.outputs.BIN_NAME }}
           path: ${{ steps.strip.outputs.BIN_PATH }}
 
 
-#      - name: Generate Changelog
-#        run: |
-#          cz ch --dry-run ${{ steps.version.outputs.full_with_prefix }}  > ${{ github.workspace }}-CHANGELOG.txt
-#          cat ${{ github.workspace }}-CHANGELOG.txt
+      #      - name: Generate Changelog
+      #        run: |
+      #          cz ch --dry-run ${{ steps.version.outputs.full_with_prefix }}  > ${{ github.workspace }}-CHANGELOG.txt
+      #          cat ${{ github.workspace }}-CHANGELOG.txt
 
       - name: Publish archives and packages
         uses: softprops/action-gh-release@v1
