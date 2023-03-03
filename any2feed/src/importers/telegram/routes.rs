@@ -24,8 +24,8 @@ pub fn route_feed(importer: &TelegramImporter) -> Route {
         if let Ok(channel) = channel {
             let feed = channel_to_feed(&channel);
             let content = feed.to_string();
-            let mut response = HTTPResponse::with_content(content);
-            response.content_type = Some("text/xml".to_string());
+            let response =
+                HTTPResponse::with_content(content.as_str()).set_content_type("text/xml");
             Ok(response)
         } else {
             Err(NotFound)
@@ -49,8 +49,7 @@ pub(crate) fn route_opml(importer: &TelegramImporter) -> Route {
             ..Outline::default()
         });
         let content = opml.to_string();
-        let mut response = HTTPResponse::with_content(content);
-        response.content_type = Some("text/xml".to_string());
+        let response = HTTPResponse::with_content(content.as_str()).set_content_type("text/xml");
         Ok(response)
     })
 }

@@ -1,4 +1,4 @@
-If you want to learn the rust programming language, 
+If you want to learn the rust programming language,
 and you are interested in the project, then you can join.
 
 # Build from source
@@ -8,7 +8,7 @@ and you are interested in the project, then you can join.
 already installed `cargo` via `rustup`
 
 ## Build
-``` 
+```
 git clone https://github.com/Apkawa/rust-any2feed.git
 cd rust-any2feed
 cargo run --release --bin any2feed -- ./any2feed_config.toml
@@ -32,15 +32,17 @@ cargo build --release --target x86_64-pc-windows-gnu --bin any2feed
 
 # Commit
 
-* Install [pre-commit](https://pre-commit.com/) via package manager or pip 
-* run 
+* Install [pre-commit](https://pre-commit.com/) via package manager or pip
+* Install hooks
 ```shell
 pre-commit install
 ```
 
+
+
 # Release
 
-### Before 
+### Before
 
 Currently, use [commitizen](https://github.com/commitizen-tools/commitizen)
 
@@ -65,4 +67,3 @@ cz bump --check-consistency --no-verify --prerelease alpha
 ```shell
 cz changelog
 ```
-

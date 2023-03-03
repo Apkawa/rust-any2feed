@@ -14,7 +14,7 @@ use std::time::Duration;
 
 pub fn route_opml(importer: &MeweImporter) -> Route {
     let mewe_api = importer.api();
-    Route::new("/mewe/feed.opml", move |r| {
+    Route::new("/mewe.opml", move |r| {
         let mut url = r.url();
         url.set_path("/mewe/feed");
 
@@ -56,8 +56,8 @@ pub fn route_opml(importer: &MeweImporter) -> Route {
                 .add_outline(groups)
                 .add_outline(users),
         );
-        let mut response = HTTPResponse::with_content(opml.to_string());
-        response.content_type = Some("text/xml".to_string());
+        let response =
+            HTTPResponse::with_content(opml.to_string().as_str()).set_content_type("text/xml");
         Ok(response)
     })
 }
@@ -166,8 +166,7 @@ pub fn route_feed(importer: &MeweImporter) -> Route {
         let res = feeds.to_string();
         let new_url = format!("http://{}/mewe/media", r.config.as_ref().unwrap().addr());
         let res = replace_mewe_media_urls(res.as_str(), new_url.as_str());
-        let mut response = HTTPResponse::with_content(res);
-        response.content_type = Some("text/xml".to_string());
+        let response = HTTPResponse::with_content(res.as_str()).set_content_type("text/xml");
         Ok(response)
     })
 }

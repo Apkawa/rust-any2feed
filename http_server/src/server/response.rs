@@ -17,12 +17,21 @@ impl HTTPResponse {
             ..HTTPResponse::default()
         }
     }
-    pub fn with_content(content: String) -> Self {
+    pub fn with_content(content: &str) -> Self {
         HTTPResponse {
             status: 200,
-            content: Some(Bytes::from(content)),
+            content: Some(Bytes::from(content.to_string())),
             ..HTTPResponse::default()
         }
+    }
+    pub fn set_content_type(mut self, content_type: &str) -> Self {
+        self.content_type = Some(content_type.to_string());
+        self
+    }
+
+    pub fn set_header(mut self, name: &str, value: &str) -> Self {
+        self.headers.insert(name.to_string(), value.to_string());
+        self
     }
 }
 

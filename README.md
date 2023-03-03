@@ -17,8 +17,8 @@ Idea from [goutsune/unko](https://github.com/goutsune/unko), [goutsune/mewe-wrap
 For mvp  (minimal viable product)
 
 * Sources:
-    - [x] mewe 
-    - [x] telegram channels 
+    - [x] mewe
+    - [x] telegram channels
       - [x] by preview channel like https://t.me/s/bestogirl
       <!-- - [ ] by telegram client api -->
     - [ ] danbooru/gelbooru
@@ -29,7 +29,7 @@ For mvp  (minimal viable product)
     - [ ] dtf
     - [ ] vk
     - [ ] 2ch
-* [ ] CLI
+* [x] CLI
 * [ ] Configure via env
 * [ ] Pluggable interface
 * [ ] Cache storage
@@ -37,9 +37,22 @@ For mvp  (minimal viable product)
 
 # Usage
 
+Help
+```shell
+./any2feed help
+./any2feed help run
 ```
-./any2feed ./any2feed_config.toml
+
+Run server
+```
+Usage: any2feed --config <CONFIG> run [OPTIONS]
+
+Options:
+  -p, --port <PORT>        Server listen port
+      --threads <THREADS>  Server num threads
 ```
 
-
-
+CLI params overrides config param
+```shell
+./any2feed --config ./any2feed.config.toml run [--port 12345]
+```

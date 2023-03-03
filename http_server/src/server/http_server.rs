@@ -58,7 +58,7 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
 
 pub fn run(config: ServerConfig) -> std::io::Result<()> {
     let addr = config.addr();
-    println!("Run server: {}", addr);
+    println!("Run server: http://{}", addr);
     let listener = TcpListener::bind(addr)?;
 
     let pool = ThreadPool::new(config.threads.unwrap_or(4) as usize);
