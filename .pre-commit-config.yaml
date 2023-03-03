@@ -16,10 +16,10 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
 
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.31.1
-    hooks:
-      - id: markdownlint
+#  - repo: https://github.com/igorshubovych/markdownlint-cli
+#    rev: v0.31.1
+#    hooks:
+#      - id: markdownlint
 
   - repo: local
     hooks:
@@ -51,5 +51,5 @@ repos:
         name: test
         language: system
         types: [ file, rust ]
-        entry: ./_scripts/cargo.sh test --lib
+        entry: ./_scripts/cargo.sh test --all
         pass_filenames: false

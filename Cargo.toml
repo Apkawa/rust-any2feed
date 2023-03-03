@@ -7,3 +7,7 @@ members = [
     "test_utils",
     "telegram"
 ]
+
+#[patch.crates-io]
+## This path for
+#rustix = { git = "https://github.com/bytecodealliance/rustix/", branch = "v0.36.4" }

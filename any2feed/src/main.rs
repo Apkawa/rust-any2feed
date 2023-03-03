@@ -1,42 +1,45 @@
-use std::env;
-
+use clap::Parser;
 use std::fs::read_to_string;
 
+use any2feed::cli::{Commands, CLI};
 use any2feed::config::MainConfig;
-use any2feed::importers::mewe::importer::MeweImporter;
-use any2feed::importers::telegram::TelegramImporter;
-use any2feed::importers::traits::Importer;
+use any2feed::importers::ImporterList;
 
 use http_server::{run, HTTPRequest, HTTPResponse, Route, ServerConfig};
 
 fn main_view(_request: &HTTPRequest) -> http_server::Result<HTTPResponse> {
-    Ok(HTTPResponse::with_content("OK".to_string()))
+    Ok(HTTPResponse::with_content(
+        r#"<html>
+        <body>
+            <h1>Feeds:</h1>
+            <ul>
+                <li><a href="/mewe.opml">Mewe OPML</a></li>
+                <li><a href="/telegram.opml">Telegram OPML</a></li>
+            </ul>
+        </body>
+    </html>
+    "#,
+    )
+    .set_content_type("text/html"))
 }
 
 fn main() {
-    // todo cli
-    let args: Vec<_> = env::args().collect();
-
-    if args.len() == 1 {
-        panic!("Need config path arg");
+    let cli = CLI::parse();
+    let config_str = read_to_string(cli.config).unwrap();
+    let mut config: MainConfig = toml::from_str(&config_str).unwrap();
+    match cli.command {
+        Commands::Run(server_cfg) => {
+            config.server.port = server_cfg.port;
+            config.server.threads = server_cfg.threads;
+        }
     }
-    let config_path = &args[1];
-    let config_str = read_to_string(config_path.as_str()).unwrap();
-    dbg!(&config_path, &config_str);
-    let config: MainConfig = toml::from_str(&config_str).unwrap();
 
-    let mut routes = vec![
-        Route::new("/", main_view),
-        Route::new("/hello", |_r| {
-            Ok(HTTPResponse::with_content("Hello world".to_string()))
-        }),
-    ];
+    let mut routes = vec![Route::new("/", main_view)];
 
-    let mewe_importers = MeweImporter::with_config(&config_str);
-    routes.extend(mewe_importers.routes());
-
-    let telegram_importer = TelegramImporter::with_config(&config_str);
-    routes.extend(telegram_importer.routes());
+    let importer_list = ImporterList::get_importers(&config_str);
+    for importer in importer_list {
+        routes.extend(importer.routes());
+    }
 
     let run_args = ServerConfig {
         port: config.server.port,

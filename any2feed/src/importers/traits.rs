@@ -3,7 +3,9 @@ use http_server::Route;
 
 pub trait Importer {
     /// Initialize importer with config
-    fn with_config(toml: &str) -> Self;
+    fn with_config(toml: &str) -> Self
+    where
+        Self: Sized;
     /// Initialize routes
     fn routes(&self) -> Vec<Route>;
 
