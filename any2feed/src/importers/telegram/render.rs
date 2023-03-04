@@ -39,8 +39,8 @@ impl RenderContent for Media {
                 Some(format!(
                     r#"
                 <video style="max-width: 800px; height: auto" poster="{thumb_url}" {attrs}>
-                   <source src="{url}" type="video/mp4">
-                   <object data="{url}" >
+                   <source src="{url}" type="video/mp4" />
+                   <object data="{url}" />
                 </video>
                 "#
                 ))

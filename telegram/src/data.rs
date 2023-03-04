@@ -39,8 +39,25 @@ impl ChannelPost {
     pub fn url(&self) -> String {
         format!("https://t.me/{}", self.id)
     }
+    pub fn media_try_get_new_url(&self, media_index: usize, field: &str) -> String {
+        let media = self.media.as_ref().unwrap().get(media_index).unwrap();
+        let urls = media.get_urls();
+        let url = if urls.len() == 1 {
+            // Ссылка только одна
+            urls.get(0).unwrap()
+        } else {
+            let i = match field {
+                "url" => 0,
+                "thumb_url" => 1,
+                _ => unreachable!(),
+            };
+            urls.get(i).unwrap()
+        };
+        url.clone()
+    }
 }
 
+// TODO ссылка с токеном живет где то сутки, надо будет придумать костыль
 #[derive(Debug)]
 pub enum Media {
     Photo(String),
@@ -48,6 +65,19 @@ pub enum Media {
     Video { url: String, thumb_url: String },
     VideoGif { url: String, thumb_url: String },
     VideoTooBig { thumb_url: String },
+}
+
+impl Media {
+    pub fn get_urls(&self) -> Vec<String> {
+        use Media::*;
+        match self {
+            Photo(url) | Voice(url) => vec![url.clone()],
+            Video { url, thumb_url } | VideoGif { url, thumb_url } => {
+                vec![url.clone(), thumb_url.clone()]
+            }
+            VideoTooBig { thumb_url } => vec![thumb_url.clone()],
+        }
+    }
 }
 
 #[derive(Debug, Default)]

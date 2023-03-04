@@ -5,6 +5,7 @@ use crate::importers::traits::Importer;
 pub mod mewe;
 pub mod telegram;
 pub mod traits;
+pub mod utils;
 
 pub struct ImporterList;
 

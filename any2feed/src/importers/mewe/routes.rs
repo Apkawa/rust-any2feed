@@ -71,13 +71,9 @@ pub fn route_feed(importer: &MeweImporter) -> Route {
         let limit = r.query_params.get("limit").and_then(|l| l.parse().ok());
         let pages = r.query_params.get("pages").and_then(|l| l.parse().ok());
 
-        let pairs = path_params_to_vec(r.path_params.as_ref().unwrap());
-        let pairs: Vec<Option<&str>> = pairs
-            .iter()
-            .map(|o| o.as_ref().map(|v| v.as_str()))
-            .collect();
+        let path_parts = path_params_to_vec(r.path_params.as_ref().unwrap());
         let mut user_id: Option<String> = None;
-        let (rel_url, title) = match pairs[1..=2] {
+        let (rel_url, title) = match path_parts[1..=2] {
             [Some("me"), ..] => (
                 "https://mewe.com/myworld".to_string(),
                 "Mewe me feed".to_string(),
@@ -108,11 +104,11 @@ pub fn route_feed(importer: &MeweImporter) -> Route {
                 .fetch_feeds(next_page.as_str(), None, None)
                 .unwrap()
         } else {
-            if pairs[1] != Some("me") {
+            if path_parts[1] != Some("me") {
                 // Немного подождем чтоб не мучать мивач
                 thread::sleep(Duration::from_millis(100));
             }
-            match pairs[1..=2] {
+            match path_parts[1..=2] {
                 [Some("me"), ..] => mewe_api.get_my_feeds(limit, pages).unwrap(),
                 [Some("user"), Some(_id)] => mewe_api
                     .get_user_feed(user_id.unwrap().as_str(), limit, pages)
@@ -170,6 +166,7 @@ pub fn route_feed(importer: &MeweImporter) -> Route {
         Ok(response)
     })
 }
+
 pub fn route_media_proxy(importer: &MeweImporter) -> Route {
     let mewe_api = importer.api();
     Route::new("/mewe/media/(.*)", move |r| {

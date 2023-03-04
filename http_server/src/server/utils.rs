@@ -42,14 +42,20 @@ pub fn parse_match_captures(
 /// assert_eq!(
 ///     path_params_to_vec(&path_params),
 ///     vec![
-///         Some("/foo/bar/123/".to_string()),
-///         Some("bar".to_string()),
-///         Some("123".to_string()),
+///         Some("/foo/bar/123/"),
+///         Some("bar"),
+///         Some("123"),
 ///     ]);
 /// ```
-pub fn path_params_to_vec(path_params: &HashMap<String, Option<String>>) -> Vec<Option<String>> {
+pub fn path_params_to_vec<'a>(
+    path_params: &'a HashMap<String, Option<String>>,
+) -> Vec<Option<&'a str>> {
     let mut pairs: Vec<_> = path_params.iter().map(|(k, v)| (k, v)).collect();
     pairs.sort();
 
-    pairs.into_iter().map(|(_k, v)| v.clone()).collect()
+    pairs
+        .into_iter()
+        .map(|(_k, v)| v)
+        .map(|o| o.as_ref().map(|v| v.as_str()))
+        .collect()
 }

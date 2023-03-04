@@ -12,6 +12,8 @@ feed = { version = "0.1.0", path = "../feed" }
 mewe_api = { version = "0.1.0", path = "../mewe_api" }
 telegram = { version = "0.1.0", path = "../telegram" }
 
+reqwest = { version = "0.11", features = ["blocking", "json", "cookies"] }
+
 regex = { version = "1.7.1" }
 chrono = { version = "0.4.23", features = ["serde"] }
 # For config
@@ -19,6 +21,7 @@ serde = { version = "1.0.152", features = ["derive"] }
 toml = { version = "0.7.2" }
 # Cli
 clap = { version = "4.1.8", features = ["derive"] }
+
 
 [dev-dependencies]
 test_utils = { version = "0.1.0", path = "../test_utils" }

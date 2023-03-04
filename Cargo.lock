@@ -30,6 +30,7 @@ dependencies = [
  "http_server",
  "mewe_api",
  "regex",
+ "reqwest",
  "rstest",
  "serde",
  "serde_json",

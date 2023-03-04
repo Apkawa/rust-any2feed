@@ -4,7 +4,7 @@ mod render;
 mod routes;
 
 use crate::importers::telegram::config::Config;
-use crate::importers::telegram::routes::{route_feed, route_opml};
+use crate::importers::telegram::routes::{route_feed, route_media_proxy, route_opml};
 use crate::importers::traits::Importer;
 use ::feed::opml::Outline;
 use http_server::Route;
@@ -22,7 +22,7 @@ impl Importer for TelegramImporter {
     }
 
     fn routes(&self) -> Vec<Route> {
-        vec![route_feed(self), route_opml(self)]
+        vec![route_feed(self), route_opml(self), route_media_proxy(self)]
     }
 
     fn opml_outlines(&self) -> Vec<Outline> {
