@@ -12,14 +12,14 @@ Idea from [goutsune/unko](https://github.com/goutsune/unko), [goutsune/mewe-wrap
 >
 > The project is being written for learning rust and is not yet ready for users
 
-# Feature
+## Features
 
 For mvp  (minimal viable product)
 
 * Sources:
     - [x] mewe
     - [x] telegram channels
-      - [x] by preview channel like https://t.me/s/bestogirl
+      - [x] from public preview channel like https://t.me/s/bestogirl
       <!-- - [ ] by telegram client api -->
     - [ ] danbooru/gelbooru
     - [ ] pixiv
@@ -35,15 +35,16 @@ For mvp  (minimal viable product)
 * [ ] Cache storage
 * [x] Config
 
-# Usage
+## Usage
 
-Help
+### Help
 ```shell
 ./any2feed help
 ./any2feed help run
 ```
 
-Run server
+### Run server
+
 ```
 Usage: any2feed --config <CONFIG> run [OPTIONS]
 
@@ -56,3 +57,15 @@ CLI params overrides config param
 ```shell
 ./any2feed --config ./any2feed.config.toml run [--port 12345]
 ```
+
+
+## Similar projects
+
+* [goutsune/unko](https://github.com/goutsune/unko)
+* [goutsune/mewe-wrapper](https://github.com/goutsune/mewe-wrapper)
+* [stefansundin/rssbox](https://github.com/stefansundin/rssbox)
+* [raspi/SimpleRedditRSSBot](https://github.com/raspi/SimpleRedditRSSBot)
+* [c3kay/hoyolab-rss-feeds](https://github.com/c3kay/hoyolab-rss-feeds)
+* [pink-red/rss-exhentai-watched](https://github.com/pink-red/rss-exhentai-watched)
+* [kthchew/ao3-rss](https://github.com/kthchew/ao3-rss)
+* [SkYNewZ/youtube-subscription-feed](https://github.com/SkYNewZ/youtube-subscription-feed)
