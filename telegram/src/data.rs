@@ -16,7 +16,7 @@ impl Channel {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct ChannelPost {
     /// channel_slug/id
     pub id: String,
@@ -39,8 +39,35 @@ impl ChannelPost {
     pub fn url(&self) -> String {
         format!("https://t.me/{}", self.id)
     }
+    pub fn get_media_list_mut(&mut self) -> Vec<&mut Media> {
+        let link_preview_media = self
+            .link_preview
+            .as_mut()
+            .map(|p| p.media.as_mut())
+            .flatten();
+        self.media.as_mut().map_or_else(
+            || Vec::new(),
+            |m| m.iter_mut().chain(link_preview_media).collect::<Vec<_>>(),
+        )
+    }
+
+    pub fn get_media_list(&self) -> Vec<&Media> {
+        let link_preview_media = self
+            .link_preview
+            .as_ref()
+            .map(|p| p.media.as_ref())
+            .flatten();
+        self.media.as_ref().map_or_else(
+            || Vec::new(),
+            |m| m.iter().chain(link_preview_media).collect::<Vec<_>>(),
+        )
+    }
+
+    pub fn get_media(&self, index: usize) -> Option<&Media> {
+        self.get_media_list().get(index).map(|m| *m)
+    }
     pub fn media_try_get_new_url(&self, media_index: usize, field: &str) -> String {
-        let media = self.media.as_ref().unwrap().get(media_index).unwrap();
+        let media = self.get_media(media_index).unwrap();
         let urls = media.get_urls();
         let url = if urls.len() == 1 {
             // Ссылка только одна
@@ -58,7 +85,7 @@ impl ChannelPost {
 }
 
 // TODO ссылка с токеном живет где то сутки, надо будет придумать костыль
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Media {
     Photo(String),
     Voice(String),
@@ -80,13 +107,13 @@ impl Media {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct File {
     pub filename: String,
     pub size: String,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct LinkPreview {
     pub url: String,
     pub title: String,
@@ -95,20 +122,20 @@ pub struct LinkPreview {
     pub media: Option<Media>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct ForwardedFrom {
     pub name: String,
     pub url: String,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Poll {
     pub question: String,
     pub r#type: String,
     pub options: Vec<PollOption>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct PollOption {
     pub name: String,
     pub percent: String,

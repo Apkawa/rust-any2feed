@@ -1,5 +1,6 @@
 use http_server::response;
 use std::collections::HashMap;
+use std::time::SystemTime;
 
 pub fn response_from_reqwest_response(
     response: reqwest::blocking::Response,
@@ -18,4 +19,11 @@ pub fn response_from_reqwest_response(
         content_type,
         headers: media_headers,
     }
+}
+
+pub fn timestamp_now() -> u64 {
+    SystemTime::now()
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .unwrap()
+        .as_secs()
 }

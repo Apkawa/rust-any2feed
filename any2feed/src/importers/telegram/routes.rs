@@ -1,4 +1,4 @@
-use crate::importers::telegram::feed::channel_to_feed;
+use crate::importers::telegram::feed::{channel_to_feed, Context};
 use crate::importers::telegram::TelegramImporter;
 use crate::importers::utils::response_from_reqwest_response;
 use feed::opml::{Outline, OPML};
@@ -7,7 +7,7 @@ use http_server::utils::path_params_to_vec;
 use http_server::HTTPError::NotFound;
 use http_server::{HTTPError, HTTPResponse, Route};
 use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
-use reqwest::Method;
+use reqwest::{Method, Url};
 use std::str::FromStr;
 use std::sync::Arc;
 use telegram::preview_api::TelegramChannelPreviewApi;
@@ -27,7 +27,11 @@ pub fn route_feed(importer: &TelegramImporter) -> Route {
         let api = TelegramChannelPreviewApi::new(channel_slug.as_str());
         let channel = api.fetch(config.pages);
         if let Ok(channel) = channel {
-            let feed = channel_to_feed(&channel);
+            let mut proxy_url = r.url();
+            proxy_url.set_path("/telegram/media");
+
+            let context = Context { proxy_url };
+            let feed = channel_to_feed(&channel, Some(&context));
             let content = feed.to_string();
             let response =
                 HTTPResponse::with_content(content.as_str()).set_content_type("text/xml");

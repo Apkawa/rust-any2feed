@@ -1,9 +1,64 @@
 use crate::importers::traits::RenderContent;
+use crate::importers::utils::timestamp_now;
 use chrono::Local;
 use feed::{CDATAElement, Content, Element, Entry, Feed, Link, Person};
-use telegram::data::{Channel, ChannelPost};
+use reqwest::Url;
+use telegram::data::{Channel, ChannelPost, Media};
 
-pub fn channel_post_to_entry(post: &ChannelPost) -> Entry {
+pub struct Context {
+    pub proxy_url: Url,
+}
+
+/// Меняем у поста все медиа ссылки на прокси перед отрисовкой
+pub fn set_proxy_url(mut post: ChannelPost, proxy_url: &Url) -> ChannelPost {
+    let mut url = proxy_url.clone();
+    url.path_segments_mut().unwrap().extend(post.id.split('/'));
+    url.query_pairs_mut()
+        .append_pair("t", timestamp_now().to_string().as_str());
+    let mut medias = post.get_media_list_mut();
+    for (i, mut media) in medias.iter_mut().enumerate() {
+        media_set_proxy_urls(&url, &mut media, i);
+    }
+    return post;
+
+    fn media_set_proxy_urls(proxy_url: &Url, media: &mut Media, i: usize) {
+        use Media::*;
+        match media {
+            Photo(ref mut url) | Voice(ref mut url) => {
+                *url = build_media_url(proxy_url.clone(), url, i, "url").to_string();
+            }
+            Video {
+                ref mut url,
+                ref mut thumb_url,
+            }
+            | VideoGif {
+                ref mut url,
+                ref mut thumb_url,
+            } => {
+                *url = build_media_url(proxy_url.clone(), url, i, "url").to_string();
+                *thumb_url =
+                    build_media_url(proxy_url.clone(), thumb_url, i, "thumb_url").to_string();
+            }
+            VideoTooBig { ref mut thumb_url } => {
+                *thumb_url =
+                    build_media_url(proxy_url.clone(), thumb_url, i, "thumb_url").to_string();
+            }
+        }
+    }
+
+    fn build_media_url(mut proxy_url: Url, url: &str, i: usize, prefix: &str) -> Url {
+        proxy_url.query_pairs_mut().append_pair("url", url);
+        proxy_url
+            .path_segments_mut()
+            .unwrap()
+            .push(format!("{i}-{prefix}").as_str())
+            .push("");
+
+        proxy_url
+    }
+}
+
+pub fn channel_post_to_entry(post: ChannelPost, context: Option<&Context>) -> Entry {
     let title = post
         .text
         .lines()
@@ -14,6 +69,11 @@ pub fn channel_post_to_entry(post: &ChannelPost) -> Entry {
     let mut entry = Entry::new(post.id.clone(), title, post.datetime.clone());
 
     entry.link = Some(Link::new(post.preview_url()));
+    let post = if let Some(Context { proxy_url }) = context {
+        set_proxy_url(post, proxy_url)
+    } else {
+        post
+    };
 
     entry.content = Some(Content::Html(post.render().unwrap()));
 
@@ -23,7 +83,7 @@ pub fn channel_post_to_entry(post: &ChannelPost) -> Entry {
     entry
 }
 
-pub fn channel_to_feed(channel: &Channel) -> Feed {
+pub fn channel_to_feed(channel: &Channel, context: Option<&Context>) -> Feed {
     let mut feed = Feed {
         title: CDATAElement(channel.title.clone()),
         updated: Local::now().to_rfc3339(),
@@ -41,7 +101,7 @@ pub fn channel_to_feed(channel: &Channel) -> Feed {
         .posts
         .iter()
         .map(|p| {
-            let mut e = channel_post_to_entry(p);
+            let mut e = channel_post_to_entry(p.clone(), context);
             e.author = Element(Person::new(
                 channel.title.clone(),
                 Some(channel.preview_url()),

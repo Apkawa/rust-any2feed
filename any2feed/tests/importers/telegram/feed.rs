@@ -11,6 +11,6 @@ fn load_channel_post_fixture(name: &str) -> ChannelPost {
 #[test]
 fn test_entry_text() {
     let p = load_channel_post_fixture("text");
-    let e = channel_post_to_entry(&p);
+    let e = channel_post_to_entry(p, None);
     dbg!(e);
 }
