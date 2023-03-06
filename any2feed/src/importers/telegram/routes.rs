@@ -7,7 +7,7 @@ use http_server::utils::path_params_to_vec;
 use http_server::HTTPError::NotFound;
 use http_server::{HTTPError, HTTPResponse, Route};
 use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
-use reqwest::{Method, Url};
+use reqwest::Method;
 use std::str::FromStr;
 use std::sync::Arc;
 use telegram::preview_api::TelegramChannelPreviewApi;

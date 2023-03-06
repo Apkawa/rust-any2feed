@@ -1,8 +1,9 @@
 use bytes::Bytes;
 use std::collections::HashMap;
+use std::fmt;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Default)]
+#[derive(Default)]
 pub struct HTTPResponse {
     pub status: u16,
     pub content: Option<Bytes>,
@@ -36,7 +37,7 @@ impl HTTPResponse {
 }
 
 impl Display for HTTPResponse {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let content = &Bytes::new();
         let content = self.content.as_ref().unwrap_or(content);
 
@@ -64,5 +65,22 @@ impl Display for HTTPResponse {
             status = self.status,
             headers = headers
         )
+    }
+}
+
+impl fmt::Debug for HTTPResponse {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        f.debug_struct("HTTPResponse")
+            .field("status", &self.status)
+            .field("content_type", &self.content_type)
+            .field("headers", &self.headers)
+            .field(
+                "content",
+                &self
+                    .content
+                    .as_ref()
+                    .map(|b| Bytes::from(format!("{} bytes content", b.len()))),
+            )
+            .finish()
     }
 }

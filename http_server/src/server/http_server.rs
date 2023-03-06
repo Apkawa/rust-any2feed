@@ -1,3 +1,4 @@
+use std::io;
 use std::io::{BufRead, BufReader, Write};
 use std::net::{TcpListener, TcpStream};
 
@@ -25,6 +26,7 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
         return;
     }
     let mut request = HTTPRequest::parse(&request).unwrap();
+    let req_headers = request.headers.clone();
     request.config = Some(Arc::clone(&config));
     request.stream = Some(Box::new(&stream));
 
@@ -50,13 +52,30 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
         code = response.status,
         path = request.full_path
     );
-    stream.write_all(response.to_string().as_bytes()).unwrap();
-    stream
-        .write_all(response.content.unwrap_or_default().as_ref())
-        .unwrap();
+    // TODO Улучшить обработку ошибок.
+    let header_write_state = stream
+        .write_all(response.to_string().as_bytes())
+        .map_err(|e| {
+            dbg!(&e, &req_headers, &response);
+            e
+        });
+    if header_write_state.is_ok() {
+        let empty_bytes = bytes::Bytes::new();
+        let _ = stream
+            .write_all(&response.content.as_ref().unwrap_or_else(|| &empty_bytes))
+            .map_err(|e| {
+                match e.kind() {
+                    io::ErrorKind::BrokenPipe => (), // Разрыв соединения от клиента, пока глушим их
+                    _ => {
+                        dbg!(&e, &req_headers, &response);
+                    } // Другие ошибки
+                }
+                e
+            });
+    }
 }
 
-pub fn run(config: ServerConfig) -> std::io::Result<()> {
+pub fn run(config: ServerConfig) -> io::Result<()> {
     let addr = config.addr();
     println!("Run server: http://{}", addr);
     let listener = TcpListener::bind(addr)?;
