@@ -28,6 +28,7 @@ pub fn import_cookie_from_string(cookie_str: &str) -> io::Result<Jar> {
     let jar = Jar::default();
 
     for line in cookie_str.lines().map(|l| l.trim()) {
+        let line = line.trim_start_matches("#HttpOnly_");
         if line.is_empty() || line.starts_with('#') {
             continue;
         }

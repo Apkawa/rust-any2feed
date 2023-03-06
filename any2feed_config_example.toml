@@ -3,7 +3,7 @@ port = 12345
 threads = 4
 
 [mewe]
-# Recomend use https://chrome.google.com/webstore/detail/get-cookiestxt/bgaddhkoddajcdgocldbbfleckgcbcid
+# Recomend use https://addons.mozilla.org/en-US/firefox/addon/cookies-txt/ for Firefox
 # extension and export cookies from incognito mode
 cookies_path = "/path/to/mewe.com_cookies.txt"
 limit = 10
