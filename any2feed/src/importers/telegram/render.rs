@@ -1,13 +1,12 @@
 use crate::importers::traits::RenderContent;
-use telegram::data::{ChannelPost, File, LinkPreview, Media, Poll};
+use telegram::data::{ChannelPost, File, ForwardedFrom, LinkPreview, Media, Poll};
 
 impl RenderContent for ChannelPost {
     fn render(&self) -> Option<String> {
         let mut content = String::with_capacity(self.html.len() * 2);
 
         if let Some(f) = self.forwarded_from.as_ref() {
-            content
-                .push_str(format!(r#"<a href="{}">Forwarded from {}</a>"#, f.url, f.name).as_str());
+            content.push_str(f.render().unwrap().as_str());
         }
         let parts = [
             Some(format!("<p>{}</p>", &self.html)),
@@ -90,6 +89,15 @@ impl RenderContent for LinkPreview {
 impl RenderContent for File {
     fn render(&self) -> Option<String> {
         todo!()
+    }
+}
+
+impl RenderContent for ForwardedFrom {
+    fn render(&self) -> Option<String> {
+        let name = &self.name;
+        let default_url = "#".to_string();
+        let url = self.url.as_ref().unwrap_or(&default_url);
+        Some(format!(r#"<a href="{url}">Forwarded from {name}</a>"#))
     }
 }
 

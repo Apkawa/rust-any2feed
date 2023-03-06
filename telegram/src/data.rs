@@ -125,7 +125,7 @@ pub struct LinkPreview {
 #[derive(Debug, Default, Clone)]
 pub struct ForwardedFrom {
     pub name: String,
-    pub url: String,
+    pub url: Option<String>,
 }
 
 #[derive(Debug, Default, Clone)]

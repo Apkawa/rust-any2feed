@@ -238,7 +238,7 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
             Some("forwarded_from_name") => {
                 post.forwarded_from = Some(ForwardedFrom {
                     name: el_ref.text().into_iter().collect(),
-                    url: el.attr("href").unwrap().to_string(),
+                    url: el.attr("href").map(|s| s.to_string()),
                 })
             }
             Some("document") => post.file.get_or_insert_with(Vec::new).push(File {
