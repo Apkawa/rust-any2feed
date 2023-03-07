@@ -1,4 +1,4 @@
-use any2feed::importers::telegram::feed::channel_post_to_entry;
+use any2feed::feed_sources::telegram::feed::channel_post_to_entry;
 use telegram::data::ChannelPost;
 use telegram::parse::parse_message;
 use test_utils::fixture::load_fixture;

@@ -1,5 +1,5 @@
-use crate::importers::mewe::feed::{mewe_feed_to_feed, replace_mewe_media_urls};
-use crate::importers::mewe::importer::MeweImporter;
+use crate::feed_sources::mewe::feed::{mewe_feed_to_feed, replace_mewe_media_urls};
+use crate::feed_sources::mewe::feed_source::MeweFeedSource;
 use feed::opml::{Outline, OPML};
 use feed::{CDATAElement, Link, LinkRel};
 use http_server::utils::path_params_to_vec;
@@ -12,8 +12,8 @@ use std::collections::HashMap;
 use std::thread;
 use std::time::Duration;
 
-pub fn route_opml(importer: &MeweImporter) -> Route {
-    let mewe_api = importer.api();
+pub fn route_opml(feed_source: &MeweFeedSource) -> Route {
+    let mewe_api = feed_source.api();
     Route::new("/mewe.opml", move |r| {
         let mut url = r.url();
         url.set_path("/mewe/feed");
@@ -62,8 +62,8 @@ pub fn route_opml(importer: &MeweImporter) -> Route {
     })
 }
 
-pub fn route_feed(importer: &MeweImporter) -> Route {
-    let mewe_api = importer.api();
+pub fn route_feed(feed_source: &MeweFeedSource) -> Route {
+    let mewe_api = feed_source.api();
     Route::new("/mewe/feed/(me|user|group)/(?:(.+)/|)", move |r| {
         // TODO переработать эту простыню и покрыть тестами
         let page_url = r.query_params.get("page_url");
@@ -167,8 +167,8 @@ pub fn route_feed(importer: &MeweImporter) -> Route {
     })
 }
 
-pub fn route_media_proxy(importer: &MeweImporter) -> Route {
-    let mewe_api = importer.api();
+pub fn route_media_proxy(feed_source: &MeweFeedSource) -> Route {
+    let mewe_api = feed_source.api();
     Route::new("/mewe/media/(.*)", move |r| {
         let path = &r.path_params.as_ref().unwrap().get("1").unwrap();
         let path = path.as_ref().unwrap();

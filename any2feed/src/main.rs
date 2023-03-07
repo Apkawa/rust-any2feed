@@ -3,7 +3,7 @@ use std::fs::read_to_string;
 
 use any2feed::cli::{Commands, CLI};
 use any2feed::config::MainConfig;
-use any2feed::importers::ImporterList;
+use any2feed::feed_sources::FeedSourceList;
 
 use http_server::{run, HTTPRequest, HTTPResponse, Route, ServerConfig};
 
@@ -36,9 +36,9 @@ fn main() {
 
     let mut routes = vec![Route::new("/", main_view)];
 
-    let importer_list = ImporterList::get_importers(&config_str);
-    for importer in importer_list {
-        routes.extend(importer.routes());
+    let feed_source_list = FeedSourceList::get_sources(&config_str);
+    for feed_source in feed_source_list {
+        routes.extend(feed_source.routes());
     }
 
     let run_args = ServerConfig {

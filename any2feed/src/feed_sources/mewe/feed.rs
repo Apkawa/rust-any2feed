@@ -4,7 +4,7 @@ use regex::Regex;
 
 use feed::{Attribute, CDATAElement, Category, Content, Element, Entry, Feed, Link, Person};
 
-use crate::importers::traits::RenderContent;
+use crate::feed_sources::traits::RenderContent;
 use mewe_api::json::{MeweApiFeedList, MeweApiPost};
 use mewe_api::utils::replace_user_mention_to_name;
 
@@ -92,7 +92,7 @@ pub fn mewe_feed_to_feed(feed_list: &Vec<MeweApiFeedList>) -> Option<Feed> {
 
 /// Меняем урлы на урл прокси
 /// ```
-/// use any2feed::importers::mewe::feed::replace_mewe_media_urls;
+/// use any2feed::feed_sources::mewe::feed::replace_mewe_media_urls;
 /// let text = r#"<img src="https://mewe.com/api/v2/photo/c...0/200x300/img?static=0&mime=image/png" />
 /// <video><source src="https://mewe.com/api/v2/proxy/video/shared/5...9/original/gplus7.mp4?_dummy=1"/>
 /// </video>
@@ -114,7 +114,7 @@ pub fn replace_mewe_media_urls(text: &str, new_url: &str) -> String {
 
 /// Из пути в прокси делаем прямой путь
 /// ```
-/// use any2feed::importers::mewe::feed::get_media_url_from_proxy_path;
+/// use any2feed::feed_sources::mewe::feed::get_media_url_from_proxy_path;
 /// let path = "/mewe/media/api/v2/photo/c...0/200x300/img?static=0&mime=image/png";
 /// let url = get_media_url_from_proxy_path(path).unwrap();
 /// let expect = "https://mewe.com/api/v2/photo/c...0/200x300/img?static=0&mime=image/png";

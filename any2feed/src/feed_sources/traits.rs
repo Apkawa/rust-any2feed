@@ -1,8 +1,8 @@
 use feed::opml::Outline;
 use http_server::Route;
 
-pub trait Importer {
-    /// Initialize importer with config
+pub trait FeedSource {
+    /// Initialize with config
     fn with_config(toml: &str) -> Self
     where
         Self: Sized;

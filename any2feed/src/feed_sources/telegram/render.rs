@@ -1,4 +1,4 @@
-use crate::importers::traits::RenderContent;
+use crate::feed_sources::traits::RenderContent;
 use telegram::data::{ChannelPost, File, ForwardedFrom, LinkPreview, Media, Poll};
 
 impl RenderContent for ChannelPost {

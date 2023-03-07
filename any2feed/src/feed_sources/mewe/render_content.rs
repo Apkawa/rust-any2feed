@@ -1,4 +1,4 @@
-use crate::importers::traits::RenderContent;
+use crate::feed_sources::traits::RenderContent;
 use mewe_api::json::{MeweApiLink, MeweApiMedia, MeweApiMediaFile, MeweApiPoll, MeweApiPost};
 use mewe_api::markdown::md_to_html;
 
@@ -7,7 +7,7 @@ use mewe_api::markdown::md_to_html;
 
 ///
 /// ```
-/// use any2feed::importers::mewe::render_content::render_gifycat_gifs;
+/// use any2feed::feed_sources::mewe::render_content::render_gifycat_gifs;
 /// let res = render_gifycat_gifs("Foo https://thumbs.gfycat.com/a.gif#h=1200w=1600");
 /// assert_eq!(res, r#"Foo <p><img src="https://thumbs.gfycat.com/a.gif#h=1200w=1600" /></p>"#.to_string());
 /// let res = render_gifycat_gifs("<p>Foo https://thumbs.gfycat.com/a.gif#h=1200w=1600</p>");

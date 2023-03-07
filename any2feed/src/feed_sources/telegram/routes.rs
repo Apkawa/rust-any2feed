@@ -1,6 +1,6 @@
-use crate::importers::telegram::feed::{channel_to_feed, Context};
-use crate::importers::telegram::TelegramImporter;
-use crate::importers::utils::response_from_reqwest_response;
+use crate::feed_sources::telegram::feed::{channel_to_feed, Context};
+use crate::feed_sources::telegram::TelegramFeedSource;
+use crate::feed_sources::utils::response_from_reqwest_response;
 use feed::opml::{Outline, OPML};
 use feed::Attribute;
 use http_server::utils::path_params_to_vec;
@@ -12,8 +12,8 @@ use std::str::FromStr;
 use std::sync::Arc;
 use telegram::preview_api::TelegramChannelPreviewApi;
 
-pub fn route_feed(importer: &TelegramImporter) -> Route {
-    let config = Arc::clone(&importer.config);
+pub fn route_feed(feed_source: &TelegramFeedSource) -> Route {
+    let config = Arc::clone(&feed_source.config);
     Route::new("/telegram/feed/(.+)/", move |r| {
         // TODO надо что то сделать с этой цепочкой, не очень красиво
         let channel_slug = r
@@ -42,8 +42,8 @@ pub fn route_feed(importer: &TelegramImporter) -> Route {
     })
 }
 
-pub(crate) fn route_opml(importer: &TelegramImporter) -> Route {
-    let config = Arc::clone(&importer.config);
+pub(crate) fn route_opml(feed_source: &TelegramFeedSource) -> Route {
+    let config = Arc::clone(&feed_source.config);
     Route::new("/telegram.opml", move |r| {
         let mut outlines: Vec<Outline> = Vec::with_capacity(config.channels.len());
         let mut url = r.url();
@@ -77,7 +77,7 @@ https://t.me/{channel}/{id}?embed=1&mode=tme&userpic=true
 Рабочий пример:
 url=https://cdn4.telegram-cdn.org/file/CPXsqnVMJaZ8SPo6_eLY_Zh_l2vsH9wwEr7sguC5KOLvgGw6eog_MzJXcgR-rltwEsRzGwH5ZFTIveq483rlNGeTkenkV9tLnmNyAkbI5h2ZCpmVTKRDZ87V_88HNm5aaKonpYgcwJW8AfQdIoCC3Nml8g3NJyU6NZi0Qe8Rf7Tw4x41mV74c2EBDBvwLs_k1q5oOMkYNH5rQXc0J4BtxWqaES4tf5R0Y4P5BxLbMYlw-3txRq1Oa4xFLjC_bcXkhM5aDnjm6LPVt0T-5YG_-Ra_WIXkYDdg73cZNGoalkPEAtUqcz-ez9t1ouUFokhBJ8pCsrqtg-bdJtJgE4SpGQ.jpg
 */
-pub fn route_media_proxy(_importer: &TelegramImporter) -> Route {
+pub fn route_media_proxy(_feed_source: &TelegramFeedSource) -> Route {
     // TODO cache
     Route::new(
         r#"/telegram/media/([\w_]+)/(\d+)/(\d+)-(url|thumb_url)/"#,

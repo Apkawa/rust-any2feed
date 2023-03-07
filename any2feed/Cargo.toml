@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 http_server = { version = "0.1.0", path = "../http_server" }
 feed = { version = "0.1.0", path = "../feed" }
-# For importers
+# For feed source
 mewe_api = { version = "0.1.0", path = "../mewe_api" }
 telegram = { version = "0.1.0", path = "../telegram" }
 

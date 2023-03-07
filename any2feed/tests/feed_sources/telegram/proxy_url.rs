@@ -1,4 +1,4 @@
-use any2feed::importers::telegram::feed::{channel_post_to_entry, set_proxy_url, Context};
+use any2feed::feed_sources::telegram::feed::{channel_post_to_entry, set_proxy_url, Context};
 use feed::Content;
 use reqwest::Url;
 use std::collections::HashMap;

@@ -1,3 +1,3 @@
 pub mod cli;
 pub mod config;
-pub mod importers;
+pub mod feed_sources;

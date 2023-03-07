@@ -3,20 +3,20 @@ pub mod feed;
 mod render;
 mod routes;
 
-use crate::importers::telegram::config::Config;
-use crate::importers::telegram::routes::{route_feed, route_media_proxy, route_opml};
-use crate::importers::traits::Importer;
+use crate::feed_sources::telegram::config::Config;
+use crate::feed_sources::telegram::routes::{route_feed, route_media_proxy, route_opml};
+use crate::feed_sources::traits::FeedSource;
 use ::feed::opml::Outline;
 use http_server::Route;
 use std::sync::Arc;
 
-pub struct TelegramImporter {
+pub struct TelegramFeedSource {
     pub(crate) config: Arc<Config>,
 }
 
-impl Importer for TelegramImporter {
+impl FeedSource for TelegramFeedSource {
     fn with_config(toml: &str) -> Self {
-        TelegramImporter {
+        TelegramFeedSource {
             config: Arc::new(Config::load(toml)),
         }
     }

@@ -86,7 +86,7 @@ enum ChannelConfig {
 
 #[cfg(test)]
 mod test {
-    use crate::importers::telegram::config::Config;
+    use crate::feed_sources::telegram::config::Config;
     use std::fs::read_to_string;
     use test_utils::fixture::path_from_git_root;
 

@@ -1,4 +1,4 @@
-use any2feed::importers::mewe::feed::{mewe_feed_to_feed, mewe_post_to_entry};
+use any2feed::feed_sources::mewe::feed::{mewe_feed_to_feed, mewe_post_to_entry};
 use rstest::rstest;
 
 use mewe_api::json::{MeweApiFeedList, MeweApiPost, MeweApiUserInfo};

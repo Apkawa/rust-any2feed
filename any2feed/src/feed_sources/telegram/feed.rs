@@ -1,5 +1,5 @@
-use crate::importers::traits::RenderContent;
-use crate::importers::utils::timestamp_now;
+use crate::feed_sources::traits::RenderContent;
+use crate::feed_sources::utils::timestamp_now;
 use chrono::Local;
 use feed::{CDATAElement, Content, Element, Entry, Feed, Link, Person};
 use reqwest::Url;
