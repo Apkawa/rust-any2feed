@@ -1,5 +1,5 @@
 use log::LevelFilter;
-use simplelog::{ColorChoice, CombinedLogger, Config, ConfigBuilder, TerminalMode, TermLogger};
+use simplelog::{ColorChoice, CombinedLogger, ConfigBuilder, TerminalMode, TermLogger};
 use crate::cli::CLI;
 
 pub fn logging_init(cli: &CLI) {

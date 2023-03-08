@@ -26,6 +26,8 @@ pub struct CDATAElement<T>(pub T);
 #[derive(Debug, Default)]
 pub struct Attribute<T>(pub T);
 
+
+
 #[derive(Debug, Default)]
 pub struct Feed {
     pub id: String,
@@ -84,6 +86,7 @@ impl Entry {
         let id = {
             let mut id = id;
             if cfg!(debug_assertions) {
+                log::warn!("Entry id DEBUG MODE");
                 // Отладочный режим, делаем id неуникальными
                 id.push('/');
                 id.push_str(&Local::now().to_rfc3339());
