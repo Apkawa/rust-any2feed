@@ -75,6 +75,7 @@ impl MeweApi {
     }
 
     pub fn get(&self, url: &str) -> crate::Result<Response> {
+        log::debug!("API get: url={:?}", url);
         let mut rb = self.session.get(url);
 
         for (k, v) in self.headers.lock().unwrap().iter() {
@@ -104,10 +105,11 @@ impl MeweApi {
             self.save_cookies(url);
         }
         if result.status() == 200 {
+            log::trace!("API get result={:?}", result);
             Ok(result)
         } else {
-            dbg!(&result);
-            dbg!(&result.text());
+            log::error!("API ERROR! result={:?}", &result);
+            log::error!("text={:?}", &result.text());
             Err(crate::MeweApiError::ApiError {
                 kind: crate::ApiErrorKind::StatusError,
             })
@@ -117,6 +119,7 @@ impl MeweApi {
     pub fn whoami(&mut self) -> crate::Result<json::MeweApiSelfProfileInfo> {
         let info: json::MeweApiSelfProfileInfo = self.get(API_MEWE_ME_INFO)?.json()?;
         self.me_info = Some(info.clone());
+        log::debug!("whoami: {:?}", info);
         Ok(info)
     }
 
@@ -125,8 +128,10 @@ impl MeweApi {
             .get(API_MEWE_IDENTIFY)?
             .json::<json::MeweApiIdentify>()?;
         if json.authenticated {
+            log::debug!("identify {:?}", json);
             Ok(true)
         } else {
+            log::error!("FAIL identify {:?}", json);
             Err(crate::MeweApiError::ApiError {
                 kind: crate::ApiErrorKind::IdentifyFail,
             })
@@ -138,6 +143,7 @@ impl MeweApi {
         url: &str,
         limit: Option<usize>,
     ) -> crate::Result<json::MeweApiFeedList> {
+        log::debug!("fetch_feed: url={:?} limit={:?}", url, limit);
         let mut url = Url::parse(url).unwrap();
         if let Some(limit) = limit {
             let limit = limit.to_string();
@@ -155,6 +161,12 @@ impl MeweApi {
         limit: Option<usize>,
         pages: Option<usize>,
     ) -> crate::Result<Vec<json::MeweApiFeedList>> {
+        log::debug!(
+            "fetch_feeds: url={:?} limit={:?} pages={:?}",
+            url,
+            limit,
+            pages
+        );
         self.identify()?;
         let pages = pages.unwrap_or(1);
 
@@ -185,26 +197,41 @@ impl MeweApi {
         limit: Option<usize>,
         pages: Option<usize>,
     ) -> crate::Result<Vec<json::MeweApiFeedList>> {
+        log::debug!("get_my_feeds: limit={:?} pages={:?}", limit, pages);
         self.fetch_feeds(API_MEWE_ALLFEED, limit, pages)
     }
+
     pub fn get_user_feed(
         &self,
         user_id: &str,
         limit: Option<usize>,
         pages: Option<usize>,
     ) -> crate::Result<Vec<json::MeweApiFeedList>> {
+        log::debug!(
+            "get_user_feed: user_id={:?} limit={:?} pages={:?}",
+            user_id,
+            limit,
+            pages
+        );
         self.fetch_feeds(
             API_MEWE_USER_FEED.replace("{user_id}", user_id).as_str(),
             limit,
             pages,
         )
     }
+
     pub fn get_group_feed(
         &self,
         group_id: &str,
         limit: Option<usize>,
         pages: Option<usize>,
     ) -> crate::Result<Vec<json::MeweApiFeedList>> {
+        log::debug!(
+            "get_group_feed: group_id={:?} limit={:?} pages={:?}",
+            group_id,
+            limit,
+            pages
+        );
         self.fetch_feeds(
             API_MEWE_GROUP_FEED.replace("{group_id}", group_id).as_str(),
             limit,
@@ -213,17 +240,20 @@ impl MeweApi {
     }
 
     pub fn fetch_groups(&self) -> crate::Result<json::MeweApiGroupList> {
+        log::debug!("fetch_groups");
         let response = self.get(API_MEWE_GROUPS)?;
         Ok(response.json::<json::MeweApiGroupList>().unwrap())
     }
 
     pub fn fetch_group_info(&self, group_id: &str) -> crate::Result<json::MeweApiGroup> {
+        log::debug!("fetch_group_info {:?}", group_id);
         let url = API_MEWE_GROUP_INFO.replace("{group_id}", group_id);
         let response = self.get(url.as_str())?;
         Ok(response.json::<json::MeweApiGroup>().unwrap())
     }
 
     pub fn fetch_contact_info(&self, invite_id: &str) -> crate::Result<json::MeweApiContactUser> {
+        log::debug!("fetch_contact_info {:?}", invite_id);
         let url = API_MEWE_CONTACT_INFO.replace("{invite_id}", invite_id);
         let response = self.get(url.as_str())?;
         Ok(response.json::<json::MeweApiContactUser>().unwrap())
@@ -235,6 +265,12 @@ impl MeweApi {
         limit: usize,
         offset: Option<usize>,
     ) -> crate::Result<json::MeweApiContactList> {
+        log::debug!(
+            "fetch_contact_page: url={:?} limit={:?} offset={:?}",
+            url,
+            limit,
+            offset
+        );
         let mut url = Url::parse(url).unwrap();
         url.query_pairs_mut()
             .append_pair("maxResults", limit.to_string().as_str());
@@ -243,8 +279,9 @@ impl MeweApi {
                 .append_pair("offset", offset.to_string().as_str());
         }
         let response = self.get(url.as_str())?;
-
-        Ok(response.json::<json::MeweApiContactList>().unwrap())
+        let json = response.json::<json::MeweApiContactList>().unwrap();
+        log::trace!("fetch_contact_page result: {:?}", json);
+        Ok(json)
     }
 
     pub fn fetch_contacts(
@@ -253,6 +290,12 @@ impl MeweApi {
         limit: Option<usize>,
         pages: Option<usize>,
     ) -> crate::Result<Vec<json::MeweApiContactUser>> {
+        log::debug!(
+            "fetch_contacts: url={:?} limit={:?} pages={:?}",
+            url,
+            limit,
+            pages
+        );
         let pages = pages.unwrap_or(20);
         let limit = limit.unwrap_or(21);
         let mut res: Vec<json::MeweApiContactUser> = Vec::with_capacity(limit * pages);
@@ -269,6 +312,7 @@ impl MeweApi {
     }
 
     pub fn get_contacts(&self, favorites: bool) -> crate::Result<Vec<json::MeweApiContactUser>> {
+        log::debug!("get_contacts: favorites={:?}", favorites);
         let url = if favorites {
             API_MEWE_CONTACTS_FAVORITES
         } else {
@@ -346,7 +390,7 @@ mod test {
 
     #[test]
     fn test_error() {
-        let Err(err) = MeweApi::new("/foo/bar") else { unreachable!()};
+        let Err(err) = MeweApi::new("/foo/bar") else { unreachable!() };
         dbg!(&err);
     }
 }
