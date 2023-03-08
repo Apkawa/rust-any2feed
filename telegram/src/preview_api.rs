@@ -48,7 +48,10 @@ impl TelegramChannelPreviewApi {
     }
 
     pub fn get(&self, url: &str) -> reqwest::Result<Response> {
-        self.request(Method::GET, url).send()
+        log::debug!("get url={:?}", url);
+        let result = self.request(Method::GET, url).send();
+        log::trace!("get response {:?}", result);
+        result
     }
 
     pub fn parse_html_page(&self, html: &str) -> error::Result<Channel> {
@@ -67,27 +70,34 @@ impl TelegramChannelPreviewApi {
                 _ => {}
             }
         }
+        log::trace!("parsed meta {:?}", channel);
         for el_ref in parser.select(&Selector::parse(".js-widget_message").unwrap()) {
-            channel
-                .posts
-                .push(parse_message(el_ref.html().as_str()).unwrap());
+            log::debug!("start parse message id={:?}", el_ref.value().attr("data-post"));
+            let post = parse_message(el_ref.html().as_str()).unwrap();
+            log::trace!("parsed message {:?}", post);
+            channel.posts.push(post);
         }
-
         Ok(channel)
     }
     /// Пытаемся получить новый урл.
     pub fn try_get_new_media_url(&self, post_id: usize, media_index: usize, field: &str) -> String {
+        log::trace!("try_get_new_media_url post_id={:?} media_index={:?} field={:?}", post_id, media_index, field);
         let channel = self.fetch_post(post_id).unwrap();
         let post = channel.posts.get(0).unwrap();
-        post.media_try_get_new_url(media_index, field)
+        let url = post.media_try_get_new_url(media_index, field);
+        log::trace!("try_get_new_media_url url={:?}", url);
+        url
+
     }
 
     pub fn fetch_post(&self, id: usize) -> error::Result<Channel> {
+        log::debug!("fetch_post id={:?}", id);
         let html = self.get(self.embedded_post_url(id).as_str())?.text()?;
         self.parse_html_page(html.as_str())
     }
 
     pub fn fetch(&self, _pages: Option<usize>) -> error::Result<Channel> {
+        log::debug!("fetch pages={:?}", _pages);
         // TODO handle pages
         let html = self.get(self.preview_url().as_str())?.text()?;
         self.parse_html_page(html.as_str())

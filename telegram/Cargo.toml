@@ -11,6 +11,7 @@ scraper = "0.14.0"
 openssl = { version = "0.10.45", features = ["vendored"] }
 reqwest = { version = "0.11", features = ["blocking", "json", "cookies"] }
 regex = { version = "1.7.1" }
+log = "0.4.17"
 
 [dev-dependencies]
 test_utils = { version = "0.1.0", path = "../test_utils" }
