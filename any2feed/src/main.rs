@@ -1,11 +1,13 @@
 use clap::Parser;
 use std::fs::read_to_string;
 
-use any2feed::cli::{Commands, CLI};
+use any2feed::cli::{CLI, Commands};
 use any2feed::config::MainConfig;
 use any2feed::feed_sources::FeedSourceList;
+use any2feed::logging;
 
-use http_server::{run, HTTPRequest, HTTPResponse, Route, ServerConfig};
+use http_server::{HTTPRequest, HTTPResponse, Route, run, ServerConfig};
+
 
 fn main_view(_request: &HTTPRequest) -> http_server::Result<HTTPResponse> {
     Ok(HTTPResponse::with_content(
@@ -20,11 +22,13 @@ fn main_view(_request: &HTTPRequest) -> http_server::Result<HTTPResponse> {
     </html>
     "#,
     )
-    .set_content_type("text/html"))
+        .set_content_type("text/html"))
 }
 
 fn main() {
     let cli = CLI::parse();
+    logging::logging_init(&cli);
+    log::debug!("CLI: {:?}", &cli);
     let config_str = read_to_string(cli.config).unwrap();
     let mut config: MainConfig = toml::from_str(&config_str).unwrap();
     match cli.command {
@@ -33,6 +37,8 @@ fn main() {
             config.server.threads = server_cfg.threads;
         }
     }
+
+    log::debug!("CONFIG: {:?}", &config);
 
     let mut routes = vec![Route::new("/", main_view)];
 
