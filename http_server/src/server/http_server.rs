@@ -51,11 +51,20 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
             _ => HTTPResponse::new(500),
         },
     };
-    log::info!("{code} {path}", code = response.status, path = request.full_path);
+    log::info!(
+        "{code} {path}",
+        code = response.status,
+        path = request.full_path
+    );
     let header_write_state = stream
         .write_all(response.to_string().as_bytes())
         .map_err(|e| {
-            log::warn!("Write headers fail: e={:?} request={:?} response={:?}", &e, &req_headers, &response);
+            log::warn!(
+                "Write headers fail: e={:?} request={:?} response={:?}",
+                &e,
+                &req_headers,
+                &response
+            );
             e
         });
     if header_write_state.is_ok() {
@@ -66,7 +75,12 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
                 match e.kind() {
                     io::ErrorKind::BrokenPipe => (), // Разрыв соединения от клиента, пока глушим их
                     _ => {
-                        log::warn!("Write headers fail: e={:?} request={:?} response={:?}", &e, &req_headers, &response);
+                        log::warn!(
+                            "Write headers fail: e={:?} request={:?} response={:?}",
+                            &e,
+                            &req_headers,
+                            &response
+                        );
                     } // Другие ошибки
                 }
                 e
@@ -80,7 +94,6 @@ pub fn run(config: ServerConfig) -> io::Result<()> {
     let addr = config.addr();
     log::info!("Run server: http://{}", addr);
     let listener = TcpListener::bind(addr)?;
-
 
     let pool = ThreadPool::new(config.threads.unwrap_or(4) as usize);
     // accept connections and process them serially

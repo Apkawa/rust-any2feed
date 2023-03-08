@@ -26,8 +26,6 @@ pub struct CDATAElement<T>(pub T);
 #[derive(Debug, Default)]
 pub struct Attribute<T>(pub T);
 
-
-
 #[derive(Debug, Default)]
 pub struct Feed {
     pub id: String,

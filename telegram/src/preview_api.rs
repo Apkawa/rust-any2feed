@@ -72,7 +72,10 @@ impl TelegramChannelPreviewApi {
         }
         log::trace!("parsed meta {:?}", channel);
         for el_ref in parser.select(&Selector::parse(".js-widget_message").unwrap()) {
-            log::debug!("start parse message id={:?}", el_ref.value().attr("data-post"));
+            log::debug!(
+                "start parse message id={:?}",
+                el_ref.value().attr("data-post")
+            );
             let post = parse_message(el_ref.html().as_str()).unwrap();
             log::trace!("parsed message {:?}", post);
             channel.posts.push(post);
@@ -81,13 +84,17 @@ impl TelegramChannelPreviewApi {
     }
     /// Пытаемся получить новый урл.
     pub fn try_get_new_media_url(&self, post_id: usize, media_index: usize, field: &str) -> String {
-        log::trace!("try_get_new_media_url post_id={:?} media_index={:?} field={:?}", post_id, media_index, field);
+        log::trace!(
+            "try_get_new_media_url post_id={:?} media_index={:?} field={:?}",
+            post_id,
+            media_index,
+            field
+        );
         let channel = self.fetch_post(post_id).unwrap();
         let post = channel.posts.get(0).unwrap();
         let url = post.media_try_get_new_url(media_index, field);
         log::trace!("try_get_new_media_url url={:?}", url);
         url
-
     }
 
     pub fn fetch_post(&self, id: usize) -> error::Result<Channel> {

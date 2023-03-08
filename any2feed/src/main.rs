@@ -1,13 +1,12 @@
 use clap::Parser;
 use std::fs::read_to_string;
 
-use any2feed::cli::{CLI, Commands};
+use any2feed::cli::{Commands, CLI};
 use any2feed::config::MainConfig;
 use any2feed::feed_sources::FeedSourceList;
 use any2feed::logging;
 
-use http_server::{HTTPRequest, HTTPResponse, Route, run, ServerConfig};
-
+use http_server::{run, HTTPRequest, HTTPResponse, Route, ServerConfig};
 
 fn main_view(_request: &HTTPRequest) -> http_server::Result<HTTPResponse> {
     Ok(HTTPResponse::with_content(
@@ -22,7 +21,7 @@ fn main_view(_request: &HTTPRequest) -> http_server::Result<HTTPResponse> {
     </html>
     "#,
     )
-        .set_content_type("text/html"))
+    .set_content_type("text/html"))
 }
 
 fn main() {

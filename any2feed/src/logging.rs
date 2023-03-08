@@ -1,6 +1,6 @@
-use log::LevelFilter;
-use simplelog::{ColorChoice, CombinedLogger, ConfigBuilder, TerminalMode, TermLogger};
 use crate::cli::CLI;
+use log::LevelFilter;
+use simplelog::{ColorChoice, CombinedLogger, ConfigBuilder, TermLogger, TerminalMode};
 
 pub fn logging_init(cli: &CLI) {
     let log_level = match cli.verbose {
@@ -17,11 +17,9 @@ pub fn logging_init(cli: &CLI) {
         .add_filter_ignore_str("reqwest")
         .build();
 
-
-    CombinedLogger::init(
-        vec![
-            TermLogger::new(log_level, config, TerminalMode::Mixed, ColorChoice::Auto),
-            // WriteLogger::new(LevelFilter::Info, Config::default(), File::create("my_rust_binary.log").unwrap()),
-        ]
-    ).unwrap();
+    CombinedLogger::init(vec![
+        TermLogger::new(log_level, config, TerminalMode::Mixed, ColorChoice::Auto),
+        // WriteLogger::new(LevelFilter::Info, Config::default(), File::create("my_rust_binary.log").unwrap()),
+    ])
+    .unwrap();
 }
