@@ -13,6 +13,10 @@ pub struct CLI {
     /// Verbosity log debug
     pub verbose: u8,
 
+    #[arg(long)]
+    /// Write log to file
+    pub log_file: Option<PathBuf>,
+
     #[command(subcommand)]
     pub command: Commands,
 }

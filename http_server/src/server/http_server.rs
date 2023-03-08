@@ -92,7 +92,7 @@ pub fn run(config: ServerConfig) -> io::Result<()> {
     log::debug!("Server config: {:?}", config);
     let config = Arc::new(config);
     let addr = config.addr();
-    log::info!("Run server: http://{}", addr);
+    println!("Run server: http://{}", addr);
     let listener = TcpListener::bind(addr)?;
 
     let pool = ThreadPool::new(config.threads.unwrap_or(4) as usize);
