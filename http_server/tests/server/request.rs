@@ -10,7 +10,6 @@ Accept: */*"#
         .map(|l| l.into())
         .collect();
     let res = HTTPRequest::parse(&lines).unwrap();
-    // dbg!(res);
     assert_eq!(res.method, HTTPMethod::HEAD);
     assert_eq!(res.path, "/");
 }

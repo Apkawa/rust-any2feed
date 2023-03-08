@@ -65,6 +65,7 @@ impl HTTPRequest<'_> {
     /// assert_eq!(r.query_params.get("a").unwrap(), "1");
     /// ```
     pub fn parse(lines: &[String]) -> error::Result<HTTPRequest> {
+        log::trace!("parse: lines={:?}", lines);
         let req_head = lines[0]
             .split_whitespace()
             .filter(|c| !c.is_empty())
@@ -87,6 +88,7 @@ impl HTTPRequest<'_> {
                 }
             }
             _ => {
+                log::error!("parse error match head req_head={:?}", req_head);
                 return Err(InvalidRequest);
             }
         };
@@ -98,10 +100,12 @@ impl HTTPRequest<'_> {
                     .headers
                     .insert(k.trim().to_string(), v.trim().to_string()),
                 _ => {
+                    log::error!("parse error headers");
                     return Err(InvalidRequest);
                 }
             };
         }
+        log::trace!("parse result {:?}", request);
         Ok(request)
     }
 

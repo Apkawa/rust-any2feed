@@ -12,7 +12,8 @@ use crate::server::thread_pool::ThreadPool;
 use crate::server::HTTPError::*;
 
 pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
-    // let addr = stream.peer_addr().unwrap();
+    let addr = stream.peer_addr().unwrap();
+    log::debug!("client {:?} connected", addr);
     let reader = BufReader::new(&stream);
     // TODO check body
     let request: Vec<String> = reader
@@ -33,9 +34,12 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
     let routes = &config.routes;
     let mut response = Err(NotFound);
     for r in routes {
+        log::trace!("try match route: {:?}", r);
         if let Some(path_params) = r.parse_path(&request.path) {
             request.path_params = Some(path_params);
+            log::trace!("run callback request={:?}", request);
             response = r.run_cb(&request);
+            log::trace!("response={:?}", response);
             break;
         }
     }
@@ -47,16 +51,11 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
             _ => HTTPResponse::new(500),
         },
     };
-    println!(
-        "{code} {path}",
-        code = response.status,
-        path = request.full_path
-    );
-    // TODO Улучшить обработку ошибок.
+    log::info!("{code} {path}", code = response.status, path = request.full_path);
     let header_write_state = stream
         .write_all(response.to_string().as_bytes())
         .map_err(|e| {
-            dbg!(&e, &req_headers, &response);
+            log::warn!("Write headers fail: e={:?} request={:?} response={:?}", &e, &req_headers, &response);
             e
         });
     if header_write_state.is_ok() {
@@ -67,7 +66,7 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
                 match e.kind() {
                     io::ErrorKind::BrokenPipe => (), // Разрыв соединения от клиента, пока глушим их
                     _ => {
-                        dbg!(&e, &req_headers, &response);
+                        log::warn!("Write headers fail: e={:?} request={:?} response={:?}", &e, &req_headers, &response);
                     } // Другие ошибки
                 }
                 e
@@ -76,12 +75,14 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
 }
 
 pub fn run(config: ServerConfig) -> io::Result<()> {
+    log::debug!("Server config: {:?}", config);
+    let config = Arc::new(config);
     let addr = config.addr();
-    println!("Run server: http://{}", addr);
+    log::info!("Run server: http://{}", addr);
     let listener = TcpListener::bind(addr)?;
 
+
     let pool = ThreadPool::new(config.threads.unwrap_or(4) as usize);
-    let config = Arc::new(config);
     // accept connections and process them serially
     for stream in listener.incoming() {
         let stream = stream.unwrap();

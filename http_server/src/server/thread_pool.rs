@@ -14,6 +14,7 @@ type Job = Box<dyn FnOnce() + Send + 'static>;
 impl ThreadPool {
     pub fn new(size: usize) -> ThreadPool {
         assert!(size > 0);
+        log::trace!("ThreadPool::new(size={:?})", size);
         let mut threads: Vec<Worker> = Vec::with_capacity(size);
         // Создаем однонаправленный FIFO очередь
         let (sender, reciver) = mpsc::channel();
@@ -52,13 +53,13 @@ impl ThreadPool {
 
 impl Drop for ThreadPool {
     fn drop(&mut self) {
-        println!("ThreadPool drop");
+        log::trace!("ThreadPool drop");
         // Без этой части кода не будет работать остановка процессов
         // по причине того что Worker.reciver будет вечно ждать сообщений
         // При дропе sender умирает канал reciver
         drop(self.sender.take());
         for worker in &mut self.workers {
-            println!("Shutting down worker {}", worker.id);
+            log::trace!("Shutting down worker {}", worker.id);
             if let Some(thread) = worker.thread.take() {
                 thread.join().unwrap();
             }
@@ -73,20 +74,20 @@ struct Worker {
 
 impl Worker {
     fn new(id: usize, reciver: Arc<Mutex<mpsc::Receiver<Job>>>) -> Worker {
-        println!("Worker {id}: started");
+        log::debug!("Worker {:?}: started", id);
         // Спавним поток
         let thread = thread::spawn(move // перемещаем ссылку reciver внутрь замыкания
                 || loop { // И поток зависает в бесконечном цикле
                 let job = reciver.lock().unwrap().recv();
                 match job {
                     Ok(job) => {
-                        println!("Worker {id}: got a job; executing.");
+                        log::debug!("Worker {:?}: got a job; executing.", id);
                         job()
                     }
                     Err(_) => {
                         // Когда дропнули ссылку на sender,
                         // то умирает канал и воркер выходит из чата
-                        println!("Worker {id}: disconnected; shutting down.");
+                        log::debug!("Worker {:?}: disconnected; shutting down.", id);
                         break;
                     }
                 }
