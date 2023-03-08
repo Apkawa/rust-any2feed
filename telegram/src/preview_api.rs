@@ -1,4 +1,5 @@
 use crate::data::Channel;
+use crate::error;
 use crate::parse::parse_message;
 use reqwest::blocking::Response;
 use reqwest::cookie::Jar;
@@ -50,7 +51,7 @@ impl TelegramChannelPreviewApi {
         self.request(Method::GET, url).send()
     }
 
-    pub fn parse_html_page(&self, html: &str) -> Channel {
+    pub fn parse_html_page(&self, html: &str) -> error::Result<Channel> {
         let parser = scraper::Html::parse_document(html);
         let mut channel = Channel {
             slug: self.slug.clone(),
@@ -72,7 +73,7 @@ impl TelegramChannelPreviewApi {
                 .push(parse_message(el_ref.html().as_str()).unwrap());
         }
 
-        channel
+        Ok(channel)
     }
     /// Пытаемся получить новый урл.
     pub fn try_get_new_media_url(&self, post_id: usize, media_index: usize, field: &str) -> String {
@@ -81,15 +82,15 @@ impl TelegramChannelPreviewApi {
         post.media_try_get_new_url(media_index, field)
     }
 
-    pub fn fetch_post(&self, id: usize) -> reqwest::Result<Channel> {
+    pub fn fetch_post(&self, id: usize) -> error::Result<Channel> {
         let html = self.get(self.embedded_post_url(id).as_str())?.text()?;
-        Ok(self.parse_html_page(html.as_str()))
+        self.parse_html_page(html.as_str())
     }
 
-    pub fn fetch(&self, _pages: Option<usize>) -> reqwest::Result<Channel> {
+    pub fn fetch(&self, _pages: Option<usize>) -> error::Result<Channel> {
         // TODO handle pages
         let html = self.get(self.preview_url().as_str())?.text()?;
-        Ok(self.parse_html_page(html.as_str()))
+        self.parse_html_page(html.as_str())
     }
 }
 

@@ -62,7 +62,7 @@ pub(crate) fn handle_client(mut stream: TcpStream, config: Arc<ServerConfig>) {
     if header_write_state.is_ok() {
         let empty_bytes = bytes::Bytes::new();
         let _ = stream
-            .write_all(&response.content.as_ref().unwrap_or_else(|| &empty_bytes))
+            .write_all(response.content.as_ref().unwrap_or(&empty_bytes))
             .map_err(|e| {
                 match e.kind() {
                     io::ErrorKind::BrokenPipe => (), // Разрыв соединения от клиента, пока глушим их

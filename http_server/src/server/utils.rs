@@ -47,9 +47,7 @@ pub fn parse_match_captures(
 ///         Some("123"),
 ///     ]);
 /// ```
-pub fn path_params_to_vec<'a>(
-    path_params: &'a HashMap<String, Option<String>>,
-) -> Vec<Option<&'a str>> {
+pub fn path_params_to_vec(path_params: &HashMap<String, Option<String>>) -> Vec<Option<&str>> {
     let mut pairs: Vec<_> = path_params.iter().map(|(k, v)| (k, v)).collect();
     pairs.sort();
 

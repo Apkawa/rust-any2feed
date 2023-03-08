@@ -1,4 +1,5 @@
 use crate::data::{ChannelPost, File, ForwardedFrom, LinkPreview, Media, Poll, PollOption};
+use crate::error;
 use regex::Regex;
 use scraper::node::Element;
 use scraper::Selector;
@@ -192,7 +193,7 @@ pub fn parse_poll(html: &str) -> Poll {
     poll
 }
 
-pub fn parse_message(html: &str) -> Option<ChannelPost> {
+pub fn parse_message(html: &str) -> error::Result<ChannelPost> {
     let mut post = ChannelPost::default();
     let class_prefix = ".js-message_";
 
@@ -280,5 +281,5 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
             _ => {}
         }
     }
-    Some(post)
+    Ok(post)
 }

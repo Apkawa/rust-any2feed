@@ -16,8 +16,8 @@ pub fn set_proxy_url(mut post: ChannelPost, proxy_url: &Url) -> ChannelPost {
     url.query_pairs_mut()
         .append_pair("t", timestamp_now().to_string().as_str());
     let mut medias = post.get_media_list_mut();
-    for (i, mut media) in medias.iter_mut().enumerate() {
-        media_set_proxy_urls(&url, &mut media, i);
+    for (i, media) in medias.iter_mut().enumerate() {
+        media_set_proxy_urls(&url, media, i);
     }
     return post;
 
