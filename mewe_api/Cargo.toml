@@ -24,6 +24,8 @@ pulldown-cmark = { version = "0.9.2", default-features = false }
 regex = { version = "1.7.1" }
 chrono = { version = "0.4.23", features = ["serde"] }
 
+log = "0.4.17"
+
 [dev-dependencies]
 test_utils = { version = "0.1.0", path = "../test_utils" }
 # Для тестов

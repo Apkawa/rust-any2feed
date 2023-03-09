@@ -16,8 +16,10 @@ pub struct TelegramFeedSource {
 
 impl FeedSource for TelegramFeedSource {
     fn with_config(toml: &str) -> Self {
+        let config = Config::load(toml);
+        log::debug!("Config: {:?}", config);
         TelegramFeedSource {
-            config: Arc::new(Config::load(toml)),
+            config: Arc::new(config),
         }
     }
 

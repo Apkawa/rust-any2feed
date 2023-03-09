@@ -1,4 +1,5 @@
 use crate::data::{ChannelPost, File, ForwardedFrom, LinkPreview, Media, Poll, PollOption};
+use crate::error;
 use regex::Regex;
 use scraper::node::Element;
 use scraper::Selector;
@@ -192,7 +193,7 @@ pub fn parse_poll(html: &str) -> Poll {
     poll
 }
 
-pub fn parse_message(html: &str) -> Option<ChannelPost> {
+pub fn parse_message(html: &str) -> error::Result<ChannelPost> {
     let mut post = ChannelPost::default();
     let class_prefix = ".js-message_";
 
@@ -223,6 +224,23 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
         let el = el_ref.value();
         if el.name() == "time" {
             post.datetime = el.attr("datetime").unwrap().to_string();
+        }
+        match get_class_name_by_prefix(el, "js-") {
+            Some("widget_message") => post.id = el.attr("data-post").unwrap().to_string(),
+            Some("message_text") => {
+                let t = el_ref.text().into_iter().collect::<Vec<_>>();
+                post.text = t.join(" ");
+                post.html = el_ref.inner_html();
+            }
+            Some("message_video_player" | "message_roundvideo_player") => {
+                if !has_class(el, "link_preview_video_player") {
+                    post.media
+                        .get_or_insert_with(Vec::new)
+                        .push(parse_media_video(el_ref.html().as_str()))
+                }
+            }
+            Some("poll") => post.poll = Some(parse_poll(el_ref.html().as_str())),
+            _ => {}
         }
         match get_class_name_by_prefix(el, "tgme_widget_message_") {
             Some("photo_wrap") => {
@@ -262,23 +280,6 @@ pub fn parse_message(html: &str) -> Option<ChannelPost> {
             }
             _ => {}
         }
-        match get_class_name_by_prefix(el, "js-") {
-            Some("widget_message") => post.id = el.attr("data-post").unwrap().to_string(),
-            Some("message_text") => {
-                let t = el_ref.text().into_iter().collect::<Vec<_>>();
-                post.text = t.join(" ");
-                post.html = el_ref.inner_html();
-            }
-            Some("message_video_player" | "message_roundvideo_player") => {
-                if !has_class(el, "link_preview_video_player") {
-                    post.media
-                        .get_or_insert_with(Vec::new)
-                        .push(parse_media_video(el_ref.html().as_str()))
-                }
-            }
-            Some("poll") => post.poll = Some(parse_poll(el_ref.html().as_str())),
-            _ => {}
-        }
     }
-    Some(post)
+    Ok(post)
 }

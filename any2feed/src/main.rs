@@ -1,10 +1,5 @@
-use clap::Parser;
-use std::fs::read_to_string;
-
-use any2feed::cli::{Commands, CLI};
-use any2feed::config::MainConfig;
+use any2feed::config::load_config;
 use any2feed::feed_sources::FeedSourceList;
-
 use http_server::{run, HTTPRequest, HTTPResponse, Route, ServerConfig};
 
 fn main_view(_request: &HTTPRequest) -> http_server::Result<HTTPResponse> {
@@ -24,19 +19,11 @@ fn main_view(_request: &HTTPRequest) -> http_server::Result<HTTPResponse> {
 }
 
 fn main() {
-    let cli = CLI::parse();
-    let config_str = read_to_string(cli.config).unwrap();
-    let mut config: MainConfig = toml::from_str(&config_str).unwrap();
-    match cli.command {
-        Commands::Run(server_cfg) => {
-            config.server.port = server_cfg.port;
-            config.server.threads = server_cfg.threads;
-        }
-    }
+    let config = load_config();
 
     let mut routes = vec![Route::new("/", main_view)];
 
-    let feed_source_list = FeedSourceList::get_sources(&config_str);
+    let feed_source_list = FeedSourceList::get_sources(config.config_text.as_ref().unwrap());
     for feed_source in feed_source_list {
         routes.extend(feed_source.routes());
     }

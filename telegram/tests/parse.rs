@@ -7,7 +7,7 @@ use test_utils::fixture::load_fixture;
 fn test_parse_html() {
     let api = TelegramChannelPreviewApi::new("foo");
     let html = load_fixture("telegram_preview/full.html");
-    let result = api.parse_html_page(html.as_str());
+    let result = api.parse_html_page(html.as_str()).unwrap();
     assert_eq!(result.slug, "foo");
     assert_eq!(result.title, "Военное обозрение");
     assert!(result.description.starts_with("Официальный канал сайта"));

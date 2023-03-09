@@ -1,11 +1,16 @@
-use crate::data::Channel;
-use crate::parse::parse_message;
+use std::sync::Arc;
+
 use reqwest::blocking::Response;
 use reqwest::cookie::Jar;
 use reqwest::Method;
 use scraper;
 use scraper::Selector;
-use std::sync::Arc;
+
+use crate::data::Channel;
+use crate::error;
+use crate::error::TelegramApiError;
+use crate::parse::parse_message;
+use crate::TelegramApiErrorKind::StatusError;
 
 const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
 
@@ -46,11 +51,23 @@ impl TelegramChannelPreviewApi {
         self.session.request(method, url)
     }
 
-    pub fn get(&self, url: &str) -> reqwest::Result<Response> {
-        self.request(Method::GET, url).send()
+    pub fn get(&self, url: &str) -> crate::Result<Response> {
+        log::debug!("get url={:?}", url);
+        let result = self.request(Method::GET, url).send()?;
+        let status = result.status().as_u16();
+        log::debug!("get [{:?}]", status);
+        log::trace!("get result={:?}", &result);
+        if status >= 400 {
+            log::trace!("ERROR text={:?}", &result.text());
+            Err(TelegramApiError::ApiError {
+                kind: StatusError(status),
+            })
+        } else {
+            Ok(result)
+        }
     }
 
-    pub fn parse_html_page(&self, html: &str) -> Channel {
+    pub fn parse_html_page(&self, html: &str) -> error::Result<Channel> {
         let parser = scraper::Html::parse_document(html);
         let mut channel = Channel {
             slug: self.slug.clone(),
@@ -66,37 +83,52 @@ impl TelegramChannelPreviewApi {
                 _ => {}
             }
         }
+        log::trace!("parsed meta {:?}", channel);
         for el_ref in parser.select(&Selector::parse(".js-widget_message").unwrap()) {
-            channel
-                .posts
-                .push(parse_message(el_ref.html().as_str()).unwrap());
+            log::debug!(
+                "start parse message id={:?}",
+                el_ref.value().attr("data-post")
+            );
+            let post = parse_message(el_ref.html().as_str()).unwrap();
+            log::trace!("parsed message {:?}", post);
+            channel.posts.push(post);
         }
-
-        channel
+        Ok(channel)
     }
     /// Пытаемся получить новый урл.
     pub fn try_get_new_media_url(&self, post_id: usize, media_index: usize, field: &str) -> String {
+        log::trace!(
+            "try_get_new_media_url post_id={:?} media_index={:?} field={:?}",
+            post_id,
+            media_index,
+            field
+        );
         let channel = self.fetch_post(post_id).unwrap();
         let post = channel.posts.get(0).unwrap();
-        post.media_try_get_new_url(media_index, field)
+        let url = post.media_try_get_new_url(media_index, field);
+        log::trace!("try_get_new_media_url url={:?}", url);
+        url
     }
 
-    pub fn fetch_post(&self, id: usize) -> reqwest::Result<Channel> {
+    pub fn fetch_post(&self, id: usize) -> error::Result<Channel> {
+        log::debug!("fetch_post id={:?}", id);
         let html = self.get(self.embedded_post_url(id).as_str())?.text()?;
-        Ok(self.parse_html_page(html.as_str()))
+        self.parse_html_page(html.as_str())
     }
 
-    pub fn fetch(&self, _pages: Option<usize>) -> reqwest::Result<Channel> {
+    pub fn fetch(&self, _pages: Option<usize>) -> error::Result<Channel> {
+        log::debug!("fetch pages={:?}", _pages);
         // TODO handle pages
         let html = self.get(self.preview_url().as_str())?.text()?;
-        Ok(self.parse_html_page(html.as_str()))
+        self.parse_html_page(html.as_str())
     }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::preview_api::TelegramChannelPreviewApi;
     use reqwest::Url;
+
+    use crate::preview_api::TelegramChannelPreviewApi;
 
     #[test]
     fn test_preview_api() {

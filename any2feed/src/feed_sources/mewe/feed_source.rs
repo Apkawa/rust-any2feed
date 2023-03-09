@@ -22,6 +22,8 @@ impl FeedSource for MeweFeedSource {
     fn with_config(toml_str: &str) -> Self {
         let config: Config = toml::from_str(toml_str).unwrap();
 
+        log::debug!("Config: {:?}", config);
+
         let mewe = MeweApi::new(config.mewe.cookies_path.as_str()).unwrap();
 
         MeweFeedSource {

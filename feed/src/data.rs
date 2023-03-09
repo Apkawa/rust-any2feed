@@ -84,6 +84,7 @@ impl Entry {
         let id = {
             let mut id = id;
             if cfg!(debug_assertions) {
+                log::warn!("Entry id DEBUG MODE");
                 // Отладочный режим, делаем id неуникальными
                 id.push('/');
                 id.push_str(&Local::now().to_rfc3339());
