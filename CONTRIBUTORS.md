@@ -32,13 +32,29 @@ cargo build --release --target x86_64-pc-windows-gnu --bin any2feed
 
 # Commit
 
-* Install [pre-commit](https://pre-commit.com/) via package manager or pip
+* Install [pre-commit](https://pre-commit.com/) via package manager or `pip`
 * Install hooks
 ```shell
 pre-commit install
 ```
 
+# Checks
 
+## pre
+
+install clippy:
+```shell
+rustup component add clippy
+```
+
+## run
+
+* `cargo fmt --fix` - fix formatting
+* `cargo check`
+* `cargo clippy --fix` - lint and fix lint issues
+* `cargo test --all` - run all tests
+
+Also, this checks run in git hoots
 
 # Release
 

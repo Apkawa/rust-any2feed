@@ -1,3 +1,5 @@
+[![CICD](https://github.com/Apkawa/rust-any2feed/actions/workflows/ci.yml/badge.svg)](https://github.com/Apkawa/rust-any2feed/actions/workflows/ci.yml)
+
 # rust-any2feed
 
 A pluggable localhost server for convert any source to rss
@@ -66,6 +68,5 @@ CLI params overrides config param
 * [stefansundin/rssbox](https://github.com/stefansundin/rssbox)
 * [raspi/SimpleRedditRSSBot](https://github.com/raspi/SimpleRedditRSSBot)
 * [c3kay/hoyolab-rss-feeds](https://github.com/c3kay/hoyolab-rss-feeds)
-* [pink-red/rss-exhentai-watched](https://github.com/pink-red/rss-exhentai-watched)
 * [kthchew/ao3-rss](https://github.com/kthchew/ao3-rss)
 * [SkYNewZ/youtube-subscription-feed](https://github.com/SkYNewZ/youtube-subscription-feed)
