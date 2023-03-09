@@ -1,5 +1,4 @@
 use std::borrow::Borrow;
-
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -8,10 +7,11 @@ use std::time::Duration;
 use reqwest::blocking::Response;
 use reqwest::{cookie::Jar, Url};
 
+use reqwest_mozilla_cookie::{import_cookie_from_file, update_cookie_from_file};
+
 use crate::json;
 use crate::json::MeweApiFeedListNextPageLink;
 use crate::utils::update_query;
-use reqwest_mozilla_cookie::{import_cookie_from_file, update_cookie_from_file};
 
 const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
 

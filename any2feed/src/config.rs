@@ -20,6 +20,7 @@ pub struct MainConfig {
     pub config_text: Option<String>,
 }
 
+/// load config and initialize logging
 pub fn load_config() -> MainConfig {
     let cli = CLI::parse();
     // TODO find config in other locations

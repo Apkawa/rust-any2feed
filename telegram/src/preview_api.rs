@@ -1,12 +1,16 @@
-use crate::data::Channel;
-use crate::error;
-use crate::parse::parse_message;
+use std::sync::Arc;
+
 use reqwest::blocking::Response;
 use reqwest::cookie::Jar;
 use reqwest::Method;
 use scraper;
 use scraper::Selector;
-use std::sync::Arc;
+
+use crate::data::Channel;
+use crate::error;
+use crate::error::TelegramApiError;
+use crate::parse::parse_message;
+use crate::TelegramApiErrorKind::StatusError;
 
 const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
 
@@ -47,11 +51,20 @@ impl TelegramChannelPreviewApi {
         self.session.request(method, url)
     }
 
-    pub fn get(&self, url: &str) -> reqwest::Result<Response> {
+    pub fn get(&self, url: &str) -> crate::Result<Response> {
         log::debug!("get url={:?}", url);
-        let result = self.request(Method::GET, url).send();
-        log::trace!("get response {:?}", result);
-        result
+        let result = self.request(Method::GET, url).send()?;
+        let status = result.status().as_u16();
+        log::debug!("get [{:?}]", status);
+        log::trace!("get result={:?}", &result);
+        if status >= 400 {
+            log::trace!("ERROR text={:?}", &result.text());
+            Err(TelegramApiError::ApiError {
+                kind: StatusError(status),
+            })
+        } else {
+            Ok(result)
+        }
     }
 
     pub fn parse_html_page(&self, html: &str) -> error::Result<Channel> {
@@ -113,8 +126,9 @@ impl TelegramChannelPreviewApi {
 
 #[cfg(test)]
 mod test {
-    use crate::preview_api::TelegramChannelPreviewApi;
     use reqwest::Url;
+
+    use crate::preview_api::TelegramChannelPreviewApi;
 
     #[test]
     fn test_preview_api() {

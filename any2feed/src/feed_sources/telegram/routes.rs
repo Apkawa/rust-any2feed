@@ -37,7 +37,8 @@ pub fn route_feed(feed_source: &TelegramFeedSource) -> Route {
                 HTTPResponse::with_content(content.as_str()).set_content_type("text/xml");
             Ok(response)
         } else {
-            Err(NotFound)
+            // TODO handle kind HostUnreachable
+            Err(HTTPError::InvalidRequest)
         }
     })
 }

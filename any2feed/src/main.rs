@@ -1,10 +1,5 @@
-use clap::Parser;
-
-use any2feed::cli::{Commands, CLI};
 use any2feed::config::load_config;
 use any2feed::feed_sources::FeedSourceList;
-use any2feed::logging;
-
 use http_server::{run, HTTPRequest, HTTPResponse, Route, ServerConfig};
 
 fn main_view(_request: &HTTPRequest) -> http_server::Result<HTTPResponse> {

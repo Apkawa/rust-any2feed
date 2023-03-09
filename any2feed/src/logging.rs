@@ -1,10 +1,11 @@
-use crate::cli::CLI;
-use crate::config::MainConfig;
+use std::fs::File;
+
 use log::LevelFilter;
 use simplelog::{
     ColorChoice, CombinedLogger, ConfigBuilder, SharedLogger, TermLogger, TerminalMode, WriteLogger,
 };
-use std::fs::File;
+
+use crate::config::MainConfig;
 
 pub fn logging_init(config: &MainConfig) {
     let log_level = match config.verbose.unwrap_or(0) {

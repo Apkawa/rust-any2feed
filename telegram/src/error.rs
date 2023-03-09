@@ -2,8 +2,7 @@ pub type Result<T> = std::result::Result<T, TelegramApiError>;
 
 #[derive(Debug)]
 pub enum TelegramApiErrorKind {
-    IdentifyFail,
-    StatusError,
+    StatusError(u16),
 }
 
 #[derive(Debug)]

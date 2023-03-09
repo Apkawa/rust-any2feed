@@ -172,27 +172,28 @@ pub fn route_media_proxy(feed_source: &MeweFeedSource) -> Route {
     Route::new("/mewe/media/(.*)", move |r| {
         let path = &r.path_params.as_ref().unwrap().get("1").unwrap();
         let path = path.as_ref().unwrap();
-        let media_res = mewe_api
-            .get(format!("https://mewe.com/{path}").as_str())
-            .unwrap();
-
-        match media_res.status().as_u16() {
-            200 => {
-                let media_headers: HashMap<String, String> = media_res
-                    .headers()
-                    .iter()
-                    .map(|(k, v)| (k.to_string(), v.to_str().unwrap().to_string()))
-                    .collect();
-                let content_type = media_headers.get("content-type").cloned();
-                Ok(HTTPResponse {
-                    status: 200,
-                    content: Some(media_res.bytes().unwrap()),
-                    content_type,
-                    headers: media_headers,
-                })
+        let media_res = mewe_api.get(format!("https://mewe.com/{path}").as_str());
+        if let Ok(media_res) = media_res {
+            match media_res.status().as_u16() {
+                200 => {
+                    let media_headers: HashMap<String, String> = media_res
+                        .headers()
+                        .iter()
+                        .map(|(k, v)| (k.to_string(), v.to_str().unwrap().to_string()))
+                        .collect();
+                    let content_type = media_headers.get("content-type").cloned();
+                    Ok(HTTPResponse {
+                        status: 200,
+                        content: Some(media_res.bytes().unwrap()),
+                        content_type,
+                        headers: media_headers,
+                    })
+                }
+                404 => Err(NotFound),
+                _ => Err(HTTPError::InvalidRequest),
             }
-            404 => Err(NotFound),
-            _ => Err(HTTPError::InvalidRequest),
+        } else {
+            Err(HTTPError::InvalidRequest)
         }
     })
 }
