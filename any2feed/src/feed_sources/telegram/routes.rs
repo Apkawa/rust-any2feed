@@ -13,7 +13,7 @@ use std::sync::Arc;
 use telegram::preview_api::TelegramChannelPreviewApi;
 
 pub fn route_feed(feed_source: &TelegramFeedSource) -> Route {
-    let config = Arc::clone(&feed_source.config);
+    let config = Arc::clone(feed_source.config.as_ref().unwrap());
     Route::new("/telegram/feed/(.+)/", move |r| {
         // TODO надо что то сделать с этой цепочкой, не очень красиво
         let channel_slug = r
@@ -44,7 +44,7 @@ pub fn route_feed(feed_source: &TelegramFeedSource) -> Route {
 }
 
 pub(crate) fn route_opml(feed_source: &TelegramFeedSource) -> Route {
-    let config = Arc::clone(&feed_source.config);
+    let config = Arc::clone(feed_source.config.as_ref().unwrap());
     Route::new("/telegram.opml", move |r| {
         let mut outlines: Vec<Outline> = Vec::with_capacity(config.channels.len());
         let mut url = r.url();

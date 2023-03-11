@@ -10,17 +10,21 @@ use ::feed::opml::Outline;
 use http_server::Route;
 use std::sync::Arc;
 
+#[derive(Debug, Default)]
 pub struct TelegramFeedSource {
-    pub(crate) config: Arc<Config>,
+    pub(crate) config: Option<Arc<Config>>,
 }
 
 impl FeedSource for TelegramFeedSource {
-    fn with_config(toml: &str) -> Self {
+    #[inline]
+    fn name(&self) -> String {
+        "telegram".to_string()
+    }
+
+    fn with_config(&mut self, toml: &str) {
         let config = Config::load(toml);
         log::debug!("Config: {:?}", config);
-        TelegramFeedSource {
-            config: Arc::new(config),
-        }
+        self.config = Some(Arc::new(config));
     }
 
     fn routes(&self) -> Vec<Route> {

@@ -1,5 +1,4 @@
 use any2feed::config::load_config;
-use any2feed::feed_sources::FeedSourceList;
 use http_server::{run, HTTPRequest, HTTPResponse, Route, ServerConfig};
 
 fn main_view(_request: &HTTPRequest) -> http_server::Result<HTTPResponse> {
@@ -23,8 +22,12 @@ fn main() {
 
     let mut routes = vec![Route::new("/", main_view)];
 
-    let feed_source_list = FeedSourceList::get_sources(config.config_text.as_ref().unwrap());
-    for feed_source in feed_source_list {
+    let mut feed_source_list = config.get_enabled_feed_sources();
+    let config_str = config.config_text.as_ref().unwrap();
+    for feed_source in feed_source_list.iter_mut() {
+        // Initialize
+        log::info!("Feed source '{}' initialize", feed_source.name());
+        feed_source.with_config(config_str);
         routes.extend(feed_source.routes());
     }
 

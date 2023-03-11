@@ -37,3 +37,23 @@ pub struct RunServer {
     #[arg(long)]
     pub threads: Option<u8>,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Commands::*;
+    use super::*;
+
+    #[test]
+    fn test_cli_parse() {
+        let args = "any2feed --config /tmp/config.toml run --port 123 --threads 10".split(' ');
+        let cli = CLI::try_parse_from(args).unwrap();
+        assert_eq!(cli.config, PathBuf::from("/tmp/config.toml"));
+        assert_eq!(cli.verbose, 0);
+        assert_eq!(cli.log_file, None);
+
+        if let Run(server) = cli.command {
+            assert_eq!(server.threads, Some(10));
+            assert_eq!(server.port, Some(123));
+        }
+    }
+}
