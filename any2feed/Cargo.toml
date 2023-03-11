@@ -20,7 +20,7 @@ chrono = { version = "0.4.23", features = ["serde"] }
 serde = { version = "1.0.152", features = ["derive"] }
 toml = { version = "0.7.2" }
 # Cli
-clap = { version = "4.1.8", features = ["derive"] }
+clap = { version = "4.1.8", features = ["derive", "string"] }
 # Logging
 log = "0.4.17"
 simplelog = "0.12.1"

@@ -53,6 +53,16 @@ impl MainConfig {
             self.verbose = Some(cli.verbose);
         }
         self.log_file = cli.log_file.clone().or(self.log_file).clone();
+
+        self.feed_sources = cli
+            .feed_source
+            .as_ref()
+            .map(|fs| {
+                fs.into_iter()
+                    .map(|s| (s.to_owned(), FeedSourceOption::default()))
+                    .collect::<HashMap<String, FeedSourceOption>>()
+            })
+            .unwrap_or(self.feed_sources);
         self
     }
 
@@ -140,8 +150,30 @@ threads = 5
         # [mewe] disabled
         "#;
         let c = MainConfig::load(config_str);
-        dbg!(&c);
         assert_eq!(c.feed_sources.get("mewe"), None);
+        assert_eq!(c.feed_sources.get("telegram").unwrap().disable, None);
+        let fs = c.get_enabled_feed_sources();
+        assert_eq!(fs.len(), 1);
+        assert_eq!(fs[0].name(), "telegram".to_string());
+    }
+
+    #[test]
+    fn test_feed_sources_override_via_cli() {
+        let config_str = r#"
+        [server] # TODO make optional
+        [telegram]
+        [mewe]
+        disable = false
+        "#;
+        let args = "any2feed --config /tmp/config.toml --feed-source=telegram run".split(' ');
+        let c = MainConfig::load(config_str);
+        // All enabled
+        assert_eq!(c.feed_sources.get("mewe").unwrap().disable, Some(false));
+        assert_eq!(c.feed_sources.get("telegram").unwrap().disable, None);
+        assert_eq!(c.get_enabled_feed_sources().len(), 2);
+
+        let c = c.merge_with_cli(&CLI::parse_from(args));
+        assert_eq!(c.feed_sources.get("mewe"), None); // Mewe disabled
         assert_eq!(c.feed_sources.get("telegram").unwrap().disable, None);
         let fs = c.get_enabled_feed_sources();
         assert_eq!(fs.len(), 1);
