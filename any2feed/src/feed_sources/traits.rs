@@ -1,11 +1,11 @@
+use crate::feed_sources::error::FeedSourceError;
 use feed::opml::Outline;
 use http_server::Route;
 
 pub trait FeedSource {
+    fn name(&self) -> String;
     /// Initialize with config
-    fn with_config(toml: &str) -> Self
-    where
-        Self: Sized;
+    fn with_config(&mut self, toml: &str) -> Result<(), FeedSourceError>;
     /// Initialize routes
     fn routes(&self) -> Vec<Route>;
 

@@ -109,6 +109,7 @@ pub fn route_feed(feed_source: &MeweFeedSource) -> Route {
                 thread::sleep(Duration::from_millis(100));
             }
             match path_parts[1..=2] {
+                // TODO handle error, like HostUnreachable
                 [Some("me"), ..] => mewe_api.get_my_feeds(limit, pages).unwrap(),
                 [Some("user"), Some(_id)] => mewe_api
                     .get_user_feed(user_id.unwrap().as_str(), limit, pages)
