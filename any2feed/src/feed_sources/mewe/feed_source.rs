@@ -3,6 +3,7 @@ use std::sync::Arc;
 
 use http_server::Route;
 
+use crate::feed_sources::error::FeedSourceError;
 use crate::feed_sources::mewe::config::Config;
 use crate::feed_sources::mewe::routes::{route_feed, route_media_proxy, route_opml};
 use crate::feed_sources::traits::FeedSource;
@@ -25,13 +26,12 @@ impl FeedSource for MeweFeedSource {
         "mewe".to_string()
     }
 
-    fn with_config(&mut self, toml_str: &str) {
-        let config: Config = toml::from_str(toml_str).unwrap();
-
+    fn with_config(&mut self, toml_str: &str) -> Result<(), FeedSourceError> {
+        let config: Config = toml::from_str(toml_str)?;
         log::debug!("Config: {:?}", config);
-
-        let mewe = MeweApi::new(config.mewe.cookies_path.as_str()).unwrap();
+        let mewe = MeweApi::new(config.mewe.cookies_path.as_str())?;
         self.api = Some(Arc::new(mewe));
+        Ok(())
     }
 
     fn routes(&self) -> Vec<Route> {

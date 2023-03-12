@@ -3,6 +3,7 @@ pub mod feed;
 mod render;
 mod routes;
 
+use crate::feed_sources::error::FeedSourceError;
 use crate::feed_sources::telegram::config::Config;
 use crate::feed_sources::telegram::routes::{route_feed, route_media_proxy, route_opml};
 use crate::feed_sources::traits::FeedSource;
@@ -21,10 +22,11 @@ impl FeedSource for TelegramFeedSource {
         "telegram".to_string()
     }
 
-    fn with_config(&mut self, toml: &str) {
+    fn with_config(&mut self, toml: &str) -> Result<(), FeedSourceError> {
         let config = Config::load(toml);
         log::debug!("Config: {:?}", config);
         self.config = Some(Arc::new(config));
+        Ok(())
     }
 
     fn routes(&self) -> Vec<Route> {

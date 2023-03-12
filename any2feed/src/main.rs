@@ -27,7 +27,7 @@ fn main() {
     for feed_source in feed_source_list.iter_mut() {
         // Initialize
         log::info!("Feed source '{}' initialize", feed_source.name());
-        feed_source.with_config(config_str);
+        feed_source.with_config(config_str).unwrap();
         routes.extend(feed_source.routes());
     }
 
