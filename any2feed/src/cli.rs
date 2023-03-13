@@ -10,6 +10,10 @@ use crate::feed_sources::FeedSourceManager;
 #[derive(Debug, Parser)] // requires `derive` feature
 #[command(name = "any2feed")]
 #[command(bin_name = "any2feed")]
+#[command(version = env!("CARGO_PKG_VERSION"))]
+// TODO pass git commit
+#[command(long_version = format!(r#"v{version}
+ commit: {commit}"#, version=env!("CARGO_PKG_VERSION"), commit="TODO"))]
 pub struct CLI {
     #[arg(short, long)]
     /// Path to config.toml. See any2feed_config_example.toml
