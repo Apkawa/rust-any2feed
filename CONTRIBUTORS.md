@@ -62,10 +62,13 @@ Also, this checks run in git hoots
 
 Currently, use [commitizen](https://github.com/commitizen-tools/commitizen)
 
-install tool:
+Install tool:
 ```shell
-sudo pip3 install -U Commitizen
+sudo pip install -U git+https://github.com/Apkawa/commitizen@dev#egg=commitizen
 ```
+We are using a fork because the original is not compatible with semver.
+
+After my [patch](https://github.com/commitizen-tools/commitizen/pull/686) is accepted, it will be possible to use =)
 
 ### Release
 ```shell
