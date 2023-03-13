@@ -1,12 +1,18 @@
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.1.0"
+version = "0.0.1"
 tag_format = "v$version"
 version_files = [
-    "any2feed/__init__.py"
+    "any2feed/Cargo.toml"
+]
+pre_bump_hooks = [
+    "cargo check"
 ]
 changelog_file = 'CHANGELOG.md'
 changelog_incremental = false
+# https://0ver.org/
 major_version_zero = true
 update_changelog_on_bump = true
 annotated_tag = true
+gpg_sign = true
+version_type = "semver"

@@ -22,7 +22,7 @@ dependencies = [
 
 [[package]]
 name = "any2feed"
-version = "0.1.0"
+version = "0.1.0-a17"
 dependencies = [
  "chrono",
  "clap",

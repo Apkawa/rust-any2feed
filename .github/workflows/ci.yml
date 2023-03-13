@@ -5,26 +5,24 @@ env:
   PROJECT_NAME: any2feed
 
 on:
-  workflow_dispatch:
   pull_request:
   push:
     branches:
       - master
     tags:
-      - '*'
+      - 'v*'
 
 jobs:
   version:
     name: check git version
     runs-on: ubuntu-20.04
     outputs:
-      prerelease: ${{ !steps.version.outputs.is_stable }}
+      is_prerelease: ${{ steps.version.outputs.is_prerelease }}
+      full: ${{ steps.version.outputs.full_with_prefix }}
     steps:
       - name: Check version
         uses: apkawa/gh-action-semver-check@master
         id: version
-
-
   cargo_fmt:
     name: Ensure 'cargo fmt' has been run
     runs-on: ubuntu-20.04
@@ -60,10 +58,10 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { target: x86_64-apple-darwin         , os: macos-10.15 }
+          - { target: x86_64-apple-darwin, target_name: macos-x84_64, os: macos-10.15, }
           #          - { target: x86_64-pc-windows-gnu       , os: windows-2019                  }
-          - { target: x86_64-pc-windows-gnu       , os: ubuntu-20.04, use-cross: true, skip-test: true }
-          - { target: x86_64-unknown-linux-gnu    , os: ubuntu-20.04,  }
+          - { target: x86_64-pc-windows-gnu, target_name: windows-x84_64, os: ubuntu-20.04, use-cross: true, skip-test: true }
+          - { target: x86_64-unknown-linux-gnu, target_name: linux-x84_64, os: ubuntu-20.04, }
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -128,11 +126,11 @@ jobs:
           # Setup paths
           BIN_DIR="${{ env.CICD_INTERMEDIATES_DIR }}/stripped-release-bin/"
           mkdir -p "${BIN_DIR}"
-          BIN_NAME="${{ env.PROJECT_NAME }}${EXE_suffix}"
-          BIN_PATH="${BIN_DIR}/${{ matrix.job.target }}-${BIN_NAME}"
+          BIN_NAME="${{ env.PROJECT_NAME }}_${{ needs.version.outputs.full }}_${{ matrix.job.target_name }}${EXE_suffix}"
+          BIN_PATH="${BIN_DIR}/${BIN_NAME}"
 
           # Copy the release build binary to the result location
-          cp "target/${{ matrix.job.target }}/release/${BIN_NAME}" "${BIN_PATH}"
+          cp "target/${{ matrix.job.target }}/release/${{ env.PROJECT_NAME }}${EXE_suffix}" "${BIN_PATH}"
           # Also strip if possible
           if [ -n "${STRIP}" ]; then
             "${STRIP}" "${BIN_PATH}"
@@ -152,23 +150,57 @@ jobs:
       - name: "Artifact upload: "
         uses: actions/upload-artifact@master
         with:
-          name: ${{ matrix.job.target }}-${{ steps.strip.outputs.BIN_NAME }}
+          name: ${{ steps.strip.outputs.BIN_NAME }}
           path: ${{ steps.strip.outputs.BIN_PATH }}
 
+  release:
+    permissions:
+      contents: write # to upload release asset (softprops/action-gh-release)
+    runs-on: ubuntu-20.04
+    if: ${{ !github.event.schedule && startsWith(github.ref, 'refs/tags') }}
+    needs:
+      - version
+      - cargo_fmt
+      - cargo_clippy
+      - build
+    steps:
+      - uses: actions/checkout@v3
 
-      #      - name: Generate Changelog
-      #        run: |
-      #          cz ch --dry-run ${{ steps.version.outputs.full_with_prefix }}  > ${{ github.workspace }}-CHANGELOG.txt
-      #          cat ${{ github.workspace }}-CHANGELOG.txt
+      - name: Download artifacts
+        id: download
+        uses: actions/download-artifact@v3
+        with:
+          path: ${{ github.workspace }}/${{ env.CICD_INTERMEDIATES_DIR }}
+
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: install commitizen
+        run: pip install -U git+https://github.com/Apkawa/commitizen@version_provider#egg=commitizen
+
+      - name: Generate Changelog
+        run: |
+          cz changelog --dry-run ${{ needs.version.outputs.full }}  > ${{ github.workspace }}-CHANGELOG.txt
+          cat ${{ github.workspace }}-CHANGELOG.txt
+
+      - name: Check files
+        run: |
+          pwd
+          ls -lh ${{ env.CICD_INTERMEDIATES_DIR }}
+          ls -lh ${{ github.workspace }}/${{ env.CICD_INTERMEDIATES_DIR }}
+          echo ${{ steps.download.outputs.download-path }}
+          ls -lh ${{ steps.download.outputs.download-path }}
+          ls -lh ./
 
       - name: Publish archives and packages
         uses: softprops/action-gh-release@v1
         if: ${{ !github.event.schedule && startsWith(github.ref, 'refs/tags') }}
         with:
-          draft: true
-          prerelease: ${{ needs.version.outputs.prerelease }}
-          generate_release_notes: true
+          prerelease: ${{ needs.version.outputs.is_prerelease }}
+          body_path: ${{ github.workspace }}-CHANGELOG.txt
           files: |
-            ${{ steps.strip.outputs.BIN_PATH }}
+            ${{ steps.download.outputs.download-path }}/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
