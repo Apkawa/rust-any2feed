@@ -27,11 +27,9 @@ jobs:
     name: Ensure 'cargo fmt' has been run
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: stable
-          default: true
-          profile: minimal
           components: rustfmt
       - uses: actions/checkout@v3
       - run: cargo fmt -- --check
@@ -40,11 +38,9 @@ jobs:
     name: Ensure 'cargo clippy' has been run
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: stable
-          default: true
-          profile: minimal
           components: clippy
       - uses: actions/checkout@v3
       - run: cargo clippy
@@ -80,12 +76,10 @@ jobs:
           brew install openssl
 
       - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: stable
           target: ${{ matrix.job.target }}
-          override: true
-          profile: minimal # minimal component installation (ie, no documentation)
 
       - name: Show version information (Rust, cargo, GCC)
         shell: bash
@@ -136,8 +130,8 @@ jobs:
             "${STRIP}" "${BIN_PATH}"
           fi
           # Let subsequent steps know where to find the (stripped) bin
-          echo ::set-output name=BIN_PATH::${BIN_PATH}
-          echo ::set-output name=BIN_NAME::${BIN_NAME}
+          echo "BIN_PATH=${BIN_PATH}" >>  $GITHUB_OUTPUT
+          echo "BIN_NAME=${BIN_NAME}" >>  $GITHUB_OUTPUT
 
       - name: Run tests
         uses: actions-rs/cargo@v1
@@ -165,6 +159,9 @@ jobs:
       - build
     steps:
       - uses: actions/checkout@v3
+        # For correctly generate changelog
+        with:
+          fetch-depth: 0
 
       - name: Download artifacts
         id: download
