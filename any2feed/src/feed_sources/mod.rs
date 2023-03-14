@@ -1,12 +1,16 @@
+use crate::feed_sources::danbooru::DanbooruFeedSource;
 use crate::feed_sources::mewe::feed_source::MeweFeedSource;
 use crate::feed_sources::telegram::TelegramFeedSource;
 use crate::feed_sources::traits::FeedSource;
 
 pub mod error;
-pub mod mewe;
-pub mod telegram;
 pub mod traits;
 pub mod utils;
+
+// Feed sources
+pub mod danbooru;
+pub mod mewe;
+pub mod telegram;
 
 pub struct FeedSourceManager;
 
@@ -17,6 +21,14 @@ impl FeedSourceManager {
         vec![
             Box::new(MeweFeedSource::default()),
             Box::new(TelegramFeedSource::default()),
+            Box::new(DanbooruFeedSource::default()),
         ]
+    }
+
+    pub fn source_names() -> Vec<String> {
+        FeedSourceManager::get_sources()
+            .into_iter()
+            .map(|s| s.name())
+            .collect()
     }
 }

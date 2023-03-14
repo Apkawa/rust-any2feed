@@ -57,9 +57,9 @@ struct FeedSourceValueParser(Vec<PossibleValue>);
 
 impl FeedSourceValueParser {
     fn new() -> Self {
-        let sources: Vec<PossibleValue> = FeedSourceManager::get_sources()
-            .into_iter()
-            .map(|s| PossibleValue::from(s.name()))
+        let sources: Vec<PossibleValue> = FeedSourceManager::source_names()
+            .iter()
+            .map(PossibleValue::from)
             .collect();
         FeedSourceValueParser(sources)
     }
@@ -142,7 +142,10 @@ mod tests {
         let err = CLI::try_parse_from(args).unwrap_err();
         assert_eq!(
             err.render().to_string().lines().take(1).collect::<String>(),
-            r#"error: "foobar" not in ["mewe", "telegram"]!"#
+            format!(
+                r#"error: "foobar" not in {:?}!"#,
+                FeedSourceManager::source_names()
+            )
         )
     }
 }

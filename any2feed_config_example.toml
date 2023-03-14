@@ -34,3 +34,11 @@ pages = 5
 # Maybe empty
 [telegram.extra.channel_name_2]
 [telegram.extra.channel_name_3]
+
+[danbooru]
+# limit = 50
+# proxy = "https://host:port"
+tags = [
+    "masabodo",
+    "touhou -guro" # touhou tag and not guro. Max 2 tags
+]

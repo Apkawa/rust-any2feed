@@ -5,7 +5,8 @@ members = [
     "feed", "mewe_api",
     "reqwest_mozilla_cookie",
     "test_utils",
-    "telegram"
+    "telegram",
+    "booru-rs",
 ]
 
 #[patch.crates-io]
