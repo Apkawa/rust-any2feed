@@ -9,9 +9,9 @@ use reqwest::{cookie::Jar, Url};
 
 use reqwest_mozilla_cookie::{import_cookie_from_file, update_cookie_from_file};
 
-use crate::json;
 use crate::json::MeweApiFeedListNextPageLink;
 use crate::utils::update_query;
+use crate::{json, MeweApiError};
 
 const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
 
@@ -53,6 +53,7 @@ impl MeweApi {
         let session = reqwest::blocking::Client::builder()
             .user_agent(USER_AGENT)
             .cookie_provider(Arc::clone(&jar))
+            .timeout(Some(Duration::from_secs(5)))
             .build()
             .unwrap();
         let mut mewe_api = MeweApi {
@@ -81,7 +82,12 @@ impl MeweApi {
         for (k, v) in self.headers.lock().unwrap().iter() {
             rb = rb.header(k, v);
         }
-        let result = rb.send()?;
+        let result = rb.send();
+        let Ok(result) = result else {
+            let err = result.unwrap_err();
+            log::error!("API GET FAIL: {:?}", err);
+            return Err(MeweApiError::from(err));
+        };
         let cookies: HashMap<String, String> = result
             .cookies()
             .map(|c| (c.name().to_lowercase(), c.value().to_string()))

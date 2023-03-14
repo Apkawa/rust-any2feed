@@ -3,9 +3,9 @@ use crate::feed_sources::mewe::feed_source::MeweFeedSource;
 use feed::opml::{Outline, OPML};
 use feed::{CDATAElement, Link, LinkRel};
 use http_server::utils::path_params_to_vec;
-use http_server::HTTPError::NotFound;
+use http_server::HTTPError::{InvalidRequest, NotFound};
 use http_server::{HTTPError, HTTPResponse, Route};
-use mewe_api::json::{MeweApiFeedList, MeweApiFeedListNextPageLink, MeweApiHref};
+use mewe_api::json::{MeweApiFeedListNextPageLink, MeweApiHref};
 use mewe_api::utils::update_query;
 use mewe_api::Url;
 use std::collections::HashMap;
@@ -98,29 +98,29 @@ pub fn route_feed(feed_source: &MeweFeedSource) -> Route {
             }
         };
 
-        let mewe_feeds: Vec<MeweApiFeedList> = if let Some(next_page) = page_url {
+        let mewe_feeds = if let Some(next_page) = page_url {
             // Паджинация
-            mewe_api
-                .fetch_feeds(next_page.as_str(), None, None)
-                .unwrap()
+            mewe_api.fetch_feeds(next_page.as_str(), None, None)
         } else {
             if path_parts[1] != Some("me") {
                 // Немного подождем чтоб не мучать мивач
                 thread::sleep(Duration::from_millis(100));
             }
             match path_parts[1..=2] {
-                // TODO handle error, like HostUnreachable
-                [Some("me"), ..] => mewe_api.get_my_feeds(limit, pages).unwrap(),
-                [Some("user"), Some(_id)] => mewe_api
-                    .get_user_feed(user_id.unwrap().as_str(), limit, pages)
-                    .unwrap(),
-                [Some("group"), Some(id)] => mewe_api.get_group_feed(id, limit, pages).unwrap(),
+                [Some("me"), ..] => mewe_api.get_my_feeds(limit, pages),
+                [Some("user"), Some(_id)] => {
+                    mewe_api.get_user_feed(user_id.unwrap().as_str(), limit, pages)
+                }
+                [Some("group"), Some(id)] => mewe_api.get_group_feed(id, limit, pages),
                 _ => {
                     return Err(NotFound);
                 }
             }
         };
-
+        let Ok(mewe_feeds) = mewe_feeds else {
+            log::error!("Fetch mewe feed failed: {:?}", mewe_feeds);
+            return Err(InvalidRequest)
+        };
         let mut feeds = mewe_feed_to_feed(&mewe_feeds).unwrap();
 
         feeds.title = CDATAElement(title);
