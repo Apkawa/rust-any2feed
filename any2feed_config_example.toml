@@ -35,10 +35,50 @@ pages = 5
 [telegram.extra.channel_name_2]
 [telegram.extra.channel_name_3]
 
-[danbooru]
-# limit = 50
-# proxy = "https://host:port"
+
+[booru]
+# Global limit
+limit = 10
+# Global proxy
+proxy = "https://host:port"
+
+#
+[[booru.site]]
+# optional, try autodetection engine from host
+engine = "danbooru"
+# optional if engine set, use default engine host
+url = "https://testbooru.donmai.us"
+# Disable proxy
+proxy = false
+
+limit = 5
+# Optional
+order = "id"
+# Optioal
+rating = "s"
 tags = [
-    "masabodo",
-    "touhou -guro" # touhou tag and not guro. Max 2 tags
+    "", # no tags, all posts
+    "foo bar",
+    "1girl",
+    { tag = "1girl", rating = "s", order = "id", limit = 100 }
+]
+
+[[booru.danbooru]]
+# optional
+url = "https://testbooru.donmai.us"
+
+limit = 5
+tags = [
+    "foo bar",
+    "1girl"
+]
+
+[[booru.gelbooru_v02]]
+# optional
+url = "https://testbooru.donmai.us"
+
+limit = 5
+tags = [
+    "foo bar",
+    "1girl"
 ]

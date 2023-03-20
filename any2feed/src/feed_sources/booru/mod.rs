@@ -1,5 +1,5 @@
-use crate::feed_sources::danbooru::config::{Config, DanbooruFeedSourceConfig};
-use crate::feed_sources::danbooru::routes::{route_feed, route_media_proxy, route_opml};
+use crate::feed_sources::booru::config::BooruConfig;
+use crate::feed_sources::booru::routes::{route_feed, route_media_proxy, route_opml};
 use ::feed::opml::Outline;
 use http_server::Route;
 use std::sync::Arc;
@@ -13,17 +13,17 @@ pub mod feed;
 pub mod routes;
 
 #[derive(Debug, Default)]
-pub struct DanbooruFeedSource {
-    pub(crate) config: Option<Arc<DanbooruFeedSourceConfig>>,
+pub struct BooruFeedSource {
+    pub(crate) config: Option<Arc<BooruConfig>>,
 }
 
-impl FeedSource for DanbooruFeedSource {
+impl FeedSource for BooruFeedSource {
     fn name(&self) -> String {
-        "danbooru".to_string()
+        "booru".to_string()
     }
 
     fn with_config(&mut self, toml: &str) -> Result<(), FeedSourceError> {
-        let config: DanbooruFeedSourceConfig = toml::from_str::<Config>(toml)?.danbooru;
+        let config = BooruConfig::load(toml);
         log::debug!("Config: {:?}", config);
         self.config = Some(Arc::new(config));
         Ok(())

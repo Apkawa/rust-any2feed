@@ -1,9 +1,9 @@
 use ::feed::Entry;
+use booru_rs::client::generic::BooruPostModel;
 use chrono::Local;
 use feed::{Category, Content, Element, Feed, Link, Person};
 use reqwest::Url;
-use booru_rs::client::danbooru::DanbooruPost;
-use booru_rs::client::generic::BooruPostModel;
+use std::borrow::Cow;
 
 #[derive(Debug, Default)]
 pub struct Context {
@@ -16,17 +16,12 @@ pub fn build_proxy_url(media_url: &str, mut proxy_url: Url) -> String {
     proxy_url.to_string()
 }
 
-pub fn danbooru_post_to_entry(post: DanbooruPost, context: Option<&Context>) -> Entry {
-    let source = if post.pixiv_id.is_some() {
-        format!("https://www.pixiv.net/artworks/{}", post.pixiv_id.unwrap())
-    } else {
-        post.source.clone()
-    };
-    let img = if post.file_url.is_none() {
+pub fn danbooru_post_to_entry(post: Box<dyn BooruPostModel>, context: Option<&Context>) -> Entry {
+    let img = if post.images().sample.is_none() {
         String::new()
     } else {
         // let img = DanbooruImage::from_md5(&post.md5.unwrap(), &post.file_ext);
-        let sample = post.large_file_url.unwrap();
+        let sample = post.images().sample.unwrap().url;
         let sample = if let Some(Context {
             proxy_url: Some(proxy_url),
             ..
@@ -34,48 +29,53 @@ pub fn danbooru_post_to_entry(post: DanbooruPost, context: Option<&Context>) -> 
         {
             build_proxy_url(&sample, proxy_url.clone())
         } else {
-            sample
+            sample.to_string()
         };
 
         format!(
             r#"
         <img
           src="{sample}"
-          alt="{alt}" />
+          />
         "#,
             sample = sample,
-            alt = post.tag_string,
         )
     };
+    let source = post
+        .source_url()
+        .unwrap_or_else(|| Cow::Owned(String::new()));
     let content = format!(
         r#"
         <a href="{source}">{source}</a>
         {img}
         "#,
     );
-    let mut post_id = post.id.to_string();
+    let mut post_id = post.id().to_string();
     if let Some(Context { key: Some(key), .. }) = context {
         // For intersection feeds
         post_id.push_str(key)
     }
-    let mut entry = Entry::new(post_id, post.tag_string, post.created_at.clone());
-    entry.published = Some(Element(post.created_at));
+    let mut entry = Entry::new(
+        post_id,
+        post.tags().join(" "),
+        post.created().unwrap().to_string(),
+    );
+    entry.published = post.created().map(|c| Element(c.to_string()));
     entry.content = Some(Content::Html(content));
-    entry.link = Some(Link::new(format!(
-        "https://danbooru.donmai.us/posts/{}",
-        post.id
-    )));
+    entry.link = Some(Link::new(post.post_url().unwrap().into()));
     let categories: Vec<Category> = post
-        .tag_string_general
-        .split_whitespace()
+        .tags()
+        .iter()
         .map(|t| Category::new(t.to_string(), None, None))
         .collect();
     entry.categories = Some(Element(categories));
-    entry.author = Element(Person::new(post.tag_string_artist, None, None));
+    if let Some(artist) = post.artist() {
+        entry.author = Element(Person::new(artist.to_string(), None, None));
+    }
     entry
 }
 
-pub fn danbooru_posts_to_feed(posts: Vec<DanbooruPost>, context: Option<&Context>) -> Feed {
+pub fn booru_posts_to_feed(posts: Vec<Box<dyn BooruPostModel>>, context: Option<&Context>) -> Feed {
     let entry_list: Vec<Entry> = posts
         .into_iter()
         .map(|p| danbooru_post_to_entry(p, context))
@@ -83,17 +83,8 @@ pub fn danbooru_posts_to_feed(posts: Vec<DanbooruPost>, context: Option<&Context
 
     let mut feed = Feed {
         updated: Local::now().to_rfc3339(),
-        author: Element(Person::new("Danbooru".to_string(), None, None)),
         ..Feed::default()
     };
     feed.entries = entry_list;
     feed
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_() {}
 }

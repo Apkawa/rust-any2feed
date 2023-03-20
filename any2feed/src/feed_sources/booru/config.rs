@@ -1,44 +1,28 @@
-use std::collections::HashMap;
-use std::fmt::format;
+use booru_rs::manager::Engine;
 use reqwest::Url;
 use serde::Deserialize;
-use booru_rs::manager::Engine;
-
-#[derive(Debug, Deserialize)]
-pub(crate) struct Config {
-    pub(crate) danbooru: DanbooruFeedSourceConfig,
-}
-
-#[derive(Debug, Deserialize)]
-pub(crate) struct DanbooruFeedSourceConfig {
-    pub(crate) proxy: Option<String>,
-    pub(crate) tags: Vec<String>,
-    pub(crate) limit: Option<u32>,
-}
-
-impl DanbooruFeedSourceConfig {
-    pub(crate) fn limit(&self) -> u32 {
-        self.limit.unwrap_or(50)
-    }
-}
+use std::collections::HashMap;
 
 #[derive(Debug)]
 pub(crate) struct BooruConfig {
-    sites: HashMap<String, BooruSiteConfig>,
+    pub(crate) sites: HashMap<String, BooruSiteConfig>,
 }
 
 impl BooruConfig {
     /// Load normalized_config
     pub fn load(toml_str: &str) -> BooruConfig {
         let config = toml::from_str::<ConfigTOML>(toml_str).unwrap().booru;
-        let sites_capacity = config.site.len() + config.engines.iter().map(|(_, c)| c.len()).sum::<usize>();
+        let sites_capacity =
+            config.site.len() + config.engines.iter().map(|(_, c)| c.len()).sum::<usize>();
         let mut sites: HashMap<String, BooruSiteConfig> = HashMap::with_capacity(sites_capacity);
-        let engines = config.engines.into_iter()
-            .chain(config.site.into_iter()
+        let engines = config.engines.into_iter().chain(
+            config
+                .site
+                .into_iter()
                 .map(|s| (s.engine.clone(), s))
                 .filter(|(e, _)| e.is_some()) // TODO detection engine from url
-                .map(|(e, s)|(e.unwrap().to_owned(), vec![s]))
-            );
+                .map(|(e, s)| (e.unwrap().to_owned(), vec![s])),
+        );
         for (engine, engine_sites) in engines {
             for s in engine_sites {
                 let limit = s.limit.unwrap_or(config.limit.unwrap_or(50));
@@ -52,17 +36,16 @@ impl BooruConfig {
                             rating: s.rating.to_owned(),
                         },
                         BooruTagEnum::TagConfig {
-                            tag, order,
+                            tag,
+                            order,
                             rating,
-                            limit: l
-                        } => {
-                            BooruTag {
-                                tag: tag.to_owned(),
-                                limit: l.unwrap_or(limit),
-                                order: order.as_ref().or_else(|| s.order.as_ref()).cloned(),
-                                rating: rating.as_ref().or_else(|| s.rating.as_ref()).cloned(),
-                            }
-                        }
+                            limit: l,
+                        } => BooruTag {
+                            tag: tag.to_owned(),
+                            limit: l.unwrap_or(limit),
+                            order: order.as_ref().or_else(|| s.order.as_ref()).cloned(),
+                            rating: rating.as_ref().or_else(|| s.rating.as_ref()).cloned(),
+                        },
                     };
                     tags.insert(tag.tag.clone(), tag);
                 }
@@ -75,17 +58,17 @@ impl BooruConfig {
                                 None
                             }
                         }
-                        BooruProxyEnum::ProxyOverride(proxy) => Some(proxy)
+                        BooruProxyEnum::ProxyOverride(proxy) => Some(proxy),
                     }
                 } else {
                     config.proxy.as_ref()
                 };
                 let site_config = BooruSiteConfig {
-                        engine: engine.to_owned(),
-                        url: s.url.to_owned(),
-                        proxy: proxy.cloned(),
-                        tags,
-                    };
+                    engine: engine.to_owned(),
+                    url: s.url.to_owned(),
+                    proxy: proxy.cloned(),
+                    tags,
+                };
                 let mut key = site_config.engine.to_string();
                 if let Some(url) = site_config.url.as_ref() {
                     let url = Url::parse(url).unwrap();
@@ -97,26 +80,24 @@ impl BooruConfig {
         }
 
         sites.shrink_to_fit();
-        BooruConfig {
-            sites
-        }
+        BooruConfig { sites }
     }
 }
 
 #[derive(Debug)]
 pub(crate) struct BooruSiteConfig {
-    engine: Engine,
-    url: Option<String>,
-    proxy: Option<String>,
-    tags: HashMap<String, BooruTag>,
+    pub engine: Engine,
+    pub url: Option<String>,
+    pub proxy: Option<String>,
+    pub tags: HashMap<String, BooruTag>,
 }
 
 #[derive(Debug)]
 pub(crate) struct BooruTag {
-    tag: String,
-    limit: u32,
-    order: Option<String>,
-    rating: Option<String>,
+    pub tag: String,
+    pub limit: u32,
+    pub order: Option<String>,
+    pub rating: Option<String>,
 }
 
 // Serde
@@ -164,7 +145,6 @@ pub(crate) enum BooruTagEnum {
         limit: Option<u32>,
     },
 }
-
 
 #[cfg(test)]
 mod tests {

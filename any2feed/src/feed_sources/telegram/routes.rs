@@ -55,7 +55,7 @@ pub(crate) fn route_opml(feed_source: &TelegramFeedSource) -> Route {
         }
         let opml = OPML::new("Telegram channels").add_outline(Outline {
             title: Attribute("Telegram channels".to_string()),
-            outlines: Some(outlines),
+            outlines: outlines,
             ..Outline::default()
         });
         let content = opml.to_string();

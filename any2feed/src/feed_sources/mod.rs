@@ -1,4 +1,4 @@
-use crate::feed_sources::danbooru::DanbooruFeedSource;
+use crate::feed_sources::booru::BooruFeedSource;
 use crate::feed_sources::mewe::feed_source::MeweFeedSource;
 use crate::feed_sources::telegram::TelegramFeedSource;
 use crate::feed_sources::traits::FeedSource;
@@ -8,7 +8,7 @@ pub mod traits;
 pub mod utils;
 
 // Feed sources
-pub mod danbooru;
+pub mod booru;
 pub mod mewe;
 pub mod telegram;
 
@@ -21,7 +21,7 @@ impl FeedSourceManager {
         vec![
             Box::new(MeweFeedSource::default()),
             Box::new(TelegramFeedSource::default()),
-            Box::new(DanbooruFeedSource::default()),
+            Box::new(BooruFeedSource::default()),
         ]
     }
 

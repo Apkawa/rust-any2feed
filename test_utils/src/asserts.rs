@@ -38,7 +38,3 @@ pub fn remove_extra_spaces(s: &str) -> String {
 
     output
 }
-
-// trait AssertCompareHelper {
-//     fn remove_
-// }

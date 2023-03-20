@@ -5,6 +5,7 @@ members = [
     "feed", "mewe_api",
     "reqwest_mozilla_cookie",
     "test_utils",
+    "test_helpers",
     "telegram",
     "booru-rs",
 ]
