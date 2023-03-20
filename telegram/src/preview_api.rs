@@ -135,7 +135,7 @@ mod test {
         let api = TelegramChannelPreviewApi::new("fighter_bomber");
         let channel = api.fetch(None).unwrap();
         dbg!(&channel);
-        assert!(channel.posts.len() > 0);
+        assert!(!channel.posts.is_empty());
     }
 
     #[test]

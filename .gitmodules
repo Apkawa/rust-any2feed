@@ -1,0 +1,3 @@
+[submodule "booru-rs"]
+	path = booru-rs
+	url = git@github.com:Apkawa/booru-rs.git

@@ -31,7 +31,7 @@ pub fn route_opml(feed_source: &MeweFeedSource) -> Route {
                 )
             })
             .collect();
-        groups.outlines = Some(groups_outlines);
+        groups.outlines = groups_outlines;
 
         let mut users = Outline::new("Users");
         let users_outlines = mewe_api
@@ -45,7 +45,7 @@ pub fn route_opml(feed_source: &MeweFeedSource) -> Route {
                 )
             })
             .collect();
-        users.outlines = Some(users_outlines);
+        users.outlines = users_outlines;
 
         let opml = OPML::new("Mewe feed").add_outline(
             Outline::new("Mewe feeds")

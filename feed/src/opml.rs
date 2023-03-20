@@ -76,7 +76,7 @@ pub struct Outline {
     pub text: Option<Attribute<String>>,
     pub xml_url: Option<Attribute<String>>,
     pub r#type: Option<Attribute<String>>,
-    pub outlines: Option<Vec<Outline>>,
+    pub outlines: Vec<Outline>,
 }
 
 impl Outline {
@@ -97,23 +97,17 @@ impl Outline {
         }
     }
     pub fn add_child(mut self, title: &str, url: Option<&str>) -> Outline {
-        if self.outlines.is_none() {
-            self.outlines = Some(Vec::with_capacity(3));
-        }
         let outline = if let Some(url) = url {
             Outline::with_url(title, url)
         } else {
             Outline::new(title)
         };
-        self.outlines.as_mut().unwrap().push(outline);
+        self.outlines.push(outline);
         self
     }
 
     pub fn add_outline(mut self, outline: Outline) -> Outline {
-        if self.outlines.is_none() {
-            self.outlines = Some(Vec::with_capacity(3));
-        }
-        self.outlines.as_mut().unwrap().push(outline);
+        self.outlines.push(outline);
         self
     }
 }
@@ -137,12 +131,7 @@ impl Display for Outline {
         ]
         .join(" ");
 
-        let outlines = outlines
-            .as_ref()
-            .unwrap_or(&vec![])
-            .iter()
-            .map(|c| c.to_string())
-            .collect::<String>();
+        let outlines = outlines.iter().map(|c| c.to_string()).collect::<String>();
         let (start, end) = if !outlines.is_empty() {
             (">\n", "\n</outline>")
         } else {
@@ -160,10 +149,10 @@ mod test {
     fn test_opml_render() {
         let mut opml = OPML::new("Foo bar");
         let mut outline = Outline::new("Foo");
-        outline.outlines = Some(vec![
+        outline.outlines = vec![
             Outline::with_url("bar & url", "http://ya.ru"),
             Outline::with_url("diez", "http://diez.ru"),
-        ]);
+        ];
         opml.outlines.push(outline);
 
         dbg!(&opml);

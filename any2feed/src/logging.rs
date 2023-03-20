@@ -12,7 +12,7 @@ pub fn logging_init(config: &MainConfig) {
         0 => LevelFilter::Error,
         1 => LevelFilter::Info,
         2 => LevelFilter::Debug,
-        3 | _ => LevelFilter::Trace,
+        _ => LevelFilter::Trace,
     };
 
     let log_config = ConfigBuilder::default()
@@ -35,7 +35,7 @@ pub fn logging_init(config: &MainConfig) {
             // and critical error write to stderr
             loggers.push(TermLogger::new(
                 LevelFilter::Error,
-                log_config.clone(),
+                log_config,
                 TerminalMode::Stderr,
                 ColorChoice::Auto,
             ));
@@ -46,7 +46,7 @@ pub fn logging_init(config: &MainConfig) {
         // stdout/stderr
         loggers.push(TermLogger::new(
             log_level,
-            log_config.clone(),
+            log_config,
             TerminalMode::Mixed,
             ColorChoice::Auto,
         ));

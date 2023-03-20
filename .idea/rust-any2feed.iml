@@ -16,6 +16,10 @@
       <sourceFolder url="file://$MODULE_DIR$/telegram/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/telegram/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/test_utils/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/booru-api/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/booru-rs/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/booru-rs/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/test_helpers/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
       <excludeFolder url="file://$MODULE_DIR$/http_server/target" />
       <excludeFolder url="file://$MODULE_DIR$/test_utils/src/fixtures/telegram_preview" />

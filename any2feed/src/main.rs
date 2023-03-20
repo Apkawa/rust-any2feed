@@ -9,6 +9,7 @@ fn main_view(_request: &HTTPRequest) -> http_server::Result<HTTPResponse> {
             <ul>
                 <li><a href="/mewe.opml">Mewe OPML</a></li>
                 <li><a href="/telegram.opml">Telegram OPML</a></li>
+                <li><a href="/booru.opml">Booru OPML</a></li>
             </ul>
         </body>
     </html>

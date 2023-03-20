@@ -18,5 +18,7 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/booru-rs" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/test_helpers" vcs="Git" />
   </component>
 </project>

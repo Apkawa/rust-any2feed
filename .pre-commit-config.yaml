@@ -34,14 +34,14 @@ repos:
         name: cargo clippy
         language: system
         types: [ file, rust ]
-        entry: ./_scripts/cargo.sh  clippy --all-targets --all # -- -D warnings # Use -D warnings option to ensure the job fails when encountering warnings
+        entry: ./_scripts/cargo.sh clippy --all-targets --all -- -D warnings # Use -D warnings option to ensure the job fails when encountering warnings
         pass_filenames: false
 
       - id: cargo_check
         name: cargo check
         language: system
         types: [ file, rust ]
-        entry: ./_scripts/cargo.sh  check
+        entry: ./_scripts/cargo.sh check --all-targets --all
         pass_filenames: false
 
       - id: test

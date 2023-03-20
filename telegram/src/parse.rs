@@ -228,7 +228,7 @@ pub fn parse_message(html: &str) -> error::Result<ChannelPost> {
         match get_class_name_by_prefix(el, "js-") {
             Some("widget_message") => post.id = el.attr("data-post").unwrap().to_string(),
             Some("message_text") => {
-                let t = el_ref.text().into_iter().collect::<Vec<_>>();
+                let t = el_ref.text().collect::<Vec<_>>();
                 post.text = t.join(" ");
                 post.html = el_ref.inner_html();
             }
@@ -255,7 +255,7 @@ pub fn parse_message(html: &str) -> error::Result<ChannelPost> {
             }
             Some("forwarded_from_name") => {
                 post.forwarded_from = Some(ForwardedFrom {
-                    name: el_ref.text().into_iter().collect(),
+                    name: el_ref.text().collect(),
                     url: el.attr("href").map(|s| s.to_string()),
                 })
             }

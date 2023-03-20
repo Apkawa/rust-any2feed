@@ -32,6 +32,8 @@ jobs:
           toolchain: stable
           components: rustfmt
       - uses: actions/checkout@v3
+        with:
+          submodules: true
       - run: cargo fmt -- --check
 
   cargo_clippy:
@@ -48,7 +50,9 @@ jobs:
           toolchain: stable
           components: clippy
       - uses: actions/checkout@v3
-      - run: cargo clippy
+        with:
+          submodules: true
+      - run: cargo clippy --all-targets --all -- -D warnings
 
 
   build:
@@ -67,6 +71,8 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
+        with:
+          submodules: true
 
       - name: Install prerequisites for ubuntu
         shell: bash

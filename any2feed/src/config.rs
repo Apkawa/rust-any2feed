@@ -36,7 +36,7 @@ pub struct FeedSourceOption {
 
 impl MainConfig {
     fn load(config_str: &str) -> MainConfig {
-        let mut config: MainConfig = toml::from_str(&config_str).unwrap();
+        let mut config: MainConfig = toml::from_str(config_str).unwrap();
         config.config_text = Some(config_str.to_string());
         config
     }
@@ -52,13 +52,13 @@ impl MainConfig {
         if cli.verbose > 0 {
             self.verbose = Some(cli.verbose);
         }
-        self.log_file = cli.log_file.clone().or(self.log_file).clone();
+        self.log_file = cli.log_file.as_ref().or(self.log_file.as_ref()).cloned();
 
         self.feed_sources = cli
             .feed_source
             .as_ref()
             .map(|fs| {
-                fs.into_iter()
+                fs.iter()
                     .map(|s| (s.to_owned(), FeedSourceOption::default()))
                     .collect::<HashMap<String, FeedSourceOption>>()
             })
