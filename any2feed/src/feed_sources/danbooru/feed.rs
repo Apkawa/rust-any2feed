@@ -1,8 +1,9 @@
 use ::feed::Entry;
-use booru_rs::model::danbooru::DanbooruPost;
 use chrono::Local;
 use feed::{Category, Content, Element, Feed, Link, Person};
 use reqwest::Url;
+use booru_rs::client::danbooru::DanbooruPost;
+use booru_rs::client::generic::BooruPostModel;
 
 #[derive(Debug, Default)]
 pub struct Context {

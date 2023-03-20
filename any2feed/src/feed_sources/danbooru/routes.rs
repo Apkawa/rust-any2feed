@@ -9,11 +9,12 @@ use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
 use reqwest::Url;
 use std::str::FromStr;
 use std::sync::Arc;
+use booru_rs::client::generic::{BooruClient, BooruOptionBuilder};
 
 pub fn route_feed(feed_source: &DanbooruFeedSource) -> Route {
     let config = Arc::clone(feed_source.config.as_ref().unwrap());
     Route::new("/danbooru/feed/(.+)/", move |r| {
-        let mut builder = DanbooruClient::builder()
+        let mut builder = DanbooruClient::new()
             .limit(config.limit())
             .proxy(config.proxy.as_ref());
 
@@ -22,7 +23,7 @@ pub fn route_feed(feed_source: &DanbooruFeedSource) -> Route {
             builder = builder.tag(tag);
         }
 
-        let posts = builder.build().get();
+        let posts = builder.get();
 
         if let Ok(posts) = posts {
             let mut proxy_url: Option<Url> = None;
@@ -79,9 +80,9 @@ pub fn route_media_proxy(feed_source: &DanbooruFeedSource) -> Route {
     let config = Arc::clone(feed_source.config.as_ref().unwrap());
     Route::new(r#"/danbooru/media/"#, move |r| {
         let media_url = Url::parse(r.query_params.get("url").unwrap()).unwrap();
-        let builder = DanbooruClient::builder()
-            .proxy(config.proxy.as_ref())
-            .build();
+
+        let builder = DanbooruClient::new()
+            .proxy(config.proxy.as_ref());
 
         let mut proxy_headers: HeaderMap = HeaderMap::from_iter(r.headers.iter().map(|(k, v)| {
             (

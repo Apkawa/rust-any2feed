@@ -1,5 +1,4 @@
 use any2feed::feed_sources::danbooru::feed::{danbooru_posts_to_feed, Context};
-use booru_rs::model::danbooru::DanbooruPost;
 use reqwest::Url;
 use test_utils::fixture::{load_fixture, load_json_fixture};
 

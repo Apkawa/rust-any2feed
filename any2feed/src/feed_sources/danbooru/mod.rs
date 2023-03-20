@@ -37,8 +37,3 @@ impl FeedSource for DanbooruFeedSource {
         todo!()
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use booru_rs::client::danbooru::DanbooruClient;
-}

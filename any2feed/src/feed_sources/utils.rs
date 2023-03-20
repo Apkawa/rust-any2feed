@@ -27,3 +27,21 @@ pub fn timestamp_now() -> u64 {
         .unwrap()
         .as_secs()
 }
+
+// ///```
+// /// use any2feed::feed_sources::utils::take_option;
+// /// let o = take_option([None, Some("foo")]);
+// /// assert_eq!(o, Some("foo"))
+// ///```
+// pub fn take_option<T, I>(options: I) -> Option<T>
+//     where
+//         I: IntoIterator<Item=Option<T>>,
+//         Option<T>: FromIterator<Option<T>>,
+//         T: Sized + ToOwned
+//
+// {
+//     options.into_iter()
+//         .filter(Option::is_some)
+//         .take(1)
+//         .collect()
+// }
