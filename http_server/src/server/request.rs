@@ -1,26 +1,24 @@
-use crate::server::config::ServerConfig;
-use crate::server::error;
-use crate::server::error::HTTPError;
 use std::collections::HashMap;
 use std::net::TcpStream;
 use std::sync::Arc;
+
 use url::Url;
+
 use HTTPError::*;
 
-#[derive(Debug, Eq, PartialEq)]
+use crate::server::config::ServerConfig;
+use crate::server::error;
+use crate::server::error::HTTPError;
+
+#[derive(Default, Debug, Eq, PartialEq)]
 pub enum HTTPMethod {
     HEAD,
     OPTIONS,
+    #[default]
     GET,
     POST,
     PUT,
     DELETE,
-}
-
-impl Default for HTTPMethod {
-    fn default() -> Self {
-        HTTPMethod::GET
-    }
 }
 
 impl HTTPMethod {

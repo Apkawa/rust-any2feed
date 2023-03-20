@@ -135,8 +135,9 @@ impl Person {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub enum LinkRel {
+    #[default]
     Alternate,
     Enclosure,
     Related,
@@ -147,12 +148,6 @@ pub enum LinkRel {
     Last,
     Previous,
     Next,
-}
-
-impl Default for LinkRel {
-    fn default() -> Self {
-        LinkRel::Alternate
-    }
 }
 
 impl Display for LinkRel {
