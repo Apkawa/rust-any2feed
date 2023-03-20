@@ -13,7 +13,7 @@ impl BooruConfig {
     pub fn load(toml_str: &str) -> BooruConfig {
         let config = toml::from_str::<ConfigTOML>(toml_str).unwrap().booru;
         let sites_capacity =
-            config.site.len() + config.engines.iter().map(|(_, c)| c.len()).sum::<usize>();
+            config.site.len() + config.engines.values().map(|c| c.len()).sum::<usize>();
         let mut sites: HashMap<String, BooruSiteConfig> = HashMap::with_capacity(sites_capacity);
         let engines = config.engines.into_iter().chain(
             config
@@ -21,11 +21,11 @@ impl BooruConfig {
                 .into_iter()
                 .map(|s| (s.engine.clone(), s))
                 .filter(|(e, _)| e.is_some()) // TODO detection engine from url
-                .map(|(e, s)| (e.unwrap().to_owned(), vec![s])),
+                .map(|(e, s)| (e.unwrap(), vec![s])),
         );
         for (engine, engine_sites) in engines {
             for s in engine_sites {
-                let limit = s.limit.unwrap_or(config.limit.unwrap_or(50));
+                let limit = s.limit.unwrap_or_else(|| config.limit.unwrap_or(50));
                 let mut tags = HashMap::with_capacity(s.tags.len());
                 for t in s.tags.iter() {
                     let tag = match t {
@@ -43,8 +43,8 @@ impl BooruConfig {
                         } => BooruTag {
                             tag: tag.to_owned(),
                             limit: l.unwrap_or(limit),
-                            order: order.as_ref().or_else(|| s.order.as_ref()).cloned(),
-                            rating: rating.as_ref().or_else(|| s.rating.as_ref()).cloned(),
+                            order: order.as_ref().or(s.order.as_ref()).cloned(),
+                            rating: rating.as_ref().or(s.rating.as_ref()).cloned(),
                         },
                     };
                     tags.insert(tag.tag.clone(), tag);

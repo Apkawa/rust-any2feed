@@ -1,3 +1,3 @@
-mod danbooru;
+mod booru;
 mod mewe;
 mod telegram;

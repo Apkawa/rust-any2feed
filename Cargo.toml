@@ -2,10 +2,10 @@
 members = [
     "any2feed",
     "http_server",
-    "feed", "mewe_api",
+    "feed",
+    "mewe_api",
     "reqwest_mozilla_cookie",
     "test_utils",
-    "test_helpers",
     "telegram",
     "booru-rs",
 ]

@@ -92,7 +92,7 @@ pub(crate) fn route_opml(feed_source: &BooruFeedSource) -> Route {
 
             let mut site_o = Outline::new(site_title.as_str());
             for (tag_key, _) in site.tags.iter() {
-                site_o.outlines.push(Outline::new(&tag_key).add_child(
+                site_o.outlines.push(Outline::new(tag_key).add_child(
                     &site_title,
                     Some(format!("{url}/{key}/{tag_key}/").as_str()),
                 ))
@@ -101,7 +101,7 @@ pub(crate) fn route_opml(feed_source: &BooruFeedSource) -> Route {
         }
         let opml = OPML::new("Booru").add_outline(Outline {
             title: Attribute("Booru".to_string()),
-            outlines: outlines,
+            outlines,
             ..Outline::default()
         });
         let content = opml.to_string();
@@ -150,12 +150,10 @@ pub fn route_media_proxy(feed_source: &BooruFeedSource) -> Route {
             .unwrap();
 
         match media_res.status().as_u16() {
-            200..=299 => {
-                return Ok(response_from_reqwest_response(media_res));
-            }
+            200..=299 => Ok(response_from_reqwest_response(media_res)),
             _ => {
                 dbg!(&media_url, &media_res);
-                return Err(HTTPError::InvalidRequest);
+                Err(HTTPError::InvalidRequest)
             }
         }
     })

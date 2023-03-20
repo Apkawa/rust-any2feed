@@ -7,4 +7,8 @@ if [[ -d $CARGO_BIN_DIR ]]
 then
   export PATH="$CARGO_BIN_DIR:$PATH"
 fi
+if [[ -f './.env' ]]
+then
+  export $(cat ./.env)
+fi
 cargo "$@"

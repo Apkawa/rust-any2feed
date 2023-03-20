@@ -19,9 +19,9 @@ pub type FeedSourceList = Vec<Box<dyn FeedSource>>;
 impl FeedSourceManager {
     pub fn get_sources() -> FeedSourceList {
         vec![
-            Box::new(MeweFeedSource::default()),
-            Box::new(TelegramFeedSource::default()),
-            Box::new(BooruFeedSource::default()),
+            Box::<MeweFeedSource>::default(),
+            Box::<TelegramFeedSource>::default(),
+            Box::<BooruFeedSource>::default(),
         ]
     }
 

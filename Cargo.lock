@@ -90,7 +90,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
- "test-helpers 0.1.0 (git+https://github.com/Apkawa/rust-test-helpers.git)",
+ "test-helpers",
  "time 0.3.20",
 ]
 
@@ -1853,17 +1853,13 @@ dependencies = [
 [[package]]
 name = "test-helpers"
 version = "0.1.0"
-
-[[package]]
-name = "test-helpers"
-version = "0.1.0"
 source = "git+https://github.com/Apkawa/rust-test-helpers.git#1ee43100210e5161427ad396efb71d1e06ab37cc"
 
 [[package]]
 name = "test_utils"
 version = "0.1.0"
 dependencies = [
- "test-helpers 0.1.0",
+ "test-helpers",
 ]
 
 [[package]]

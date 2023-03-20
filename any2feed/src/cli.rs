@@ -121,9 +121,11 @@ mod tests {
         assert_eq!(cli.verbose, 0);
         assert_eq!(cli.log_file, None);
 
-        if let Run(server) = cli.command {
-            assert_eq!(server.threads, Some(10));
-            assert_eq!(server.port, Some(123));
+        match cli.command {
+            Run(server) => {
+                assert_eq!(server.threads, Some(10));
+                assert_eq!(server.port, Some(123));
+            }
         }
     }
     #[test]

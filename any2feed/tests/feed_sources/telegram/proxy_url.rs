@@ -8,20 +8,22 @@ use test_utils::fixture::load_fixture;
 
 #[test]
 fn test_set_proxy_url() {
-    let mut post = ChannelPost::default();
-    post.id = "channel_name/123".to_string();
-    post.media = Some(vec![
-        Media::Photo("https://url.com/1/".to_string()),
-        Media::Photo("https://url.com/2/".to_string()),
-        Media::Video {
-            url: "https://url.com/3/".to_string(),
-            thumb_url: "https://url.com/3/".to_string(),
-        },
-    ]);
-    post.link_preview = Some(LinkPreview {
-        media: Some(Media::Photo("https://url.com/link_preview/".to_string())),
-        ..LinkPreview::default()
-    });
+    let mut post = ChannelPost {
+        id: "channel_name/123".to_string(),
+        media: Some(vec![
+            Media::Photo("https://url.com/1/".to_string()),
+            Media::Photo("https://url.com/2/".to_string()),
+            Media::Video {
+                url: "https://url.com/3/".to_string(),
+                thumb_url: "https://url.com/3/".to_string(),
+            },
+        ]),
+        link_preview: Some(LinkPreview {
+            media: Some(Media::Photo("https://url.com/link_preview/".to_string())),
+            ..LinkPreview::default()
+        }),
+        ..ChannelPost::default()
+    };
 
     assert_eq!(post.get_media_list_mut().len(), 4);
     assert_eq!(post.get_media_list().len(), 4);

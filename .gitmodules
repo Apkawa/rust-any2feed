@@ -1,6 +1,3 @@
 [submodule "booru-rs"]
 	path = booru-rs
 	url = git@github.com:Apkawa/booru-rs.git
-[submodule "test_helpers"]
-	path = test_helpers
-	url = git@github.com:Apkawa/rust-test-helpers.git
