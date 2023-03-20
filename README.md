@@ -23,7 +23,7 @@ For mvp  (minimal viable product)
     - [x] telegram channels
       - [x] from public preview channel like https://t.me/s/bestogirl
       <!-- - [ ] by telegram client api -->
-    - [ ] danbooru/gelbooru
+    - [x] booru sites via [Apkawa/booru-rs](https://github.com/Apkawa/booru-rs) crate
     - [ ] pixiv
     - [ ] twitter
     - [ ] tumblr
@@ -31,11 +31,11 @@ For mvp  (minimal viable product)
     - [ ] dtf
     - [ ] vk
     - [ ] 2ch
-* [x] CLI
-* [ ] Configure via env
 * [ ] Pluggable interface
 * [ ] Cache storage
 * [x] Config
+* [x] CLI
+* [ ] Configure via env
 
 ## Usage
 
