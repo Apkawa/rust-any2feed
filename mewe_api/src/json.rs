@@ -35,7 +35,9 @@ impl MeweApiUserInfo {
         let user_id = &self.id;
 
         match group_id {
-            Some(group_id) => format!("https://mewe.com/group/{group_id}/profile/{user_id}"),
+            Some(group_id) => {
+                format!("https://mewe.com/group/{group_id}/members/profile/{user_id}")
+            }
             None => {
                 format!("https://mewe.com/i/{}", self.contact_invite_id)
             }
