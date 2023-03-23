@@ -1,4 +1,5 @@
 use ::feed::Entry;
+use booru_rs::client::generic::model::{Image, ImageSize};
 use booru_rs::client::generic::BooruPostModel;
 use chrono::Local;
 use feed::{Category, Content, Element, Feed, Link, Person};
@@ -17,7 +18,7 @@ pub fn build_proxy_url(media_url: &str, mut proxy_url: Url) -> String {
 }
 
 pub fn danbooru_post_to_entry(post: Box<dyn BooruPostModel>, context: Option<&Context>) -> Entry {
-    let img = if post.images().sample.is_none() {
+    let sample = if post.images().sample.is_none() {
         String::new()
     } else {
         // let img = DanbooruImage::from_md5(&post.md5.unwrap(), &post.file_ext);
@@ -41,13 +42,39 @@ pub fn danbooru_post_to_entry(post: Box<dyn BooruPostModel>, context: Option<&Co
             sample = sample,
         )
     };
+
+    let full_img = if post.images().original.is_none() {
+        String::new()
+    } else {
+        let Some(Image {
+            url,
+            filesize,
+            size,
+            ext }) = post.images().original else { unreachable!() };
+        let mut title = String::new();
+        if let Some(ext) = ext {
+            title.push_str(format!(".{ext} ").as_str());
+        }
+        if let Some(ImageSize { width, height }) = size {
+            title.push_str(format!("{width}x{height} ").as_str());
+        }
+        if let Some(filesize) = filesize {
+            let filesize = filesize / 1024;
+            title.push_str(format!("{filesize}KB").as_str());
+        }
+
+        format!(r#"<p><a href="{url}">Full {title}</a></p>"#)
+    };
+
     let source = post
         .source_url()
         .unwrap_or_else(|| Cow::Owned(String::new()));
+
     let content = format!(
         r#"
-        <a href="{source}">{source}</a>
-        {img}
+        <p><a href="{source}">{source}</a></p>
+        {full_img}
+        {sample}
         "#,
     );
     let mut post_id = post.id().to_string();
