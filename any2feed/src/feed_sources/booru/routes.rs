@@ -33,13 +33,22 @@ pub fn route_feed(feed_source: &BooruFeedSource) -> Route {
             builder = builder.url(url);
         }
         if let Some(tag) = tag.as_ref() {
-            let tag = config.tags.get(tag).unwrap();
-            builder = builder.tag(&tag.tag).limit(tag.limit);
-            if let Some(order) = tag.order.as_ref() {
-                builder = builder.order(order);
-            }
-            if let Some(rating) = tag.rating.as_ref() {
-                builder = builder.rating(rating);
+            if let Some(tag_config) = config.tags.get(tag) {
+                builder = builder.tag(&tag_config.tag).limit(tag_config.limit);
+                if let Some(order) = tag_config.order.as_ref() {
+                    builder = builder.order(order);
+                }
+                if let Some(rating) = tag_config.rating.as_ref() {
+                    builder = builder.rating(rating);
+                }
+            } else {
+                builder = builder.tag(tag).limit(config.limit);
+                if let Some(order) = config.order.as_ref() {
+                    builder = builder.order(order);
+                }
+                if let Some(rating) = config.rating.as_ref() {
+                    builder = builder.rating(rating);
+                }
             }
         }
 
@@ -121,7 +130,11 @@ pub fn route_media_proxy(feed_source: &BooruFeedSource) -> Route {
             .unwrap()
             .as_ref()
             .unwrap();
-        let media_url = Url::parse(r.query_params.get("url").unwrap()).unwrap();
+
+        let media_url = Url::parse(r.query_params.get("url").unwrap()).map_err(|e| {
+            log::error!("{:?}", e);
+            HTTPError::InvalidRequest
+        })?;
 
         let site: Option<&BooruSiteConfig> = config.sites.get(key);
 

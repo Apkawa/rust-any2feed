@@ -26,14 +26,16 @@ impl BooruConfig {
         for (engine, engine_sites) in engines {
             for s in engine_sites {
                 let limit = s.limit.unwrap_or_else(|| config.limit.unwrap_or(50));
+                let order = s.order;
+                let rating = s.rating;
                 let mut tags = HashMap::with_capacity(s.tags.len());
                 for t in s.tags.iter() {
                     let tag = match t {
                         BooruTagEnum::Tag(tag) => BooruTag {
                             tag: tag.to_owned(),
                             limit,
-                            order: s.order.to_owned(),
-                            rating: s.rating.to_owned(),
+                            order: order.to_owned(),
+                            rating: rating.to_owned(),
                         },
                         BooruTagEnum::TagConfig {
                             tag,
@@ -43,8 +45,8 @@ impl BooruConfig {
                         } => BooruTag {
                             tag: tag.to_owned(),
                             limit: l.unwrap_or(limit),
-                            order: order.as_ref().or(s.order.as_ref()).cloned(),
-                            rating: rating.as_ref().or(s.rating.as_ref()).cloned(),
+                            order: order.as_ref().or(order.as_ref()).cloned(),
+                            rating: rating.as_ref().or(rating.as_ref()).cloned(),
                         },
                     };
                     tags.insert(tag.tag.clone(), tag);
@@ -67,6 +69,9 @@ impl BooruConfig {
                     engine: engine.to_owned(),
                     url: s.url.to_owned(),
                     proxy: proxy.cloned(),
+                    limit,
+                    order,
+                    rating,
                     tags,
                 };
                 let mut key = site_config.engine.to_string();
@@ -89,6 +94,9 @@ pub(crate) struct BooruSiteConfig {
     pub engine: Engine,
     pub url: Option<String>,
     pub proxy: Option<String>,
+    pub limit: u32,
+    pub order: Option<String>,
+    pub rating: Option<String>,
     pub tags: HashMap<String, BooruTag>,
 }
 
