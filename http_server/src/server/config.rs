@@ -43,7 +43,10 @@ impl Route {
     }
 
     pub fn run_cb(&self, request: &HTTPRequest) -> error::Result<HTTPResponse> {
-        self.callback.lock().unwrap()(request)
+        self.callback
+            .lock()
+            // Ignore poison error
+            .unwrap_or_else(|e| e.into_inner())(request)
     }
 }
 
