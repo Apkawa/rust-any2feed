@@ -1,3 +1,16 @@
+## v0.1.0-a1 (2023-03-25)
+
+### Feat
+
+- **booru**: Add full image link with res, size
+
+### Fix
+
+- **http-server**: ignore PoisonError, minor refactoring thread_pool
+- **mewe**: fix group link
+- **booru**: work with unknown tags, use per site limit,order,rating
+- **mewe**: crash server if network unrechable
+
 ## v0.1.0-a0 (2023-03-13)
 
 ### Feat
